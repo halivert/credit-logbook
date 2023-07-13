@@ -1,5 +1,7 @@
 <?php
 
+use App\API\CreditCard\v1\CreditCardController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,6 +15,21 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::get('/', function (Request $request) {
+    return $request->wantsJson()
+        ? response()->json(null, 200)
+        : view('welcome');
+});
+
+Route::middleware(['auth:sanctum'])->prefix('api')->group(function () {
+    Route::prefix('v1')->group(function () {
+        Route::apiResources([
+            'credit-cards' => CreditCardController::class
+        ], [
+            'parameters' => [
+                'credit-cards' => 'creditCard'
+            ],
+            'shallow' => true
+        ]);
+    });
 });
