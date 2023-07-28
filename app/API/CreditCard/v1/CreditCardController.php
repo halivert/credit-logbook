@@ -4,13 +4,12 @@ namespace App\API\CreditCard\v1;
 
 use App\API\CreditCard\CreditCard;
 use App\Http\Controllers\Controller;
-use App\Models\User;
 
 class CreditCardController extends Controller
 {
     public function __construct()
     {
-        $this->authorizeResource(CreditCard::class);
+        $this->authorizeResource(CreditCard::class, 'creditCard');
     }
 
     /**
