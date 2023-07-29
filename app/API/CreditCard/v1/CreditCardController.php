@@ -4,7 +4,9 @@ namespace App\API\CreditCard\v1;
 
 use App\API\CreditCard\CreditCard;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class CreditCardController extends Controller
 {
@@ -25,9 +27,19 @@ class CreditCardController extends Controller
 
     /**
      * Store a newly created resource in storage.
+     *
+     * @return JsonResponse
      */
-    public function store(StoreCreditCardRequest $request): void
+    public function store(StoreCreditCardRequest $request): JsonResponse
     {
+        $attrs = $request->validated();
+
+        $creditCard = $request->user()->creditCards()->create($attrs);
+
+        return response()->json(
+            new CreditCardResource($creditCard),
+            Response::HTTP_CREATED
+        );
     }
 
     /**

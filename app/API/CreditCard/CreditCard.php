@@ -22,6 +22,13 @@ class CreditCard extends Model
         'limit',
     ];
 
+    protected $casts = [
+        'due_date' => 'integer',
+        'closing_date' => 'integer',
+        'interest_rate' => 'decimal:2',
+        'limit' => 'decimal:2'
+    ];
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
