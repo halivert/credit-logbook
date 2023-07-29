@@ -18,7 +18,7 @@ return new class extends Migration
             $table->integer('due_date');
             $table->integer('closing_date');
             $table->decimal('interest_rate', 5, 2)->default(0);
-            $table->decimal('limit', 19, 4);
+            $table->text('limit');
             $table->softDeletes(precision: 3);
             $table->timestamps(3);
         });

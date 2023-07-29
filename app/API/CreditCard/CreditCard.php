@@ -26,7 +26,7 @@ class CreditCard extends Model
         'due_date' => 'integer',
         'closing_date' => 'integer',
         'interest_rate' => 'decimal:2',
-        'limit' => 'decimal:2'
+        'limit' => 'encrypted'
     ];
 
     public function user(): BelongsTo
