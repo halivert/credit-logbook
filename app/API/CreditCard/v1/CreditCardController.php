@@ -4,6 +4,7 @@ namespace App\API\CreditCard\v1;
 
 use App\API\CreditCard\CreditCard;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 
 class CreditCardController extends Controller
 {
@@ -15,23 +16,24 @@ class CreditCardController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request): CreditCardCollection
     {
-        //
+        return new CreditCardCollection(
+            $request->user()->creditCards()->paginate(10)
+        );
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreCreditCardRequest $request)
+    public function store(StoreCreditCardRequest $request): void
     {
-        //
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(CreditCard $creditCard)
+    public function show(CreditCard $creditCard): void
     {
         //
     }
@@ -39,17 +41,15 @@ class CreditCardController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(
-        UpdateCreditCardRequest $request,
-        CreditCard $creditCard
-    ) {
+    public function update(UpdateCreditCardRequest $request, CreditCard $creditCard): void
+    {
         //
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(CreditCard $creditCard)
+    public function destroy(CreditCard $creditCard): void
     {
         //
     }
