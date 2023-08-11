@@ -11,7 +11,7 @@ class UpdateCreditCardRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return $this->user()->can('update', $this->credit_card);
+        return $this->user()->can('update', $this->creditCard);
     }
 
     /**
@@ -25,8 +25,8 @@ class UpdateCreditCardRequest extends FormRequest
             'name' => 'sometimes|required|string|max:255',
             'due_date' => 'sometimes|required|integer|min:1|max:28',
             'closing_date' => 'sometimes|required|integer|min:1|max:28',
-            'interest_rate' => 'sometimes|nullable|decimal:2|min:0|max:100',
-            'limit' => 'sometimes|required|decimal:2,4|min:0',
+            'interest_rate' => 'sometimes|nullable|decimal:0,2|min:0|max:200',
+            'limit' => 'sometimes|required|decimal:0,4|min:0',
         ];
     }
 

@@ -26,8 +26,8 @@ class StoreCreditCardRequest extends FormRequest
             'name' => 'required|string|max:255',
             'due_date' => 'required|integer|min:1|max:28',
             'closing_date' => 'required|integer|min:1|max:28',
-            'interest_rate' => 'nullable|decimal:2|min:0|max:100',
-            'limit' => 'required|decimal:2,4|min:0',
+            'interest_rate' => 'nullable|decimal:0,2|min:0|max:200',
+            'limit' => 'required|decimal:0,4|min:0',
         ];
     }
 
