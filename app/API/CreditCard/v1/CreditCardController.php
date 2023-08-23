@@ -53,9 +53,15 @@ class CreditCardController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateCreditCardRequest $request, CreditCard $creditCard): void
-    {
-        //
+    public function update(
+        UpdateCreditCardRequest $request,
+        CreditCard $creditCard
+    ): JsonResponse {
+        $attrs = $request->validated();
+
+        $creditCard->update($attrs);
+
+        return response()->json(new CreditCardResource($creditCard));
     }
 
     /**
