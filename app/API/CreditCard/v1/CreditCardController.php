@@ -45,9 +45,9 @@ class CreditCardController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(CreditCard $creditCard): void
+    public function show(CreditCard $creditCard): JsonResponse
     {
-        //
+        return response()->json(new CreditCardResource($creditCard));
     }
 
     /**
