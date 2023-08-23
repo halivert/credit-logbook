@@ -67,8 +67,10 @@ class CreditCardController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(CreditCard $creditCard): void
+    public function destroy(CreditCard $creditCard): JsonResponse
     {
-        //
+        $creditCard->delete();
+
+        return response()->json(null, Response::HTTP_NO_CONTENT);
     }
 }
