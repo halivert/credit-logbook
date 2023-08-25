@@ -45,24 +45,32 @@ class CreditCardController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(CreditCard $creditCard): void
+    public function show(CreditCard $creditCard): JsonResponse
     {
-        //
+        return response()->json(new CreditCardResource($creditCard));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateCreditCardRequest $request, CreditCard $creditCard): void
-    {
-        //
+    public function update(
+        UpdateCreditCardRequest $request,
+        CreditCard $creditCard
+    ): JsonResponse {
+        $attrs = $request->validated();
+
+        $creditCard->update($attrs);
+
+        return response()->json(new CreditCardResource($creditCard));
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(CreditCard $creditCard): void
+    public function destroy(CreditCard $creditCard): JsonResponse
     {
-        //
+        $creditCard->delete();
+
+        return response()->json(null, Response::HTTP_NO_CONTENT);
     }
 }
