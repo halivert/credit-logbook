@@ -1,5 +1,6 @@
 <?php
 
+use App\API\LoginController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,6 +15,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+Route::middleware('auth:sanctum')->get('/v1/user', function (Request $request) {
     return $request->user();
+});
+
+Route::post('/v1/login', [LoginController::class, 'store']);
+
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::post('/v1/logout', [LoginController::class, 'destroy']);
 });
