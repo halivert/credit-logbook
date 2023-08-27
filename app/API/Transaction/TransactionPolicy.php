@@ -14,9 +14,11 @@ class TransactionPolicy
     /**
      * Determine whether the user can view any models.
      */
-    public function viewAny(User $user): Response
+    public function viewAny(User $user, CreditCard $creditCard): Response
     {
-        return $user->exists ? $this->allow() : $this->denyAsNotFound();
+        return $creditCard->user->is($user)
+            ? $this->allow()
+            : $this->denyAsNotFound();
     }
 
     /**
