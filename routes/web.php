@@ -1,6 +1,7 @@
 <?php
 
 use App\API\CreditCard\v1\CreditCardController;
+use App\API\Transaction\v1\TransactionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -24,7 +25,8 @@ Route::get('/', function (Request $request) {
 Route::middleware(['auth:sanctum'])->prefix('api')->group(function () {
     Route::prefix('v1')->group(function () {
         Route::apiResources([
-            'credit-cards' => CreditCardController::class
+            'credit-cards' => CreditCardController::class,
+            'credit-cards.transactions' => TransactionController::class
         ], [
             'parameters' => [
                 'credit-cards' => 'creditCard'
