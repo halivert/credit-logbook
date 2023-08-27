@@ -26,13 +26,14 @@ class Transaction extends Model
     ];
 
     protected $casts = [
+        'datetime' => 'datetime',
         'amount' => 'decimal:4',
         'deadline_months' => 'integer',
         'commission' => 'decimal:4',
-        'commission' => 'decimal:2',
+        'interest_rate' => 'decimal:2',
     ];
 
-    public function credit_card(): BelongsTo
+    public function creditCard(): BelongsTo
     {
         return $this->belongsTo(CreditCard::class);
     }
@@ -49,7 +50,7 @@ class Transaction extends Model
         );
     }
 
-    public function parent_transaction(): BelongsTo
+    public function parentTransaction(): BelongsTo
     {
         return $this->belongsTo(Transaction::class);
     }
