@@ -15,7 +15,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignUuid('credit_card_id')->constrained();
             $table->string('concept');
-            $table->dateTime('datetime');
+            $table->dateTime('datetime', 3);
             $table->decimal('amount', 19, 4);
             $table->integer('deadline_months')->nullable();
             $table->decimal('commission', 19, 4)->nullable();

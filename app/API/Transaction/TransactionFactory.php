@@ -21,8 +21,8 @@ class TransactionFactory extends Factory
     {
         return [
             'credit_card_id' => CreditCard::factory(),
-            'concept' => fake()->paragraph(4),
-            'datetime' => fake()->dateTimeThisYear(),
+            'concept' => fake()->sentence(4),
+            'datetime' => fake()->dateTimeThisYear('today')->format('Y-m-d'),
             'amount' => fake()->randomFloat(2, 1, 10000),
         ];
     }

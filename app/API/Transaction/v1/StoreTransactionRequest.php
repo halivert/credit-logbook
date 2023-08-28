@@ -14,7 +14,7 @@ class StoreTransactionRequest extends FormRequest
     {
         return $this->user()->can(
             'create',
-            [Transaction::class, $this->credit_card]
+            [Transaction::class, $this->creditCard]
         );
     }
 
