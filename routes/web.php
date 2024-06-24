@@ -1,6 +1,7 @@
 <?php
 
-use App\Http\Controllers\CreditCardController;
+use App\CreditCard\CreditCardController;
+use App\Transaction\TransactionController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -37,7 +38,7 @@ Route::middleware('auth')->group(function () {
 
     Route::resources([
         'credit-cards' => CreditCardController::class,
-        // 'credit-cards.transactions' => TransactionController::class
+        'credit-cards.transactions' => TransactionController::class
     ], [
         'parameters' => [
             'credit-cards' => 'creditCard'

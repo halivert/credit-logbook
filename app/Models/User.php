@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\API\CreditCard\CreditCard;
+use App\CreditCard\CreditCard;
 use App\Enums\Subscription;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

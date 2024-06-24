@@ -2,10 +2,10 @@
 
 namespace App\Providers;
 
-use App\API\CreditCard\CreditCard;
-use App\API\CreditCard\CreditCardPolicy;
-use App\API\Transaction\Transaction;
-use App\API\Transaction\TransactionPolicy;
+use App\CreditCard\CreditCard;
+use App\CreditCard\CreditCardPolicy;
+use App\Transaction\Transaction;
+use App\Transaction\TransactionPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
