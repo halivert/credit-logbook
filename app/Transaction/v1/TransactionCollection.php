@@ -1,6 +1,6 @@
 <?php
 
-namespace App\API\Transaction\v1;
+namespace App\Transaction\v1;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;

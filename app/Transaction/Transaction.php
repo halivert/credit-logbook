@@ -1,8 +1,8 @@
 <?php
 
-namespace App\API\Transaction;
+namespace App\Transaction;
 
-use App\API\CreditCard\CreditCard;
+use App\CreditCard\CreditCard;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\Factory;

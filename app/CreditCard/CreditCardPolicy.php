@@ -1,6 +1,6 @@
 <?php
 
-namespace App\API\CreditCard;
+namespace App\CreditCard;
 
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;

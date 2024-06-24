@@ -1,10 +1,10 @@
 <?php
 
-namespace App\API\Transaction\v1;
+namespace App\Transaction\v1;
 
-use App\API\CreditCard\CreditCard;
-use App\API\Transaction\Transaction;
+use App\CreditCard\CreditCard;
 use App\Http\Controllers\Controller;
+use App\Transaction\Transaction;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 

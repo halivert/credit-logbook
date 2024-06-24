@@ -1,9 +1,9 @@
 <?php
 
-namespace App\API\CreditCard;
+namespace App\CreditCard;
 
-use App\API\Transaction\Transaction;
 use App\Models\User;
+use App\Transaction\Transaction;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

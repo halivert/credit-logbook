@@ -1,6 +1,6 @@
 <?php
 
-namespace App\API\CreditCard\v1;
+namespace App\CreditCard\v1;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;

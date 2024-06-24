@@ -1,21 +1,17 @@
 <?php
 
-namespace App\API\Transaction\v1;
+namespace App\Transaction\v1;
 
-use App\API\Transaction\Transaction;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreTransactionRequest extends FormRequest
+class UpdateTransactionRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return $this->user()->can(
-            'create',
-            [Transaction::class, $this->creditCard]
-        );
+        return $this->user()->can('update', $this->transaction);
     }
 
     /**
@@ -26,9 +22,9 @@ class StoreTransactionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'concept' => 'required|string|max:255',
-            'datetime' => 'required|date|before_or_equal:today',
-            'amount' => 'required|decimal:2,4|min:1',
+            'concept' => 'sometimes|required|string|max:255',
+            'datetime' => 'sometimes|required|date|before_or_equal:today',
+            'amount' => 'sometimes|required|decimal:2,4|min:1',
             'deadline_months' => 'sometimes|nullable|integer',
             'commission' => 'sometimes|nullable|decimal:2,4',
             'interest_rate' => 'sometimes|nullable|decimal:2',

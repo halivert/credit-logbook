@@ -1,8 +1,8 @@
 <?php
 
-namespace App\API\Transaction;
+namespace App\Transaction;
 
-use App\API\CreditCard\CreditCard;
+use App\CreditCard\CreditCard;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Auth\Access\Response;

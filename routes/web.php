@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CreditCardController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -33,6 +34,30 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::resources([
+        'credit-cards' => CreditCardController::class,
+        // 'credit-cards.transactions' => TransactionController::class
+    ], [
+        'parameters' => [
+            'credit-cards' => 'creditCard'
+        ],
+        'shallow' => true
+    ]);
 });
 
 require __DIR__.'/auth.php';
+//
+// Route::middleware(['auth:sanctum'])->prefix('api')->group(function () {
+//     Route::prefix('v1')->group(function () {
+//         Route::apiResources([
+//             'credit-cards' => CreditCardController::class,
+//             'credit-cards.transactions' => TransactionController::class
+//         ], [
+//             'parameters' => [
+//                 'credit-cards' => 'creditCard'
+//             ],
+//             'shallow' => true
+//         ]);
+//     });
+// });

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\API\CreditCard\v1;
+namespace App\CreditCard\v1;
 
-use App\API\CreditCard\CreditCard;
+use App\CreditCard\CreditCard;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreCreditCardRequest extends FormRequest
