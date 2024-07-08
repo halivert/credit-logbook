@@ -1,8 +1,9 @@
 <?php
 
-use App\CreditCard\CreditCardController;
-use App\Transaction\TransactionController;
+use App\CreditCards\CreditCardController;
+use App\Purchases\PurchaseController;
 use App\Http\Controllers\ProfileController;
+use App\Payments\PaymentController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -32,33 +33,41 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    /**
+     * Profile
+     */
+    Route::get('/profile', [ProfileController::class, 'edit'])
+        ->name('profile.edit');
 
-    Route::resources([
-        'credit-cards' => CreditCardController::class,
-        'credit-cards.transactions' => TransactionController::class
-    ], [
-        'parameters' => [
+    Route::patch('/profile', [ProfileController::class, 'update'])
+        ->name('profile.update');
+
+    Route::delete('/profile', [ProfileController::class, 'destroy'])
+        ->name('profile.destroy');
+
+    /**
+     * Credit Cards
+     */
+    Route::resource('credit-cards', CreditCardController::class)
+        ->parameters(['credit-cards' => 'creditCard']);
+
+    /**
+     * Purchases
+     */
+    Route::resource('credit-cards.purchases', PurchaseController::class)
+        ->parameters([
             'credit-cards' => 'creditCard'
-        ],
-        'shallow' => true
-    ]);
+        ])->only(['create', 'store', 'edit', 'update', 'destroy'])
+        ->shallow();
+
+    /**
+     * Payments
+     */
+    Route::resource('credit-cards.payments', PaymentController::class)
+        ->parameters([
+            'credit-cards' => 'creditCard'
+        ])->only(['create', 'store'])
+        ->shallow();
 });
 
-require __DIR__.'/auth.php';
-//
-// Route::middleware(['auth:sanctum'])->prefix('api')->group(function () {
-//     Route::prefix('v1')->group(function () {
-//         Route::apiResources([
-//             'credit-cards' => CreditCardController::class,
-//             'credit-cards.transactions' => TransactionController::class
-//         ], [
-//             'parameters' => [
-//                 'credit-cards' => 'creditCard'
-//             ],
-//             'shallow' => true
-//         ]);
-//     });
-// });
+require __DIR__ . '/auth.php';

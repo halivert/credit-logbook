@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Transaction;
+namespace App\Purchases;
 
-use App\CreditCard\CreditCard;
+use App\CreditCards\CreditCard;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Auth\Access\Response;
 
-class TransactionPolicy
+class PurchasePolicy
 {
     use HandlesAuthorization;
 
@@ -24,9 +24,9 @@ class TransactionPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Transaction $transaction): Response
+    public function view(User $user, Purchase $purchase): Response
     {
-        return $transaction->user->is($user)
+        return $purchase->user->is($user)
             ? $this->allow()
             : $this->denyAsNotFound();
     }
@@ -44,9 +44,11 @@ class TransactionPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Transaction $transaction): Response
+    public function update(User $user, Purchase $purchase): Response
     {
-        return $transaction->user->is($user)
+        if ($purchase->paid_at) return $this->denyAsNotFound();
+
+        return $purchase->user->is($user)
             ? $this->allow()
             : $this->denyAsNotFound();
     }
@@ -54,9 +56,9 @@ class TransactionPolicy
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Transaction $transaction): Response
+    public function delete(User $user, Purchase $purchase): Response
     {
-        return $transaction->user->is($user)
+        return $purchase->user->is($user)
             ? $this->allow()
             : $this->denyAsNotFound();
     }

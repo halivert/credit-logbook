@@ -8,26 +8,29 @@ import TextInput from "@/Components/TextInput.vue"
 
 const props = defineProps<{
     creditCard: CreditCard
-    transaction?: Transaction
+    transaction: Transaction
 }>()
 
+const datetime = (
+    props.transaction.datetime ?? new Date().toISOString()
+).split("T")[0]
+
 const form = useForm({
-    concept: props.transaction?.concept ?? "",
-    datetime: props.transaction?.datetime ?? "",
-    amount: props.transaction?.amount ?? "",
+    concept: props.transaction.concept ?? "",
+    datetime,
+    amount: props.transaction.amount ?? "",
 })
 
 function submit() {
-    if (props.transaction) {
-        throw new Error("Not implemented yet")
-    } else {
-        form.post(route("credit-cards.transactions.store", props.creditCard))
-    }
+    form.transform((data) => ({
+        ...data,
+        datetime: new Date(data.datetime + "T00:00"),
+    })).patch(route("transactions.update", props.transaction))
 }
 </script>
 
 <template>
-    <Head :title="transaction ? 'Editar transacción' : 'Nueva transacción'" />
+    <Head title="Editar transacción" />
 
     <AuthenticatedLayout>
         <template #header>
@@ -35,7 +38,6 @@ function submit() {
                 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight"
             >
                 Transacción de tarjeta: {{ creditCard.name }}
-                <span v-if="transaction">{{ transaction.concept }}</span>
             </h2>
         </template>
 

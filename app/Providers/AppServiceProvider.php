@@ -24,7 +24,6 @@ class AppServiceProvider extends ServiceProvider
     {
         Model::preventLazyLoading(!$this->app->isProduction());
 
-
         DB::connection()->setQueryGrammar(new class() extends MySqlGrammar
         {
             public function getDateFormat()

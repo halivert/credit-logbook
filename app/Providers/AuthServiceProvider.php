@@ -2,10 +2,9 @@
 
 namespace App\Providers;
 
-use App\CreditCard\CreditCard;
-use App\CreditCard\CreditCardPolicy;
-use App\Transaction\Transaction;
-use App\Transaction\TransactionPolicy;
+use App\CreditCards\{CreditCard, CreditCardPolicy};
+use App\Payments\{Payment, PaymentPolicy};
+use App\Purchases\{Purchase, PurchasePolicy};
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
@@ -17,7 +16,8 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         CreditCard::class => CreditCardPolicy::class,
-        Transaction::class => TransactionPolicy::class,
+        Purchase::class => PurchasePolicy::class,
+        Payment::class => PaymentPolicy::class,
     ];
 
     /**

@@ -11,16 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('transactions', function (Blueprint $table) {
+        Schema::create('purchases', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('credit_card_id')->constrained();
             $table->string('concept');
-            $table->dateTime('datetime', 3);
+            $table->timestamp('datetime', 3);
             $table->decimal('amount', 19, 4);
-            $table->integer('deadline_months')->nullable();
+
+            $table->integer('installment_count')->nullable();
+            $table->decimal('installment_amount', 19, 4)->nullable();
             $table->decimal('commission', 19, 4)->nullable();
             $table->decimal('interest_rate', 6, 2)->nullable();
-            $table->foreignUuid('parent_transaction_id')->nullable();
+            $table->timestamp('paid_at', 3)->nullable();
+            $table->timestamp('applied_at')->nullable();
+
             $table->timestamps(3);
         });
     }
@@ -30,6 +34,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('transactions');
+        Schema::dropIfExists('purchases');
     }
 };

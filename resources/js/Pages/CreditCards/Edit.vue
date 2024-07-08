@@ -10,17 +10,20 @@ const props = defineProps<{
     creditCard?: CreditCard
 }>()
 
+const defaultTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone
+
 const form = useForm({
     name: props.creditCard?.name ?? "",
-    due_date: props.creditCard?.due_date ?? "",
-    closing_date: props.creditCard?.closing_date ?? "",
-    interest_rate: props.creditCard?.interest_rate ?? "",
+    due_date: props.creditCard?.due_date.toString() ?? "",
+    closing_date: props.creditCard?.closing_date.toString() ?? "",
+    interest_rate: props.creditCard?.interest_rate.toString() ?? "",
     limit: props.creditCard?.limit ?? "",
+    timezone: defaultTimezone ?? props.creditCard?.timezone,
 })
 
 function submit() {
     if (props.creditCard) {
-        throw new Error("Not implemented yet")
+        form.patch(route("credit-cards.update", props.creditCard))
     } else {
         form.post(route("credit-cards.store"))
     }
@@ -142,6 +145,26 @@ function submit() {
                             <InputError
                                 class="mt-2"
                                 :message="form.errors.limit"
+                            />
+                        </div>
+
+                        <input
+                            v-if="defaultTimezone"
+                            :value="defaultTimezone"
+                            type="hidden"
+                        />
+                        <div v-else>
+                            <InputLabel for="timezone" value="Zona horaria" />
+
+                            <TextInput
+                                id="timezone"
+                                class="mt-1 block w-full"
+                                v-model="form.timezone"
+                            />
+
+                            <InputError
+                                class="mt-2"
+                                :message="form.errors.timezone"
                             />
                         </div>
 

@@ -1,36 +1,41 @@
 <script setup lang="ts">
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
-import { Link, useForm, usePage } from '@inertiajs/vue3';
+import InputError from "@/Components/InputError.vue"
+import InputLabel from "@/Components/InputLabel.vue"
+import PrimaryButton from "@/Components/PrimaryButton.vue"
+import TextInput from "@/Components/TextInput.vue"
+import { Link, useForm, usePage } from "@inertiajs/vue3"
 
 defineProps<{
-    mustVerifyEmail?: Boolean;
-    status?: String;
-}>();
+    mustVerifyEmail?: Boolean
+    status?: String
+}>()
 
-const user = usePage().props.auth.user;
+const user = usePage().props.auth.user
 
 const form = useForm({
     name: user.name,
     email: user.email,
-});
+})
 </script>
 
 <template>
     <section>
         <header>
-            <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">Profile Information</h2>
+            <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+                Información de perfil
+            </h2>
 
             <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                Update your account's profile information and email address.
+                Actualiza la información de tu perfil y correo electrónico.
             </p>
         </header>
 
-        <form @submit.prevent="form.patch(route('profile.update'))" class="mt-6 space-y-6">
+        <form
+            @submit.prevent="form.patch(route('profile.update'))"
+            class="mt-6 space-y-6"
+        >
             <div>
-                <InputLabel for="name" value="Name" />
+                <InputLabel for="name" value="Nombre" />
 
                 <TextInput
                     id="name"
@@ -46,7 +51,7 @@ const form = useForm({
             </div>
 
             <div>
-                <InputLabel for="email" value="Email" />
+                <InputLabel for="email" value="Correo electrónico" />
 
                 <TextInput
                     id="email"
@@ -62,14 +67,14 @@ const form = useForm({
 
             <div v-if="mustVerifyEmail && user.email_verified_at === null">
                 <p class="text-sm mt-2 text-gray-800 dark:text-gray-200">
-                    Your email address is unverified.
+                    Tu correo no está verificado.
                     <Link
                         :href="route('verification.send')"
                         method="post"
                         as="button"
                         class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800"
                     >
-                        Click here to re-send the verification email.
+                        Clic aquí para reenviar el correo de verificación.
                     </Link>
                 </p>
 
@@ -77,12 +82,13 @@ const form = useForm({
                     v-show="status === 'verification-link-sent'"
                     class="mt-2 font-medium text-sm text-green-600 dark:text-green-400"
                 >
-                    A new verification link has been sent to your email address.
+                    Un nuevo enlace de verificación ha sido enviado a tu correo
+                    electrónico.
                 </div>
             </div>
 
             <div class="flex items-center gap-4">
-                <PrimaryButton :disabled="form.processing">Save</PrimaryButton>
+                <PrimaryButton :disabled="form.processing">Guardar</PrimaryButton>
 
                 <Transition
                     enter-active-class="transition ease-in-out"
@@ -90,7 +96,12 @@ const form = useForm({
                     leave-active-class="transition ease-in-out"
                     leave-to-class="opacity-0"
                 >
-                    <p v-if="form.recentlySuccessful" class="text-sm text-gray-600 dark:text-gray-400">Saved.</p>
+                    <p
+                        v-if="form.recentlySuccessful"
+                        class="text-sm text-gray-600 dark:text-gray-400"
+                    >
+                        Guardado.
+                    </p>
                 </Transition>
             </div>
         </form>

@@ -26,9 +26,9 @@ defineProps<{
                 <div
                     class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-3"
                 >
-                    <div class="flex flex-wrap">
+                    <div class="flex flex-wrap gap-3">
                         <Link
-                            class="max-w-full w-60 bg-blue-100 rounded p-2"
+                            class="max-w-full w-60 bg-indigo-100 rounded p-2"
                             v-for="creditCard in creditCards.data"
                             :href="route('credit-cards.show', creditCard)"
                             :key="creditCard.id"
