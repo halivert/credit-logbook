@@ -15,6 +15,15 @@ class TrustProxies extends Middleware
     protected $proxies;
 
     /**
+     * When a proxy terminates TLS in front of the app, trusting it lets
+     * Laravel see the request as HTTPS.
+     */
+    protected function proxies()
+    {
+        return parent::proxies() ?? config('app.trusted_proxies');
+    }
+
+    /**
      * The headers that should be used to detect proxies.
      *
      * @var int

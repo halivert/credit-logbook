@@ -127,6 +127,13 @@ return [
     'cipher' => 'AES-256-CBC',
 
     /*
+    | Proxies in front of the app (a load balancer, Cloudflare...), comma
+    | separated or "*". Leave it empty when nginx serves the app directly.
+    */
+
+    'trusted_proxies' => env('TRUSTED_PROXIES'),
+
+    /*
     |--------------------------------------------------------------------------
     | Maintenance Mode Driver
     |--------------------------------------------------------------------------
