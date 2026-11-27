@@ -1,17 +1,15 @@
 <script setup lang="ts">
 import { Link } from "@inertiajs/vue3"
+import type { PaginationLink } from "@/types"
+
 const props = defineProps<{
-    links?: {
-        label: string
-        url: string
-        active: boolean
-    }[]
+    links?: Pick<PaginationLink, "label" | "url" | "active">[]
     next_page_url?: string | null
     prev_page_url?: string | null
 }>()
 
 const links =
-    props.links?.length > 3
+    props.links && props.links.length > 3
         ? props.links
         : props.next_page_url || props.prev_page_url
           ? [
@@ -23,7 +21,7 @@ const links =
 
 <template>
     <div class="flex flex-wrap -mb-1">
-        <template v-for="link in links" :key="link.url">
+        <template v-for="(link, index) in links" :key="index">
             <Link
                 v-if="link.url"
                 class="mr-1 mb-1 px-4 py-3 text-sm leading-4 border rounded hover:bg-white focus:border-indigo-500 focus:text-indigo-500"

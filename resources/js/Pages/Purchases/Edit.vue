@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { CreditCard, Purchase } from "@/types"
 import { Head, Link, useForm } from "@inertiajs/vue3"
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue"
 import PrimaryButton from "@/Components/PrimaryButton.vue"
