@@ -25,6 +25,9 @@ export type CreditCard = {
     timezone: string
     next_due_date: DateString
     next_closing_date: DateString
+    /** Only on the pages that show it */
+    balance_used?: number
+    available_credit?: number
     deleted_at: DateString | null
     created_at: DateString
     updated_at: DateString
