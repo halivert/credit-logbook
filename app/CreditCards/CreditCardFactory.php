@@ -26,6 +26,7 @@ class CreditCardFactory extends Factory
             'closing_date' => fake()->numberBetween(1, 28),
             'interest_rate' => fake()->randomFloat(2, 0, 100),
             'limit' => fake()->randomFloat(2, 0, 10000),
+            'timezone' => 'America/Mexico_City',
         ];
     }
 }
