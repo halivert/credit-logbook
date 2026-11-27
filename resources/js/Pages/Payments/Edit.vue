@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { CreditCard, Money, Purchase } from "@/types"
 import { ref, watch, onMounted } from "vue"
 import { Head, Link, useForm, usePage } from "@inertiajs/vue3"
 import InstallmentPurchaseNumberInput from "@/Components/Payments/InstallmentPurchaseNumberInput.vue"
@@ -27,7 +28,7 @@ const installmentPurchasesById = Object.fromEntries(
 
 const datetime = new Date().toISOString().split("T")[0]
 
-const toCurrency = (num: number) =>
+const toCurrency = (num: Money) =>
     new Intl.NumberFormat(page.props.locale, {
         style: "currency",
         currency: "MXN",
@@ -40,7 +41,7 @@ const form = useForm({
     installment_purchases: Object.values(installmentPurchasesById).map(
         (purchase) => ({
             id: purchase.id,
-            installment_number: purchase.paid_months + 1,
+            installment_number: (purchase.paid_months ?? 0) + 1,
         }),
     ),
 })
@@ -49,15 +50,17 @@ onMounted(() => {
     calculateAmount()
 })
 
+watch(() => form.installment_purchases, calculateAmount)
+
 function calculateAmount() {
     form.amount = (
         form.purchases.reduce((total, purchaseId) => {
-            return total + parseFloat(purchasesById[purchaseId].amount)
+            return total + Number(purchasesById[purchaseId].amount)
         }, 0) +
         form.installment_purchases.reduce((total, { id }) => {
             return (
                 total +
-                parseFloat(installmentPurchasesById[id].installment_amount)
+                Number(installmentPurchasesById[id].installment_amount)
             )
         }, 0)
     ).toFixed(2)

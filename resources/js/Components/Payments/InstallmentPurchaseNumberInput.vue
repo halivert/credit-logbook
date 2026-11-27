@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { InstallmentPayment, Purchase } from "@/types"
 import { ref, watch } from "vue"
 import TextInput from "@/Components/TextInput.vue"
 
@@ -6,18 +7,14 @@ const props = defineProps<{
     purchase: Purchase
 }>()
 
-const model = defineModel()
+const model = defineModel<InstallmentPayment[]>({ required: true })
 
 const checked = ref(false)
-const installmentNumber = ref("0")
+const installmentNumber = ref(0)
 
 watch(
     model,
     (newModel) => {
-        if (!Array.isArray(newModel)) {
-            return
-        }
-
         const found = newModel.find((item) => item.id === props.purchase.id)
         checked.value = !!found
         installmentNumber.value = found?.installment_number ?? 0
@@ -26,32 +23,25 @@ watch(
 )
 
 watch(checked, (newChecked) => {
-    if (model.value && !Array.isArray(model.value)) {
-        return
-    }
+    const others = model.value.filter((item) => item.id !== props.purchase.id)
 
-    if (newChecked) {
-        model.value = [
-            ...model.value,
-            { id: props.purchase.id, installment_number: installmentNumber },
-        ]
-    } else {
-        model.value =
-            model.value?.filter((item) => item.id !== props.purchase.id) ?? []
-    }
+    model.value = newChecked
+        ? [
+              ...others,
+              {
+                  id: props.purchase.id,
+                  installment_number: installmentNumber.value,
+              },
+          ]
+        : others
 })
 
 watch(installmentNumber, (newInstallmentNumber) => {
-    if (!Array.isArray(model.value)) {
-        model.value = {
-            id: props.purchase.id,
-            installment_number: newInstallmentNumber,
-        }
-        return
-    }
-
-    const found = model.value.find((item) => item.id === props.purchase.id)
-    if (found) found.installment_number = newInstallmentNumber
+    model.value = model.value.map((item) =>
+        item.id === props.purchase.id
+            ? { ...item, installment_number: newInstallmentNumber }
+            : item,
+    )
 })
 </script>
 
