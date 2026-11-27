@@ -28,6 +28,14 @@ class LoginController extends Controller
             ]);
         }
 
+        // Tokens can't go through the two factor challenge yet, so they
+        // must not become a way around it.
+        if ($user->two_factor_confirmed_at) {
+            throw ValidationException::withMessages([
+                Fortify::username() => [__('auth.failed')],
+            ]);
+        }
+
         return $user->createToken(
             $attrs['device_name'] ?? 'Web'
         )->plainTextToken;
