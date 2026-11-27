@@ -5,6 +5,7 @@ namespace App\Payments;
 use App\CreditCards\CreditCard;
 use App\Purchases\Purchase;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -46,5 +47,13 @@ class Payment extends Model
             ->using(PaymentPurchase::class)
             ->withPivot('installment_number')
             ->orderByPivot('installment_number', 'desc');
+    }
+
+    /**
+     * Create a new factory instance for the model.
+     */
+    protected static function newFactory(): Factory
+    {
+        return PaymentFactory::new();
     }
 }

@@ -2,31 +2,33 @@
 
 namespace Tests\Feature\Auth;
 
-use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
+/**
+ * Registration is disabled unless REGISTRATION=true.
+ *
+ * @see RegistrationEnabledTest
+ */
 class RegistrationTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_registration_screen_can_be_rendered(): void
+    #[Test]
+    public function registration_is_closed_by_default(): void
     {
-        $response = $this->get('/register');
+        $this->get('/register')->assertNotFound();
 
-        $response->assertStatus(200);
-    }
-
-    public function test_new_users_can_register(): void
-    {
-        $response = $this->post('/register', [
+        $this->post('/register', [
             'name' => 'Test User',
+            'username' => 'test',
             'email' => 'test@example.com',
             'password' => 'password',
             'password_confirmation' => 'password',
         ]);
 
-        $this->assertAuthenticated();
-        $response->assertRedirect(RouteServiceProvider::HOME);
+        $this->assertGuest();
+        $this->assertDatabaseCount('users', 0);
     }
 }
