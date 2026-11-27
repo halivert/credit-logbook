@@ -23,6 +23,8 @@ class CreditCardController extends Controller
             ->where('user_id', auth()->user()->id)
             ->paginate(10);
 
+        $creditCards->getCollection()->each->append(['balance_used', 'available_credit']);
+
         return Inertia::render('CreditCards/Index', [
             'creditCards' => $creditCards
         ]);
@@ -61,13 +63,12 @@ class CreditCardController extends Controller
 
         $installmentPurchases = $creditCard->purchases()
             ->whereNotNull('installment_count')
-            ->where('datetime', '>=', 'today')
             ->orderBy('datetime', 'desc')
             ->whereNull('paid_at')
             ->get();
 
         return Inertia::render('CreditCards/Show', [
-            'creditCard' => $creditCard,
+            'creditCard' => $creditCard->append(['balance_used', 'available_credit']),
             'purchases' => $purchases,
             'installmentPurchases' => $installmentPurchases,
         ]);

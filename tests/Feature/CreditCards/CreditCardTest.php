@@ -4,6 +4,7 @@ namespace Tests\Feature\CreditCards;
 
 use App\CreditCards\CreditCard;
 use App\Models\User;
+use App\Purchases\Purchase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
 use PHPUnit\Framework\Attributes\Test;
@@ -160,5 +161,41 @@ class CreditCardTest extends TestCase
 
         $this->assertSame('Nueva', $creditCard->name);
         $this->assertSame(15, $creditCard->closing_date);
+    }
+
+    #[Test]
+    public function the_card_page_shows_balance_and_pending_installment_purchases(): void
+    {
+        $creditCard = CreditCard::factory()->create(['limit' => '10000']);
+        Purchase::factory()->for($creditCard)->create(['amount' => 500]);
+        $installments = Purchase::factory()->for($creditCard)->create([
+            'datetime' => now()->subMonths(2),
+            'amount' => 1200,
+            'installment_count' => 12,
+            'installment_amount' => 100,
+        ]);
+
+        $this->actingAs($creditCard->user)
+            ->get(route('credit-cards.show', $creditCard))
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('creditCard.balance_used', 1700)
+                ->where('creditCard.available_credit', 8300)
+                ->has('installmentPurchases', 1)
+                ->where('installmentPurchases.0.id', $installments->id)
+            );
+    }
+
+    #[Test]
+    public function the_card_list_shows_each_balance(): void
+    {
+        $creditCard = CreditCard::factory()->create(['limit' => '10000']);
+        Purchase::factory()->for($creditCard)->create(['amount' => 250]);
+
+        $this->actingAs($creditCard->user)
+            ->get(route('credit-cards.index'))
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('creditCards.data.0.balance_used', 250)
+                ->where('creditCards.data.0.available_credit', 9750)
+            );
     }
 }
