@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { Purchase } from "@/types"
 import { usePage } from "@inertiajs/vue3"
 
 defineProps<{

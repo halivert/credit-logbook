@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { CreditCard, Money, Purchase, SimplePaginator } from "@/types"
 import { Head, Link, usePage, useForm } from "@inertiajs/vue3"
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue"
 import PrimaryButton from "@/Components/PrimaryButton.vue"
@@ -7,7 +8,7 @@ import Pagination from "@/Components/Pagination.vue"
 
 const props = defineProps<{
     creditCard: CreditCard
-    purchases: { data: Purchase[] }
+    purchases: SimplePaginator<Purchase>
     installmentPurchases: Purchase[]
 }>()
 
@@ -19,7 +20,7 @@ const toDate = (date: Date | string) =>
         dateStyle: "short",
     }).format(new Date(date))
 
-const toCurrency = (num: number) =>
+const toCurrency = (num: Money) =>
     new Intl.NumberFormat(page.props.locale, {
         style: "currency",
         currency: "MXN",

@@ -1,11 +1,12 @@
 <script setup lang="ts">
+import type { CreditCard, LengthAwarePaginator } from "@/types"
 import { Head, Link } from "@inertiajs/vue3"
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue"
 import PrimaryButton from "@/Components/PrimaryButton.vue"
 import Pagination from "@/Components/Pagination.vue"
 
 defineProps<{
-    creditCards: { data: CreditCard[] }
+    creditCards: LengthAwarePaginator<CreditCard>
 }>()
 </script>
 
