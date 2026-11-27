@@ -10,6 +10,7 @@ use Illuminate\Database\Query\Grammars\MySqlGrammar;
 use Illuminate\Database\Query\Grammars\SQLiteGrammar;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Validation\Rules\Password;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -29,6 +30,10 @@ class AppServiceProvider extends ServiceProvider
         Model::preventLazyLoading(!$this->app->isProduction());
 
         $this->useMillisecondPrecisionDates(DB::connection());
+
+        Password::defaults(fn () => $this->app->isProduction()
+            ? Password::min(12)->uncompromised()
+            : Password::min(8));
     }
 
     /**
