@@ -1,6 +1,5 @@
-import { PageProps as InertiaPageProps } from "@inertiajs/core"
 import { AxiosInstance } from "axios"
-import ziggyRoute, { Config as ZiggyConfig } from "ziggy-js"
+import { route as ziggyRoute } from "ziggy-js"
 import { PageProps as AppPageProps } from "./"
 
 declare global {
@@ -9,7 +8,7 @@ declare global {
     }
 
     var route: typeof ziggyRoute
-    var Ziggy: ZiggyConfig
+    var Ziggy: Parameters<typeof ziggyRoute>[3]
 }
 
 declare module "vue" {
@@ -19,7 +18,7 @@ declare module "vue" {
 }
 
 declare module "@inertiajs/core" {
-    interface PageProps extends InertiaPageProps, AppPageProps {}
+    export interface InertiaConfig {
+        sharedPageProps: AppPageProps
+    }
 }
-
-export { CreditCard } from "./creditCards"
