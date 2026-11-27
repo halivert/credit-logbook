@@ -8,7 +8,7 @@
         "laravel",
         "inertia"
     ],
-    "license": "proprietary",
+    "license": "AGPL-3.0-or-later",
     "homepage": "https://github.com/halivert/credit-logbook",
     "require": {
         "php": "^8.4.1",

@@ -41,3 +41,9 @@ en `.env` para crear la primera cuenta.
 Las versiones están fijadas: `composer.lock` y `package-lock.json`, más versiones
 exactas en `package.json` (`.npmrc` usa `save-exact`). `composer.json` fija la
 plataforma en PHP 8.4.1 para que el lock siga siendo instalable en cualquier 8.4.
+
+## Licencia
+
+[GNU AGPL v3.0 o posterior](LICENSE). Si modificas este proyecto y lo ofreces
+como servicio en red, debes publicar el código fuente de tus cambios bajo la
+misma licencia.
