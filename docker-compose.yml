@@ -1,11 +1,11 @@
 services:
     laravel.test:
         build:
-            context: ./vendor/laravel/sail/runtimes/8.2
+            context: ./vendor/laravel/sail/runtimes/8.4
             dockerfile: Dockerfile
             args:
                 WWWGROUP: '${WWWGROUP}'
-        image: sail-8.2/app
+        image: sail-8.4/app
         extra_hosts:
             - 'host.docker.internal:host-gateway'
         ports:
@@ -26,7 +26,7 @@ services:
             - redis
             - mailpit
     mariadb:
-        image: 'mariadb:10'
+        image: 'mariadb:10.11'
         ports:
             - '${FORWARD_DB_PORT:-3306}:3306'
         environment:
@@ -50,7 +50,7 @@ services:
             retries: 3
             timeout: 5s
     redis:
-        image: 'redis:alpine'
+        image: 'redis:8.4-alpine'
         ports:
             - '${FORWARD_REDIS_PORT:-6379}:6379'
         volumes:
@@ -65,7 +65,7 @@ services:
             retries: 3
             timeout: 5s
     mailpit:
-        image: 'axllent/mailpit:latest'
+        image: 'axllent/mailpit:v1.34'
         ports:
             - '${FORWARD_MAILPIT_PORT:-1025}:1025'
             - '${FORWARD_MAILPIT_DASHBOARD_PORT:-8025}:8025'
