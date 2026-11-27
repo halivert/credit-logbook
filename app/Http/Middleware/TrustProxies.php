@@ -15,8 +15,8 @@ class TrustProxies extends Middleware
     protected $proxies;
 
     /**
-     * In production the app sits behind the host's nginx, which terminates
-     * TLS. Trusting it lets Laravel see the request as HTTPS.
+     * When a proxy terminates TLS in front of the app, trusting it lets
+     * Laravel see the request as HTTPS.
      */
     protected function proxies()
     {

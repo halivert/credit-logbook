@@ -44,7 +44,7 @@ plataforma en PHP 8.4.1 para que el lock siga siendo instalable en cualquier 8.4
 
 ## Despliegue
 
-Producción corre en Docker detrás de Laravel Forge; ver [docs/deploy.md](docs/deploy.md).
+Producción corre en un servidor de Laravel Forge; ver [docs/deploy.md](docs/deploy.md).
 
 ## Licencia
 

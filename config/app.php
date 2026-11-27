@@ -127,9 +127,8 @@ return [
     'cipher' => 'AES-256-CBC',
 
     /*
-    | Proxies in front of the app, comma separated or "*". In the Docker
-    | deployment only the host's nginx can reach the container, so "*" is
-    | safe there.
+    | Proxies in front of the app (a load balancer, Cloudflare...), comma
+    | separated or "*". Leave it empty when nginx serves the app directly.
     */
 
     'trusted_proxies' => env('TRUSTED_PROXIES'),
