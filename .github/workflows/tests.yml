@@ -69,9 +69,6 @@ jobs:
   typecheck:
     name: JS typecheck
     runs-on: ubuntu-latest
-    # The unfinished frontend still has type errors; make this blocking once
-    # they are fixed.
-    continue-on-error: true
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
