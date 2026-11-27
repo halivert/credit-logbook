@@ -42,6 +42,10 @@ Las versiones están fijadas: `composer.lock` y `package-lock.json`, más versio
 exactas en `package.json` (`.npmrc` usa `save-exact`). `composer.json` fija la
 plataforma en PHP 8.4.1 para que el lock siga siendo instalable en cualquier 8.4.
 
+## Despliegue
+
+Producción corre en Docker detrás de Laravel Forge; ver [docs/deploy.md](docs/deploy.md).
+
 ## Licencia
 
 [GNU AGPL v3.0 o posterior](LICENSE). Si modificas este proyecto y lo ofreces
