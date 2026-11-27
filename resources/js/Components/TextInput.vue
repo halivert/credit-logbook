@@ -1,10 +1,13 @@
 <script setup lang="ts">
-import { onMounted, ref, computed } from "vue"
+import { onMounted, ref, computed, type InputTypeHTMLAttribute } from "vue"
 
-const props = defineProps<{
-    type: (typeof HTMLInputElement)["type"]
-    modelValue: string | number | Date
-}>()
+const props = withDefaults(
+    defineProps<{
+        type?: InputTypeHTMLAttribute
+        modelValue: string | number | Date | null
+    }>(),
+    { type: "text" },
+)
 
 const emit = defineEmits(["update:modelValue"])
 
@@ -25,10 +28,10 @@ const modelValue = computed(() => {
         }
     }
 
-    return props.modelValue
+    return props.modelValue ?? ""
 })
 
-function handleInput(event) {
+function handleInput(event: Event) {
     const target = event.target as HTMLInputElement
 
     if (props.type === "number") {
