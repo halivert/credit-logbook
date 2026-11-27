@@ -59,10 +59,10 @@ class PaymentController extends Controller
         /** @var Payment */
         $payment = $creditCard->payments()->create($attrs);
 
-        $payment->purchases()->sync($attrs['purchases']);
+        $payment->purchases()->sync($attrs['purchases'] ?? []);
         $payment->purchases()->update(['paid_at' => $attrs['datetime']]);
 
-        $installmentPurchases = $attrs['installment_purchases'];
+        $installmentPurchases = $attrs['installment_purchases'] ?? [];
 
         foreach ($installmentPurchases as $item) {
             // #PerformanceIssue
