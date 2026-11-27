@@ -5,6 +5,7 @@ namespace App\CreditCards;
 use App\Models\User;
 use App\Payments\Payment;
 use App\Purchases\Purchase;
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -56,24 +57,41 @@ class CreditCard extends Model
 
     protected function nextClosingDate(): Attribute
     {
-        return new Attribute(function () {
-            $today = today()->tz($this->timezone);
-
-            return today()->tz($this->timezone)
-                ->setDay($this->closing_date)
-                ->addMonth($today->day > $this->closing_date);
-        });
+        return new Attribute(
+            fn () => $this->nextOccurrenceOfDay($this->closing_date)->toDateString()
+        );
     }
 
     protected function nextDueDate(): Attribute
     {
-        return new Attribute(function () {
-            $today = today()->tz($this->timezone);
+        return new Attribute(
+            fn () => $this->nextOccurrenceOfDay($this->due_date)->toDateString()
+        );
+    }
 
-            return today()->tz($this->timezone)
-                ->setDay($this->due_date)
-                ->addMonth($today->day > $this->due_date);
-        });
+    protected function availableCredit(): Attribute
+    {
+        return new Attribute(fn () => $this->limit - $this->balance_used);
+    }
+
+    /**
+     * Today or the next date falling on the given day of the month, in the
+     * card's timezone. Short months use their last day (a card closing on
+     * the 30th closes on February 28th).
+     */
+    private function nextOccurrenceOfDay(int $day): CarbonImmutable
+    {
+        $today = CarbonImmutable::today($this->timezone);
+
+        $candidate = $today->setDay(min($day, $today->daysInMonth));
+
+        if ($candidate->gte($today)) {
+            return $candidate;
+        }
+
+        $nextMonth = $today->startOfMonth()->addMonth();
+
+        return $nextMonth->setDay(min($day, $nextMonth->daysInMonth));
     }
 
     protected function balanceUsed(): Attribute
