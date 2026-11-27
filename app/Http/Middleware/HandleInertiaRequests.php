@@ -32,7 +32,15 @@ class HandleInertiaRequests extends Middleware
     {
         return array_merge(parent::share($request), [
             'auth' => [
-                'user' => $request->user(),
+                // Whitelist what reaches the browser: every shared prop is
+                // embedded in the HTML of every page.
+                'user' => $request->user()?->only([
+                    'id',
+                    'name',
+                    'username',
+                    'email',
+                    'email_verified_at',
+                ]),
             ],
             'locale' => str(config('app.locale'))->replace('_', '-'),
             'ziggy' => function () use ($request) {

@@ -19,7 +19,8 @@ Route::middleware('auth:sanctum')->get('/v1/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('/v1/login', [LoginController::class, 'store']);
+Route::post('/v1/login', [LoginController::class, 'store'])
+    ->middleware('throttle:login');
 
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/v1/logout', [LoginController::class, 'destroy']);
