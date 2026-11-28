@@ -2,6 +2,7 @@
 
 use App\CreditCards\CreditCardController;
 use App\Purchases\PurchaseController;
+use App\Reconciliations\ReconciliationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SecurityController;
 use App\Payments\PaymentController;
@@ -57,6 +58,21 @@ Route::middleware('auth')->group(function () {
             'credit-cards' => 'creditCard'
         ])->only(['create', 'store', 'edit', 'update', 'destroy'])
         ->shallow();
+
+    /**
+     * Reconciling with the bank's statement
+     */
+    Route::get('/credit-cards/{creditCard}/reconciliation', [ReconciliationController::class, 'show'])
+        ->name('credit-cards.reconciliation.show');
+
+    Route::put('/credit-cards/{creditCard}/reconciliation', [ReconciliationController::class, 'update'])
+        ->name('credit-cards.reconciliation.update');
+
+    Route::post('/credit-cards/{creditCard}/adjustments', [ReconciliationController::class, 'storeAdjustment'])
+        ->name('credit-cards.adjustments.store');
+
+    Route::delete('/adjustments/{adjustment}', [ReconciliationController::class, 'destroyAdjustment'])
+        ->name('adjustments.destroy');
 
     /**
      * Payments

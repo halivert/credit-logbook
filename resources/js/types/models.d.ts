@@ -46,6 +46,8 @@ export type Statement = {
     /** Charged since the closing, for the next statement */
     period_charges: number
     is_overdue: boolean
+    /** Against the bank's statement, null when it wasn't captured */
+    bank_difference?: number | null
 }
 
 export type Payment = {

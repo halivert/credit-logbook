@@ -78,6 +78,13 @@ const button =
                     </Link>
                 </div>
 
+                <Link
+                    :href="route('credit-cards.reconciliation.show', creditCard)"
+                    class="block text-center text-sm text-indigo-600 dark:text-indigo-400 hover:underline"
+                >
+                    Conciliar con tu estado de cuenta
+                </Link>
+
                 <section v-if="installmentPurchases.length">
                     <h3
                         class="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400"

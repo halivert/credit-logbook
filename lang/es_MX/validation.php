@@ -26,7 +26,8 @@ return [
     'date' => 'El campo :attribute no es una fecha válida.',
     'date_equals' => 'El campo :attribute debe ser una fecha igual a :date.',
     'date_format' => 'El campo :attribute no coincide con el formato :format.',
-    'decimal' => 'El campo :attribute debe tener :decimal lugares decimales.',
+    // Every decimal in the app is money or a rate with up to two decimals
+    'decimal' => 'El campo :attribute debe ser una cantidad como 1250.50: solo números y un punto, con máximo dos decimales.',
     'declined' => 'El campo :attribute debe ser rechazado.',
     'declined_if' => 'El campo :attribute debe ser rechazado cuando :other es :value.',
     'different' => 'El campo :attribute y :other deben ser diferentes.',

@@ -133,5 +133,13 @@ const paymentState = computed<PaymentState>(() => {
                 </dd>
             </div>
         </dl>
+
+        <p
+            v-if="statement?.bank_difference"
+            class="mt-3 text-sm text-amber-700 dark:text-amber-400"
+        >
+            No cuadra con tu estado de cuenta por
+            {{ toCurrency(Math.abs(statement.bank_difference)) }}
+        </p>
     </div>
 </template>

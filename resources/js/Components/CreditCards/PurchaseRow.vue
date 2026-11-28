@@ -14,7 +14,7 @@ defineEmits<{
     delete: [purchase: Purchase]
 }>()
 
-const { toCurrency, toDate } = useFormat()
+const { toCurrency, toDate, toShortDate } = useFormat()
 
 const billedPercentage = computed(() =>
     props.purchase.installment_count
@@ -52,6 +52,11 @@ const billedPercentage = computed(() =>
             </template>
             <p v-else class="text-sm text-gray-500 dark:text-gray-400">
                 {{ toDate(purchase.date) }}
+                <span
+                    v-if="purchase.applied_on && purchase.applied_on !== purchase.date"
+                >
+                    · aplicada {{ toShortDate(purchase.applied_on) }}</span
+                >
                 <span v-if="purchase.is_refund"> · Devolución</span>
             </p>
         </div>

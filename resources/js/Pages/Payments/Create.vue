@@ -69,9 +69,8 @@ function submit() {
                                     >
                                     <TextInput
                                         id="amount"
-                                        type="number"
+                                        type="text"
                                         inputmode="decimal"
-                                        step="0.01"
                                         min="0.01"
                                         class="block w-full pl-7"
                                         v-model="form.amount"
