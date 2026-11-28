@@ -24,7 +24,7 @@ const links =
         <template v-for="(link, index) in links" :key="index">
             <Link
                 v-if="link.url"
-                class="mr-1 mb-1 px-4 py-3 text-sm leading-4 border rounded hover:bg-white focus:border-indigo-500 focus:text-indigo-500"
+                class="mr-1 mb-1 px-4 py-3 text-sm leading-4 border border-gray-300 dark:border-gray-700 rounded hover:bg-white dark:hover:bg-gray-700 focus:border-indigo-500 focus:text-indigo-500"
                 :href="link.url"
                 v-html="link.label"
             />

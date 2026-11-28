@@ -198,4 +198,26 @@ class CreditCardTest extends TestCase
                 ->where('creditCards.data.0.available_credit', 9750)
             );
     }
+
+    #[Test]
+    public function the_interest_rate_is_optional(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->post(route('credit-cards.store'), $this->validPayload(['interest_rate' => '']))
+            ->assertSessionHasNoErrors();
+
+        $creditCard = $user->creditCards()->sole();
+        $this->assertSame('0.00', $creditCard->interest_rate);
+
+        $this->actingAs($user)
+            ->put(route('credit-cards.update', $creditCard), ['interest_rate' => '30'])
+            ->assertSessionHasNoErrors();
+        $this->actingAs($user)
+            ->put(route('credit-cards.update', $creditCard), ['interest_rate' => ''])
+            ->assertSessionHasNoErrors();
+
+        $this->assertSame('0.00', $creditCard->fresh()->interest_rate);
+    }
 }

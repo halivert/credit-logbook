@@ -201,10 +201,10 @@ function submit() {
                         </div>
 
                         <fieldset
-                            class="border-t-2 border-indigo-200 py-2 mt-4"
+                            class="border-t-2 border-indigo-200 dark:border-indigo-900 py-2 mt-4"
                         >
                             <legend
-                                class="bg-white px-3 ml-auto text-indigo-600"
+                                class="bg-white dark:bg-gray-800 px-3 ml-auto text-indigo-600 dark:text-indigo-400"
                             >
                                 Opcional
                             </legend>
