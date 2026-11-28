@@ -1,5 +1,5 @@
 <template>
-    <button class="nes-btn is-error inline-flex items-center">
+    <button class="btn is-error inline-flex items-center">
         <slot />
     </button>
 </template>

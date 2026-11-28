@@ -33,8 +33,8 @@ function submit() {
     <GuestLayout>
         <Head title="Confirma tu contraseña" />
 
-        <h1 class="text-3xl">Confirma tu contraseña</h1>
-        <p class="mt-1 mb-4 text-lg text-muted">
+        <h1 class="text-title">Confirma tu contraseña</h1>
+        <p class="mt-1 mb-4 text-small text-muted">
             Por seguridad, escríbela de nuevo antes de continuar.
         </p>
 
@@ -62,7 +62,7 @@ function submit() {
             <template v-if="passkey.isSupported.value">
                 <button
                     type="button"
-                    class="nes-btn flex w-full justify-center items-center !mx-0"
+                    class="btn flex w-full justify-center items-center !mx-0"
                     :disabled="passkey.isLoading.value"
                     @click="passkey.verify"
                 >

@@ -7,10 +7,6 @@
         <title inertia>{{ config('app.name', 'Laravel') }}</title>
         <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=vt323:400&display=swap" rel="stylesheet" />
-
         <!-- Scripts -->
         @routes
         @vite(['resources/js/app.ts', "resources/js/Pages/{$page['component']}.vue"])

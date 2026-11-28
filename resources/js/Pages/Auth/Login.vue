@@ -41,11 +41,11 @@ function submit() {
     <GuestLayout>
         <Head title="Iniciar sesión" />
 
-        <h1 class="mb-4 text-3xl">Iniciar sesión</h1>
+        <h1 class="mb-4 text-title">Iniciar sesión</h1>
 
         <p
             v-if="status"
-            class="mb-4 text-lg font-medium text-success"
+            class="mb-4 text-small font-medium text-success"
         >
             {{ status }}
         </p>
@@ -81,7 +81,7 @@ function submit() {
             <div class="flex items-center justify-between">
                 <label class="flex items-center">
                     <Checkbox name="remember" v-model:checked="form.remember" />
-                    <span class="ms-2 text-lg text-muted"
+                    <span class="ms-2 text-small text-muted"
                         >Recordarme</span
                     >
                 </label>
@@ -89,7 +89,7 @@ function submit() {
                 <Link
                     v-if="canResetPassword"
                     :href="route('password.request')"
-                    class="text-lg text-primary hover:underline"
+                    class="text-small text-primary hover:underline"
                 >
                     ¿Olvidaste tu contraseña?
                 </Link>
@@ -103,16 +103,16 @@ function submit() {
 
             <template v-if="passkey.isSupported.value">
                 <div
-                    class="flex items-center gap-3 text-base text-muted"
+                    class="flex items-center gap-3 text-note text-muted"
                 >
-                    <span class="flex-1 border-t-4 border-dashed border-line/25" />
+                    <span class="divider flex-1" />
                     o
-                    <span class="flex-1 border-t-4 border-dashed border-line/25" />
+                    <span class="divider flex-1" />
                 </div>
 
                 <button
                     type="button"
-                    class="nes-btn flex w-full justify-center items-center !mx-0"
+                    class="btn flex w-full justify-center items-center !mx-0"
                     :disabled="passkey.isLoading.value"
                     @click="passkey.verify"
                 >
@@ -125,12 +125,12 @@ function submit() {
 
             <p
                 v-if="canRegister"
-                class="text-center text-lg text-muted"
+                class="text-center text-small text-muted"
             >
                 ¿No tienes cuenta?
                 <Link
                     :href="route('register')"
-                    class="px-link"
+                    class="link"
                     >Regístrate</Link
                 >
             </p>

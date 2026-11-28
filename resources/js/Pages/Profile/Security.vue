@@ -20,7 +20,7 @@ defineProps<{
     <AuthenticatedLayout>
         <template #header>
             <h2
-                class="text-2xl sm:text-3xl text-ink"
+                class="text-large sm:text-title text-ink"
             >
                 <Link :href="route('profile.edit')" class="hover:underline"
                     >Perfil</Link
@@ -32,19 +32,19 @@ defineProps<{
         <div class="py-6 sm:py-12">
             <div class="max-w-2xl mx-auto px-4 sm:px-6 space-y-6">
                 <div
-                    class="nes-container is-tight"
+                    class="card is-compact"
                 >
                     <PasskeysForm :passkeys="passkeys" />
                 </div>
 
                 <div
-                    class="nes-container is-tight"
+                    class="card is-compact"
                 >
                     <TwoFactorForm :two-factor="twoFactor" />
                 </div>
 
                 <div
-                    class="nes-container is-tight"
+                    class="card is-compact"
                 >
                     <SecurityActivity :events="events" />
                 </div>

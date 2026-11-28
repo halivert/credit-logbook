@@ -84,7 +84,7 @@ const maxWidthClass = computed(() => {
                 >
                     <div
                         v-show="show"
-                        class="nes-container mb-6 transform transition-all sm:w-full sm:mx-auto !p-0"
+                        class="card is-flush mb-6 transform transition-all sm:w-full sm:mx-auto"
                         :class="maxWidthClass"
                     >
                         <slot v-if="show" />

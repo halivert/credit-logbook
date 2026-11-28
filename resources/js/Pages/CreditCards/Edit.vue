@@ -37,7 +37,7 @@ function submit() {
     <AuthenticatedLayout>
         <template #header>
             <h2
-                class="text-2xl sm:text-3xl text-ink"
+                class="text-large sm:text-title text-ink"
             >
                 {{ creditCard ? `Tarjeta ${creditCard.name}` : "Nueva tarjeta" }}
             </h2>
@@ -46,7 +46,7 @@ function submit() {
         <div class="py-6 sm:py-12">
             <div class="max-w-lg mx-auto px-4 sm:px-6">
                 <div
-                    class="nes-container is-tight"
+                    class="card is-compact"
                 >
                     <form class="space-y-5" @submit.prevent="submit">
                         <div>
@@ -114,7 +114,7 @@ function submit() {
                             </div>
 
                             <p
-                                class="col-span-2 -mt-2 text-lg text-muted"
+                                class="col-span-2 -mt-2 text-small text-muted"
                             >
                                 Del 1 al 28 de cada mes.
                             </p>
@@ -130,7 +130,7 @@ function submit() {
 
                                 <div class="relative mt-1">
                                     <span
-                                        class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted text-2xl"
+                                        class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted text-large"
                                         >$</span
                                     >
                                     <TextInput
@@ -170,7 +170,7 @@ function submit() {
                                         v-model="form.interest_rate"
                                     />
                                     <span
-                                        class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-muted text-2xl"
+                                        class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-muted text-large"
                                         >%</span
                                     >
                                 </div>

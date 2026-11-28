@@ -36,7 +36,7 @@ function handleInput(event: Event) {
 <template>
     <input
         :type="type"
-        class="nes-input"
+        class="input"
         :value="modelValue"
         @input="handleInput"
         ref="input"

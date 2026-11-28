@@ -54,8 +54,8 @@ function describe(event: SecurityEventItem): string {
 <template>
     <section class="space-y-4">
         <header>
-            <h2 class="text-2xl">Actividad reciente</h2>
-            <p class="mt-1 text-lg text-muted">
+            <h2 class="text-large">Actividad reciente</h2>
+            <p class="mt-1 text-small text-muted">
                 Inicios de sesión y cambios de seguridad de los últimos 90
                 días. Si ves algo que no hiciste, cambia tu contraseña y revisa
                 tus passkeys.
@@ -64,7 +64,7 @@ function describe(event: SecurityEventItem): string {
 
         <ul
             v-if="events.length"
-            class="px-list"
+            class="rows"
         >
             <li v-for="event in events" :key="event.id" class="py-3">
                 <p
@@ -75,14 +75,14 @@ function describe(event: SecurityEventItem): string {
                 >
                     {{ describe(event) }}
                 </p>
-                <p class="text-lg text-muted">
+                <p class="text-small text-muted">
                     {{ toDateTime(event.at) }}
                     <template v-if="event.device"> · {{ event.device }}</template>
                     <template v-if="event.ip"> · {{ event.ip }}</template>
                 </p>
             </li>
         </ul>
-        <p v-else class="text-lg text-muted">
+        <p v-else class="text-small text-muted">
             Todavía no hay actividad.
         </p>
     </section>

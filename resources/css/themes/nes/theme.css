@@ -1,0 +1,340 @@
+/*
+ * Tokens, font and the app's own classes for the NES look. components.css
+ * has the NES.css rules for .btn, .card, .input, .meter and .choice; the
+ * rules here adapt them to the theme colors, which follow the color scheme
+ * (NES.css only has a manual is-dark class).
+ */
+
+@font-face {
+    font-family: VT323;
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url("./fonts/vt323-latin-400-normal.woff2") format("woff2");
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+    font-family: VT323;
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url("./fonts/vt323-latin-ext-400-normal.woff2") format("woff2");
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+:root {
+    color-scheme: light;
+
+    --page: 255 255 255;
+    --surface: 255 255 255;
+    --ink: 33 37 41;
+    --muted: 102 106 118;
+    --line: 33 37 41;
+    --shade: 173 175 188;
+
+    /* NES.css colors, darkened where they are used as text on white */
+    --primary: 0 107 179;
+    --success: 63 127 21;
+    --warning: 148 110 0;
+    --error: 206 55 43;
+
+    --font-body: VT323, ui-monospace, monospace;
+    --font-mono: VT323, ui-monospace, monospace;
+
+    /* Sizes before font-size-adjust (see body), which scales VT323 up */
+    --text-note: 1rem;
+    --leading-note: 1.5rem;
+    --text-small: 1.125rem;
+    --leading-small: 1.75rem;
+    --text-body: 1.25rem;
+    --leading-body: 1.75rem;
+    --text-large: 1.5rem;
+    --leading-large: 2rem;
+    --text-title: 1.875rem;
+    --leading-title: 2.25rem;
+    --text-display: 2.25rem;
+    --leading-display: 2.5rem;
+    --text-hero: 3rem;
+    --leading-hero: 1;
+
+    --px-border: url('data:image/svg+xml;utf8,<svg version="1.1" width="5" height="5" xmlns="http://www.w3.org/2000/svg"><path d="M2 1 h1 v1 h-1 z M1 2 h1 v1 h-1 z M3 2 h1 v1 h-1 z M2 3 h1 v1 h-1 z" fill="rgb(33,37,41)" /></svg>');
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+        color-scheme: dark;
+
+        --page: 24 26 30;
+        --surface: 33 37 41;
+        --ink: 255 255 255;
+        --muted: 173 175 188;
+        --line: 255 255 255;
+        --shade: 74 79 85;
+
+        --primary: 32 156 238;
+        --success: 146 204 65;
+        --warning: 247 213 29;
+        --error: 231 110 85;
+
+        --px-border: url('data:image/svg+xml;utf8,<svg version="1.1" width="5" height="5" xmlns="http://www.w3.org/2000/svg"><path d="M2 1 h1 v1 h-1 z M1 2 h1 v1 h-1 z M3 2 h1 v1 h-1 z M2 3 h1 v1 h-1 z" fill="rgb(255,255,255)" /></svg>');
+    }
+}
+
+
+@layer base {
+    html {
+        cursor: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAABFklEQVRYR9WXURLDIAhE6/0PbSdOtUpcd1Gnpv1KGpTHBpCE1/cXq+vrMph7dGvXZTtpfW10DCA5jrH1H0Jhs5E0hnZdCR+vb5S8Nn8mQCeS9BdSalYJqMBjAGzq59xAESN7VFVUgV8AZB/dZBR7QTFDCqGquvUBVVoEtgIwpQRzmANSFHgWQKExHdIrPeuMvQNDarXe6nC/AutgV3JW+6bgqQLeV8FekRtgV+ToDKEKnACYKsfZjjkam7a0ZpYTytwmgainpC3HvwBocgKOxqRjehoR9DFKNFYtOwCGYCszobeCbl26N6yyQ6g8X/Wex/rBPsNEV6qAMaJPMynIHQCoSqS9JSMmwef51LflTgCRszU7DvAGiV6mHWfsaVUAAAAASUVORK5CYII=), auto;
+    }
+
+    a,
+    button,
+    summary,
+    [role="button"],
+    [role="radio"] {
+        cursor: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAzElEQVRYR+2X0Q6AIAhF5f8/2jYXZkwEjNSVvVUjDpcrGgT7FUkI2D9xRfQETwNIiWO85wfINfQUEyxBG2ArsLwC0jioGt5zFcwF4OYDPi/mBYKm4t0U8ATgRm3ThFoAqkhNgWkA0jJLvaOVSs7j3qMnSgXWBMiWPXe94QqMBMBc1VZIvaTu5u5pQewq0EqNZvIEMCmxAawK0DNkay9QmfFNAJUXfgGgUkLaE7j/h8fnASkxHTz0DGIBMCnBeeM7AArpUd3mz2x3C7wADglA8BcWMZhZAAAAAElFTkSuQmCC) 14 0, pointer;
+    }
+
+    body {
+        @apply bg-page text-ink font-sans text-body;
+        /* VT323 runs small; size it by x-height instead of bumping every size */
+        font-size-adjust: 0.6;
+    }
+
+    h1,
+    h2,
+    h3 {
+        @apply leading-tight;
+    }
+
+    :focus-visible {
+        outline: 4px solid rgb(var(--primary) / 0.5);
+        outline-offset: 2px;
+    }
+}
+
+@layer components {
+    /* Buttons keep NES.css colors in both schemes */
+    .btn {
+        @apply text-small leading-snug uppercase tracking-wider;
+        margin: 4px;
+        padding: 8px 12px;
+    }
+
+    .btn:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 6px rgb(var(--primary) / 0.4);
+    }
+
+    .btn:disabled {
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+
+    .btn.is-icon {
+        padding: 6px;
+        line-height: 0;
+    }
+
+    .card {
+        color: rgb(var(--ink));
+        background-color: rgb(var(--surface));
+        border-color: rgb(var(--line));
+    }
+
+    .card.has-title > .card-title {
+        @apply text-small;
+        background-color: rgb(var(--surface));
+    }
+
+    .card.is-compact {
+        padding: 1rem;
+    }
+
+    @media (min-width: 640px) {
+        .card.is-compact {
+            padding: 1.5rem;
+        }
+    }
+
+    .card.is-list {
+        padding: 0 1rem;
+    }
+
+    .card.is-list > * + *,
+    .rows > * + * {
+        border-top: 4px dashed rgb(var(--line) / 0.25);
+    }
+
+    .card.is-empty {
+        border-style: dashed;
+        border-color: rgb(var(--line) / 0.4);
+        background-color: transparent;
+    }
+
+    .card.is-link:hover {
+        background-color: rgb(var(--primary) / 0.05);
+    }
+
+    .card.is-flush {
+        padding: 0;
+    }
+
+    .input,
+    .meter {
+        border-image-source: var(--px-border);
+    }
+
+    .input {
+        @apply text-large;
+        width: 100%;
+        margin: 0;
+        padding: 0.125rem 0.625rem;
+        color: rgb(var(--ink));
+        background-color: rgb(var(--surface));
+    }
+
+    .input::placeholder {
+        color: rgb(var(--muted) / 0.7);
+    }
+
+    .input:focus {
+        outline: 4px solid rgb(var(--primary) / 0.4);
+        outline-offset: 2px;
+    }
+
+    .input:disabled {
+        opacity: 0.6;
+    }
+
+    .input.is-error {
+        border-image-source: url('data:image/svg+xml;utf8,<svg version="1.1" width="5" height="5" xmlns="http://www.w3.org/2000/svg"><path d="M2 1 h1 v1 h-1 z M1 2 h1 v1 h-1 z M3 2 h1 v1 h-1 z M2 3 h1 v1 h-1 z" fill="rgb(231,110,85)" /></svg>');
+    }
+
+    /* Square checkbox drawn with borders, so it follows the theme */
+    .checkbox {
+        appearance: none;
+        width: 1.25rem;
+        height: 1.25rem;
+        flex-shrink: 0;
+        border: 4px solid rgb(var(--line));
+        background-color: rgb(var(--surface));
+    }
+
+    .checkbox:checked {
+        box-shadow: inset 0 0 0 3px rgb(var(--surface));
+        background-color: rgb(var(--primary));
+    }
+
+    /* NES.css draws the radio arrow in currentColor */
+    .choice:checked + span::before {
+        color: rgb(var(--ink));
+    }
+
+    /* The arrow is 16px tall; center it on the larger VT323 line */
+    .choice:checked + span::before,
+    .choice:checked:focus + span::before {
+        top: calc(50% - 9px);
+    }
+
+    .choice:focus-visible + span {
+        outline: 4px solid rgb(var(--primary) / 0.4);
+        outline-offset: 4px;
+    }
+
+    .meter {
+        width: calc(100% - 8px);
+        height: 1.5rem;
+        color: rgb(var(--ink));
+        background-color: rgb(var(--surface));
+    }
+
+    .meter.is-small {
+        height: 1rem;
+    }
+
+    .meter::-webkit-progress-bar {
+        background-color: rgb(var(--surface)) !important;
+    }
+
+    /* Message box in the color of its text */
+    .notice {
+        @apply p-3 text-small;
+        border: 4px solid currentColor;
+    }
+
+    .notice.is-success {
+        @apply bg-success/10 text-success;
+    }
+
+    .notice.is-warning {
+        @apply bg-warning/10 text-warning;
+    }
+
+    .link {
+        @apply text-primary underline decoration-2 underline-offset-4 hover:decoration-4;
+    }
+
+    .section-label {
+        @apply uppercase tracking-widest text-muted;
+    }
+
+    .divider {
+        border-top: 4px dashed rgb(var(--line) / 0.25);
+    }
+
+    .frame {
+        padding: 0.75rem;
+        background-color: #fff;
+        border: 4px solid rgb(var(--line));
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+        .blink {
+            animation: blink 1s steps(1) infinite;
+        }
+    }
+
+    .app-bar {
+        background-color: rgb(var(--surface));
+        border-bottom: 4px solid rgb(var(--line));
+    }
+
+    .nav-link {
+        @apply inline-flex items-center px-1 pt-1 uppercase tracking-wider text-muted hover:text-ink focus:outline-none focus:text-ink;
+        border-bottom: 4px solid transparent;
+    }
+
+    .nav-link:hover {
+        border-color: rgb(var(--line) / 0.3);
+    }
+
+    .nav-link.is-active {
+        color: rgb(var(--ink));
+        border-color: rgb(var(--primary));
+    }
+
+    .drawer-link {
+        @apply block w-full pl-3 pr-4 py-3 text-left text-muted hover:text-ink hover:bg-line/5 focus:outline-none focus:text-ink focus:bg-line/5;
+        border-left: 4px solid transparent;
+    }
+
+    .drawer-link:hover {
+        border-color: rgb(var(--line) / 0.3);
+    }
+
+    .drawer-link.is-active {
+        color: rgb(var(--primary));
+        background-color: rgb(var(--primary) / 0.1);
+        border-color: rgb(var(--primary));
+    }
+
+    .menu {
+        background-color: rgb(var(--surface));
+        border: 4px solid rgb(var(--line));
+        box-shadow: 4px 4px 0 0 rgb(var(--shade));
+    }
+
+    .menu-item {
+        @apply block w-full px-4 py-2 text-left hover:bg-primary hover:text-white focus:outline-none focus:bg-primary focus:text-white;
+    }
+}

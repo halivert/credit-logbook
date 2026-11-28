@@ -14,7 +14,7 @@ import { Link } from "@inertiajs/vue3"
         </div>
 
         <div
-            class="nes-container w-full sm:max-w-md mt-6 !px-6 !py-6"
+            class="card w-full sm:max-w-md mt-6 !px-6 !py-6"
         >
             <slot />
         </div>

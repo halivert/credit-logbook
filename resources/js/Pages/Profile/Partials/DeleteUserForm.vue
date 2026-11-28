@@ -42,11 +42,11 @@ const closeModal = () => {
 <template>
     <section class="space-y-6">
         <header>
-            <h2 class="text-2xl">
+            <h2 class="text-large">
                 Borrar cuenta
             </h2>
 
-            <p class="mt-1 text-lg text-muted">
+            <p class="mt-1 text-small text-muted">
                 Se borran para siempre tus tarjetas, compras, pagos,
                 conciliaciones y passkeys. No se puede deshacer.
             </p>
@@ -57,12 +57,12 @@ const closeModal = () => {
         <Modal :show="confirmingUserDeletion" @close="closeModal">
             <div class="p-6">
                 <h2
-                    class="text-2xl"
+                    class="text-large"
                 >
                     ¿Borrar tu cuenta?
                 </h2>
 
-                <p class="mt-1 text-lg text-muted">
+                <p class="mt-1 text-small text-muted">
                     Se borran para siempre tus tarjetas, compras, pagos,
                     conciliaciones y passkeys. Escribe tu contraseña para
                     confirmar.

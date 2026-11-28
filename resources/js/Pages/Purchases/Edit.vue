@@ -35,16 +35,16 @@ function submit() {
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="text-2xl sm:text-3xl text-ink truncate">
+            <h2 class="text-large sm:text-title text-ink truncate">
                 {{ creditCard.name }}
             </h2>
         </template>
 
         <div class="py-6 sm:py-12">
             <div class="max-w-lg mx-auto px-4 sm:px-6">
-                <div class="nes-container is-tight">
+                <div class="card is-compact">
                     <form class="space-y-5" @submit.prevent="submit">
-                        <h3 class="text-xl uppercase tracking-widest text-muted">
+                        <h3 class="section-label text-body">
                             {{
                                 purchase.is_refund
                                     ? "Editar devolución"
@@ -102,7 +102,7 @@ function submit() {
 
                                 <div class="relative mt-1">
                                     <span
-                                        class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted text-2xl"
+                                        class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted text-large"
                                         >$</span
                                     >
                                     <TextInput
@@ -155,7 +155,7 @@ function submit() {
 
                                     <div class="relative mt-1">
                                         <span
-                                            class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted text-2xl"
+                                            class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted text-large"
                                             >$</span
                                         >
                                         <TextInput
@@ -184,7 +184,7 @@ function submit() {
 
                                     <div class="relative mt-1">
                                         <span
-                                            class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted text-2xl"
+                                            class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted text-large"
                                             >$</span
                                         >
                                         <TextInput
@@ -217,7 +217,7 @@ function submit() {
                                             v-model="form.interest_rate"
                                         />
                                         <span
-                                            class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-muted text-2xl"
+                                            class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-muted text-large"
                                             >%</span
                                         >
                                     </div>
@@ -244,7 +244,7 @@ function submit() {
                                 v-model="form.applied_on"
                             />
 
-                            <p class="mt-1 text-lg text-muted">
+                            <p class="mt-1 text-small text-muted">
                                 Cuando el banco la carga después de la fecha
                                 de compra.
                             </p>

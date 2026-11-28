@@ -17,7 +17,7 @@ const showingNavigationDropdown = ref(false)
     <div>
         <div class="min-h-screen bg-page">
             <nav
-                class="bg-surface border-b-4 border-line"
+                class="app-bar"
             >
                 <!-- Primary Navigation Menu -->
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -55,7 +55,7 @@ const showingNavigationDropdown = ref(false)
                                         <span class="inline-flex rounded-md">
                                             <button
                                                 type="button"
-                                                class="inline-flex items-center px-3 py-2 text-xl leading-4 text-muted hover:text-ink focus:outline-none"
+                                                class="inline-flex items-center px-3 py-2 text-body leading-4 text-muted hover:text-ink focus:outline-none"
                                             >
                                                 {{ $page.props.auth.user.name }}
 
@@ -89,7 +89,7 @@ const showingNavigationDropdown = ref(false)
                                     showingNavigationDropdown =
                                         !showingNavigationDropdown
                                 "
-                                class="nes-btn is-icon"
+                                class="btn is-icon"
                             >
                                 <MenuIcon
                                     v-if="!showingNavigationDropdown"
@@ -121,15 +121,15 @@ const showingNavigationDropdown = ref(false)
 
                     <!-- Responsive Settings Options -->
                     <div
-                        class="pt-4 pb-1 border-t-4 border-dashed border-line/25"
+                        class="divider pt-4 pb-1"
                     >
                         <div class="px-4">
                             <div
-                                class="text-xl text-ink"
+                                class="text-body text-ink"
                             >
                                 {{ $page.props.auth.user.name }}
                             </div>
-                            <div class="mt-1 font-medium text-lg text-muted">
+                            <div class="mt-1 font-medium text-small text-muted">
                                 {{ $page.props.auth.user.email }}
                             </div>
                         </div>
@@ -152,7 +152,7 @@ const showingNavigationDropdown = ref(false)
 
             <!-- Page Heading -->
             <header
-                class="bg-surface border-b-4 border-line"
+                class="app-bar"
                 v-if="$slots.header"
             >
                 <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">

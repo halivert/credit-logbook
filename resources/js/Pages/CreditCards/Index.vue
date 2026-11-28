@@ -16,7 +16,7 @@ defineProps<{
     <AuthenticatedLayout>
         <template #header>
             <h2
-                class="text-2xl sm:text-3xl text-ink"
+                class="text-large sm:text-title text-ink"
             >
                 Tarjetas
             </h2>
@@ -31,7 +31,7 @@ defineProps<{
                     <li v-for="creditCard in creditCards.data" :key="creditCard.id">
                         <Link
                             :href="route('credit-cards.show', creditCard)"
-                            class="nes-container is-tight block h-full hover:bg-primary/5 focus:outline-none focus-visible:outline-primary/50"
+                            class="card is-compact is-link block h-full"
                         >
                             <CreditCardSummary :credit-card="creditCard" />
                         </Link>
@@ -40,10 +40,10 @@ defineProps<{
 
                 <div
                     v-else
-                    class="nes-container is-dashed text-center"
+                    class="card is-empty text-center"
                 >
-                    <p class="text-2xl">Aún no tienes tarjetas</p>
-                    <p class="mt-1 text-lg text-muted">
+                    <p class="text-large">Aún no tienes tarjetas</p>
+                    <p class="mt-1 text-small text-muted">
                         Agrega una para llevar sus compras, pagos y fechas.
                     </p>
                 </div>
@@ -54,7 +54,7 @@ defineProps<{
                 />
 
                 <Link
-                    class="nes-btn is-primary flex sm:inline-flex justify-center"
+                    class="btn is-primary flex sm:inline-flex justify-center"
                     :href="route('credit-cards.create')"
                 >
                     Agregar tarjeta

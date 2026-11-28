@@ -54,15 +54,15 @@ function disable() {
     }
 }
 
-const secondary = "nes-btn inline-flex justify-center items-center"
-const danger = "nes-btn is-error inline-flex justify-center items-center"
+const secondary = "btn inline-flex justify-center items-center"
+const danger = "btn is-error inline-flex justify-center items-center"
 </script>
 
 <template>
     <section class="space-y-4">
         <header>
-            <h2 class="text-2xl">Verificación en dos pasos</h2>
-            <p class="mt-1 text-lg text-muted">
+            <h2 class="text-large">Verificación en dos pasos</h2>
+            <p class="mt-1 text-small text-muted">
                 Además de tu contraseña, te pedimos un código de una app de
                 autenticación (Google Authenticator, 1Password, Authy…).
             </p>
@@ -77,18 +77,18 @@ const danger = "nes-btn is-error inline-flex justify-center items-center"
 
         <!-- Set up, waiting for the first code -->
         <template v-else-if="twoFactor.pending">
-            <ol class="list-decimal ps-5 space-y-1 text-lg">
+            <ol class="list-decimal ps-5 space-y-1 text-small">
                 <li>Escanea este código con tu app de autenticación.</li>
                 <li>Escribe el código de 6 dígitos que te muestra.</li>
             </ol>
 
             <div
                 v-if="twoFactor.qrCodeSvg"
-                class="inline-block bg-white p-3 border-4 border-line"
+                class="frame inline-block"
                 v-html="twoFactor.qrCodeSvg"
             />
 
-            <p class="text-lg text-muted">
+            <p class="text-small text-muted">
                 ¿No puedes escanearlo? Escribe esta clave en tu app:
                 <code
                     class="block mt-1 break-all font-mono text-ink select-all"
@@ -101,7 +101,7 @@ const danger = "nes-btn is-error inline-flex justify-center items-center"
                     <InputLabel for="code" value="Código" />
                     <TextInput
                         id="code"
-                        class="mt-1 block w-40 text-center text-3xl tracking-[0.4em] font-mono"
+                        class="mt-1 block w-40 text-center text-title tracking-[0.4em] font-mono"
                         v-model="confirmation.code"
                         inputmode="numeric"
                         pattern="[0-9]*"
@@ -137,16 +137,16 @@ const danger = "nes-btn is-error inline-flex justify-center items-center"
 
             <div
                 v-if="twoFactor.recoveryCodes"
-                class="px-alert bg-warning/10 text-warning space-y-2"
+                class="notice is-warning space-y-2"
             >
-                <p class="text-lg font-medium text-warning">
+                <p class="text-small font-medium text-warning">
                     Guarda estos códigos de recuperación en un lugar seguro (por
                     ejemplo, tu gestor de contraseñas). Sirven para entrar si
                     pierdes tu teléfono, cada uno una sola vez. No los
                     volveremos a mostrar.
                 </p>
                 <ul
-                    class="grid grid-cols-2 gap-1 font-mono text-lg text-warning select-all"
+                    class="grid grid-cols-2 gap-1 font-mono text-small text-warning select-all"
                 >
                     <li v-for="code in twoFactor.recoveryCodes" :key="code">
                         {{ code }}

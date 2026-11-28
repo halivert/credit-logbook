@@ -16,25 +16,25 @@ defineProps<{
     >
         <ApplicationLogo class="size-32 fill-current text-ink" />
 
-        <h1 class="text-4xl sm:text-5xl">Bitácora de crédito</h1>
+        <h1 class="text-display sm:text-hero">Bitácora de crédito</h1>
 
         <nav v-if="canLogin" class="flex flex-wrap justify-center gap-2">
             <Link
                 v-if="$page.props.auth.user"
                 :href="route('credit-cards.index')"
-                class="nes-btn is-primary"
+                class="btn is-primary"
                 >Tarjetas</Link
             >
 
             <template v-else>
-                <Link :href="route('login')" class="nes-btn is-primary"
+                <Link :href="route('login')" class="btn is-primary"
                     >Iniciar sesión</Link
                 >
 
                 <Link
                     v-if="canRegister"
                     :href="route('register')"
-                    class="nes-btn"
+                    class="btn"
                     >Registrarse</Link
                 >
             </template>
@@ -42,7 +42,7 @@ defineProps<{
 
         <p
             v-if="canLogin && !$page.props.auth.user"
-            class="text-xl uppercase tracking-widest text-muted motion-safe:animate-[blink_1s_steps(1)_infinite]"
+            class="section-label blink text-body"
             aria-hidden="true"
         >
             Presiona start

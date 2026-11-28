@@ -25,7 +25,7 @@ function submit() {
     <GuestLayout>
         <Head title="Crear cuenta" />
 
-        <h1 class="mb-4 text-3xl">Crear cuenta</h1>
+        <h1 class="mb-4 text-title">Crear cuenta</h1>
 
         <form class="space-y-4" @submit.prevent="submit">
             <div>
@@ -98,11 +98,11 @@ function submit() {
                 >Crear cuenta</PrimaryButton
             >
 
-            <p class="text-center text-lg text-muted">
+            <p class="text-center text-small text-muted">
                 ¿Ya tienes cuenta?
                 <Link
                     :href="route('login')"
-                    class="px-link"
+                    class="link"
                     >Inicia sesión</Link
                 >
             </p>

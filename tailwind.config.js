@@ -1,7 +1,12 @@
-import defaultTheme from 'tailwindcss/defaultTheme';
 import forms from '@tailwindcss/forms';
 
-const token = (name) => `rgb(var(--${name}) / <alpha-value>)`;
+/**
+ * Values come from CSS variables set by the theme (resources/css/themes/*),
+ * so a theme can change colors, fonts and the type scale without touching
+ * the markup. See resources/css/app.css for the full contract.
+ */
+const color = (name) => `rgb(var(--${name}) / <alpha-value>)`;
+const size = (name) => [`var(--text-${name})`, `var(--leading-${name})`];
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -15,25 +20,34 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['VT323', ...defaultTheme.fontFamily.mono],
-                mono: ['VT323', ...defaultTheme.fontFamily.mono],
+                sans: 'var(--font-body)',
+                mono: 'var(--font-mono)',
             },
-            // Theme tokens from resources/css/app.css, they follow the color scheme
+            // Type scale by role, smallest to largest
+            fontSize: {
+                note: size('note'),
+                small: size('small'),
+                body: size('body'),
+                large: size('large'),
+                title: size('title'),
+                display: size('display'),
+                hero: size('hero'),
+            },
             colors: {
-                page: token('page'),
-                surface: token('surface'),
-                ink: token('ink'),
-                muted: token('muted'),
-                line: token('line'),
-                shade: token('shade'),
-                primary: token('primary'),
-                success: token('success'),
-                warning: token('warning'),
-                error: token('error'),
+                page: color('page'),
+                surface: color('surface'),
+                ink: color('ink'),
+                muted: color('muted'),
+                line: color('line'),
+                shade: color('shade'),
+                primary: color('primary'),
+                success: color('success'),
+                warning: color('warning'),
+                error: color('error'),
             },
         },
     },
 
-    // Inputs are styled with nes.css; the plugin only applies to form-* classes
+    // Inputs are styled by the theme; the plugin only applies to form-* classes
     plugins: [forms({ strategy: 'class' })],
 };

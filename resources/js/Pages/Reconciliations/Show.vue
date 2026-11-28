@@ -63,7 +63,7 @@ function removeAdjustment(adjustment: Adjustment) {
     }
 }
 
-const secondary = "nes-btn inline-flex justify-center items-center"
+const secondary = "btn inline-flex justify-center items-center"
 </script>
 
 <template>
@@ -72,7 +72,7 @@ const secondary = "nes-btn inline-flex justify-center items-center"
     <AuthenticatedLayout>
         <template #header>
             <h2
-                class="text-2xl sm:text-3xl text-ink truncate"
+                class="text-large sm:text-title text-ink truncate"
             >
                 <Link
                     :href="route('credit-cards.show', creditCard)"
@@ -88,14 +88,14 @@ const secondary = "nes-btn inline-flex justify-center items-center"
         <div class="py-6 sm:py-12">
             <div class="max-w-lg mx-auto px-4 sm:px-6 space-y-6">
                 <section
-                    class="nes-container space-y-6"
+                    class="card space-y-6"
                 >
                     <div>
-                        <p class="text-base text-muted">
+                        <p class="text-note text-muted">
                             Corte del {{ toShortDate(statement.closing_date) }} ·
                             pago antes del {{ toShortDate(statement.due_date) }}
                         </p>
-                        <p class="mt-1 text-lg">
+                        <p class="mt-1 text-small">
                             Para no generar intereses, la bitácora dice
                             <strong>{{
                                 toCurrency(statement.to_avoid_interest)
@@ -112,7 +112,7 @@ const secondary = "nes-btn inline-flex justify-center items-center"
                             <div class="mt-2 flex items-center gap-4">
                                 <div class="relative flex-1">
                                     <span
-                                        class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted text-2xl"
+                                        class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted text-large"
                                         >$</span
                                     >
                                     <TextInput
@@ -133,7 +133,7 @@ const secondary = "nes-btn inline-flex justify-center items-center"
                                 >
                             </div>
                             <p
-                                class="mt-2 text-base text-muted"
+                                class="mt-2 text-note text-muted"
                             >
                                 El "pago para no generar intereses" de ese
                                 corte.
@@ -147,23 +147,23 @@ const secondary = "nes-btn inline-flex justify-center items-center"
 
                     <div
                         v-if="reconciliation?.matched"
-                        class="px-alert bg-success/10 text-success"
+                        class="notice is-success"
                     >
                         <p class="font-semibold">Cuadra con tu estado de cuenta</p>
                     </div>
 
                     <div
                         v-else-if="reconciliation"
-                        class="px-alert bg-warning/10 text-warning space-y-3"
+                        class="notice is-warning space-y-3"
                     >
                         <div>
                             <p
-                                class="text-base text-warning"
+                                class="text-note text-warning"
                             >
                                 Diferencia
                             </p>
                             <p
-                                class="text-3xl leading-none text-warning"
+                                class="text-title leading-none text-warning"
                             >
                                 {{ toCurrency(Math.abs(difference)) }}
                             </p>
@@ -171,12 +171,12 @@ const secondary = "nes-btn inline-flex justify-center items-center"
 
                         <p
                             v-if="difference > 0"
-                            class="text-lg text-warning"
+                            class="text-small text-warning"
                         >
                             El banco te cobra más de lo que tienes registrado.
                             ¿Te faltó anotar una compra o una comisión?
                         </p>
-                        <p v-else class="text-lg text-warning">
+                        <p v-else class="text-small text-warning">
                             Tienes registrado más de lo que te cobra el banco.
                             ¿Te faltó un pago o una devolución, o hay algo
                             duplicado?
@@ -208,7 +208,7 @@ const secondary = "nes-btn inline-flex justify-center items-center"
                                 Ajustar
                             </button>
                         </div>
-                        <p class="text-base text-warning">
+                        <p class="text-note text-warning">
                             Si no encuentras la causa, "Ajustar" registra la
                             diferencia en el corte para que cuadre. Puedes
                             borrar el ajuste después.
@@ -218,13 +218,13 @@ const secondary = "nes-btn inline-flex justify-center items-center"
 
                 <section>
                     <h3
-                        class="mb-3 text-lg uppercase tracking-widest text-muted"
+                        class="mb-3 section-label text-small"
                     >
                         Movimientos del periodo
                     </h3>
                     <ul
                         v-if="lines.length"
-                        class="nes-container !py-0 !px-4 px-list text-lg"
+                        class="card is-list text-small"
                     >
                         <li
                             v-for="(line, index) in lines"
@@ -233,7 +233,7 @@ const secondary = "nes-btn inline-flex justify-center items-center"
                         >
                             <div class="min-w-0">
                                 <p class="truncate">{{ line.concept }}</p>
-                                <p class="text-base text-muted">
+                                <p class="text-note text-muted">
                                     {{ toShortDate(line.date) }}
                                 </p>
                             </div>
@@ -250,7 +250,7 @@ const secondary = "nes-btn inline-flex justify-center items-center"
                     </ul>
                     <p
                         v-else
-                        class="nes-container is-dashed text-center text-lg text-muted"
+                        class="card is-empty text-center text-small text-muted"
                     >
                         No hay movimientos en este periodo.
                     </p>
@@ -258,12 +258,12 @@ const secondary = "nes-btn inline-flex justify-center items-center"
 
                 <section v-if="adjustments.length">
                     <h3
-                        class="mb-3 text-lg uppercase tracking-widest text-muted"
+                        class="mb-3 section-label text-small"
                     >
                         Ajustes
                     </h3>
                     <ul
-                        class="nes-container !py-0 !px-4 px-list text-lg"
+                        class="card is-list text-small"
                     >
                         <li
                             v-for="adjustment in adjustments"
@@ -272,7 +272,7 @@ const secondary = "nes-btn inline-flex justify-center items-center"
                         >
                             <div class="min-w-0">
                                 <p class="truncate">{{ adjustment.concept }}</p>
-                                <p class="text-base text-muted">
+                                <p class="text-note text-muted">
                                     {{ toShortDate(adjustment.date) }}
                                 </p>
                             </div>
@@ -285,7 +285,7 @@ const secondary = "nes-btn inline-flex justify-center items-center"
                                 </p>
                                 <button
                                     type="button"
-                                    class="nes-btn is-error is-icon !m-0"
+                                    class="btn is-error is-icon !m-0"
                                     @click="removeAdjustment(adjustment)"
                                 >
                                     <TrashIcon class="size-4" />

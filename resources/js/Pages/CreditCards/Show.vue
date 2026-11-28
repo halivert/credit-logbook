@@ -28,14 +28,14 @@ function deletePurchase(purchase: Purchase) {
         <template #header>
             <div class="flex items-center justify-between gap-3">
                 <h2
-                    class="text-2xl sm:text-3xl text-ink truncate"
+                    class="text-large sm:text-title text-ink truncate"
                 >
                     {{ creditCard.name }}
                 </h2>
 
                 <Link
                     :href="route('credit-cards.edit', creditCard)"
-                    class="nes-btn is-icon !m-0 shrink-0"
+                    class="btn is-icon !m-0 shrink-0"
                 >
                     <PencilIcon class="size-4" />
                     <span class="sr-only">Editar tarjeta</span>
@@ -46,7 +46,7 @@ function deletePurchase(purchase: Purchase) {
         <div class="py-6 sm:py-12">
             <div class="max-w-3xl mx-auto px-4 sm:px-6 space-y-6">
                 <section
-                    class="nes-container is-tight"
+                    class="card is-compact"
                 >
                     <CreditCardSummary
                         :credit-card="creditCard"
@@ -57,13 +57,13 @@ function deletePurchase(purchase: Purchase) {
                 <div class="grid grid-cols-2 gap-4 px-1">
                     <Link
                         :href="route('credit-cards.purchases.create', creditCard)"
-                        class="nes-btn is-primary flex justify-center items-center !m-0"
+                        class="btn is-primary flex justify-center items-center !m-0"
                     >
                         Agregar compra
                     </Link>
                     <Link
                         :href="route('credit-cards.payments.create', creditCard)"
-                        class="nes-btn flex justify-center items-center !m-0"
+                        class="btn flex justify-center items-center !m-0"
                     >
                         Registrar pago
                     </Link>
@@ -71,19 +71,19 @@ function deletePurchase(purchase: Purchase) {
 
                 <Link
                     :href="route('credit-cards.reconciliation.show', creditCard)"
-                    class="block text-center px-link"
+                    class="block text-center link"
                 >
                     Conciliar con tu estado de cuenta
                 </Link>
 
                 <section v-if="installmentPurchases.length">
                     <h3
-                        class="mb-3 text-xl uppercase tracking-widest text-muted"
+                        class="mb-3 section-label text-body"
                     >
                         A meses
                     </h3>
                     <ul
-                        class="nes-container !py-0 !px-4 px-list"
+                        class="card is-list"
                     >
                         <PurchaseRow
                             v-for="purchase in installmentPurchases"
@@ -96,13 +96,13 @@ function deletePurchase(purchase: Purchase) {
 
                 <section>
                     <h3
-                        class="mb-3 text-xl uppercase tracking-widest text-muted"
+                        class="mb-3 section-label text-body"
                     >
                         Compras
                     </h3>
                     <ul
                         v-if="purchases.data.length"
-                        class="nes-container !py-0 !px-4 px-list"
+                        class="card is-list"
                     >
                         <PurchaseRow
                             v-for="purchase in purchases.data"
@@ -113,20 +113,20 @@ function deletePurchase(purchase: Purchase) {
                     </ul>
                     <p
                         v-else
-                        class="nes-container is-dashed text-center text-lg text-muted"
+                        class="card is-empty text-center text-small text-muted"
                     >
                         Aún no hay compras en esta tarjeta.
                     </p>
 
                     <nav
                         v-if="purchases.prev_page_url || purchases.next_page_url"
-                        class="mt-3 flex justify-between text-lg"
+                        class="mt-3 flex justify-between text-small"
                     >
                         <Link
                             v-if="purchases.prev_page_url"
                             :href="purchases.prev_page_url"
                             preserve-scroll
-                            class="px-link"
+                            class="link"
                         >
                             ← Más recientes
                         </Link>
@@ -135,7 +135,7 @@ function deletePurchase(purchase: Purchase) {
                             v-if="purchases.next_page_url"
                             :href="purchases.next_page_url"
                             preserve-scroll
-                            class="px-link"
+                            class="link"
                         >
                             Más antiguas →
                         </Link>

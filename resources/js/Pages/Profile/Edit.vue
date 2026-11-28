@@ -17,7 +17,7 @@ defineProps<{
     <AuthenticatedLayout>
         <template #header>
             <h2
-                class="text-2xl sm:text-3xl text-ink"
+                class="text-large sm:text-title text-ink"
             >
                 Perfil
             </h2>
@@ -26,7 +26,7 @@ defineProps<{
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
                 <div
-                    class="nes-container is-tight"
+                    class="card is-compact"
                 >
                     <UpdateProfileInformationForm
                         :must-verify-email="mustVerifyEmail"
@@ -36,18 +36,18 @@ defineProps<{
                 </div>
 
                 <div
-                    class="nes-container is-tight"
+                    class="card is-compact"
                 >
                     <UpdatePasswordForm class="max-w-xl" />
                 </div>
 
                 <Link
                     :href="route('profile.security')"
-                    class="nes-container is-tight flex items-center justify-between hover:bg-primary/5"
+                    class="card is-compact is-link flex items-center justify-between"
                 >
                     <span>
-                        <span class="block text-2xl">Seguridad</span>
-                        <span class="block text-lg text-muted"
+                        <span class="block text-large">Seguridad</span>
+                        <span class="block text-small text-muted"
                             >Verificación en dos pasos y passkeys</span
                         >
                     </span>
@@ -55,7 +55,7 @@ defineProps<{
                 </Link>
 
                 <div
-                    class="nes-container is-tight"
+                    class="card is-compact"
                 >
                     <DeleteUserForm class="max-w-xl" />
                 </div>

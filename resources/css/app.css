@@ -1,244 +1,40 @@
 @import "tailwindcss/base";
-@import "./vendor/nes-components.css";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
 
 /*
- * NES.css look that follows the system color scheme. nes.css only offers
- * dark variants as an `is-dark` class, so the components below read their
- * colors from these tokens instead, and they flip with prefers-color-scheme.
- * Values are RGB channels so Tailwind can add opacity (bg-primary/10).
+ * The look of the app lives in a theme. To switch to another one, import a
+ * different folder here. A theme defines:
+ *
+ * Variables (on :root, switching with prefers-color-scheme)
+ *   Colors, as RGB channels: --page, --surface, --ink, --muted, --line,
+ *   --shade, --primary, --success, --warning, --error
+ *   Fonts: --font-body, --font-mono
+ *   Type scale: --text-{note,small,body,large,title,display,hero} and the
+ *   matching --leading-*
+ *
+ * Classes
+ *   .btn            button or link that looks like one
+ *                   .is-primary .is-error .is-icon
+ *   .card           box around content
+ *                   .is-compact .is-list (rows with dividers) .is-empty
+ *                   .is-link (whole card clickable) .is-flush (no padding)
+ *                   .has-title with a .card-title child
+ *   .input          text input
+ *   .checkbox       checkbox input
+ *   .choice         radio input, followed by a <span> with its label
+ *   .meter          <progress>: .is-primary .is-error .is-small
+ *   .notice         message box: .is-success .is-warning
+ *   .rows           list whose items are separated by dividers
+ *   .link           inline link
+ *   .section-label  small heading over a group of content
+ *   .divider        horizontal rule
+ *   .frame          plain bordered box (QR code)
+ *   .blink          blinking text
+ *   .app-bar        top navigation and page header bars
+ *   .nav-link       top navigation link, .is-active
+ *   .drawer-link    mobile navigation link, .is-active
+ *   .menu           dropdown panel, with .menu-item children
  */
-:root {
-    color-scheme: light;
+@import "./themes/nes/index.css";
 
-    --page: 255 255 255;
-    --surface: 255 255 255;
-    --ink: 33 37 41;
-    --muted: 102 106 118;
-    --line: 33 37 41;
-    --shade: 173 175 188;
-
-    /* NES.css colors, darkened where they are used as text on white */
-    --primary: 0 107 179;
-    --success: 63 127 21;
-    --warning: 148 110 0;
-    --error: 206 55 43;
-
-    --px-border: url('data:image/svg+xml;utf8,<svg version="1.1" width="5" height="5" xmlns="http://www.w3.org/2000/svg"><path d="M2 1 h1 v1 h-1 z M1 2 h1 v1 h-1 z M3 2 h1 v1 h-1 z M2 3 h1 v1 h-1 z" fill="rgb(33,37,41)" /></svg>');
-}
-
-@media (prefers-color-scheme: dark) {
-    :root {
-        color-scheme: dark;
-
-        --page: 24 26 30;
-        --surface: 33 37 41;
-        --ink: 255 255 255;
-        --muted: 173 175 188;
-        --line: 255 255 255;
-        --shade: 74 79 85;
-
-        --primary: 32 156 238;
-        --success: 146 204 65;
-        --warning: 247 213 29;
-        --error: 231 110 85;
-
-        --px-border: url('data:image/svg+xml;utf8,<svg version="1.1" width="5" height="5" xmlns="http://www.w3.org/2000/svg"><path d="M2 1 h1 v1 h-1 z M1 2 h1 v1 h-1 z M3 2 h1 v1 h-1 z M2 3 h1 v1 h-1 z" fill="rgb(255,255,255)" /></svg>');
-    }
-}
-
-@layer base {
-    html {
-        cursor: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAABFklEQVRYR9WXURLDIAhE6/0PbSdOtUpcd1Gnpv1KGpTHBpCE1/cXq+vrMph7dGvXZTtpfW10DCA5jrH1H0Jhs5E0hnZdCR+vb5S8Nn8mQCeS9BdSalYJqMBjAGzq59xAESN7VFVUgV8AZB/dZBR7QTFDCqGquvUBVVoEtgIwpQRzmANSFHgWQKExHdIrPeuMvQNDarXe6nC/AutgV3JW+6bgqQLeV8FekRtgV+ToDKEKnACYKsfZjjkam7a0ZpYTytwmgainpC3HvwBocgKOxqRjehoR9DFKNFYtOwCGYCszobeCbl26N6yyQ6g8X/Wex/rBPsNEV6qAMaJPMynIHQCoSqS9JSMmwef51LflTgCRszU7DvAGiV6mHWfsaVUAAAAASUVORK5CYII=), auto;
-    }
-
-    a,
-    button,
-    summary,
-    [role="button"],
-    [role="radio"] {
-        cursor: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAzElEQVRYR+2X0Q6AIAhF5f8/2jYXZkwEjNSVvVUjDpcrGgT7FUkI2D9xRfQETwNIiWO85wfINfQUEyxBG2ArsLwC0jioGt5zFcwF4OYDPi/mBYKm4t0U8ATgRm3ThFoAqkhNgWkA0jJLvaOVSs7j3qMnSgXWBMiWPXe94QqMBMBc1VZIvaTu5u5pQewq0EqNZvIEMCmxAawK0DNkay9QmfFNAJUXfgGgUkLaE7j/h8fnASkxHTz0DGIBMCnBeeM7AArpUd3mz2x3C7wADglA8BcWMZhZAAAAAElFTkSuQmCC) 14 0, pointer;
-    }
-
-    body {
-        @apply bg-page text-ink font-sans text-xl;
-        /* VT323 runs small; size it by x-height instead of bumping every size */
-        font-size-adjust: 0.60;
-    }
-
-    h1,
-    h2,
-    h3 {
-        @apply leading-tight;
-    }
-
-    :focus-visible {
-        outline: 4px solid rgb(var(--primary) / 0.5);
-        outline-offset: 2px;
-    }
-}
-
-@layer components {
-    /* Containers, inputs, tables and progress bars take the theme colors */
-    .nes-container {
-        color: rgb(var(--ink));
-        background-color: rgb(var(--surface));
-        border-color: rgb(var(--line));
-    }
-
-    .nes-container.with-title > .title {
-        @apply text-lg;
-        background-color: rgb(var(--surface));
-    }
-
-    /* Empty states */
-    .nes-container.is-dashed {
-        border-style: dashed;
-        border-color: rgb(var(--line) / 0.4);
-        background-color: transparent;
-    }
-
-    .nes-container.is-tight {
-        padding: 1rem;
-    }
-
-    @media (min-width: 640px) {
-        .nes-container.is-tight {
-            padding: 1.5rem;
-        }
-    }
-
-    .nes-input,
-    .nes-progress,
-    .nes-table.is-bordered {
-        border-image-source: var(--px-border);
-    }
-
-    .nes-input {
-        width: 100%;
-        margin: 0;
-        padding: 0.125rem 0.625rem;
-        @apply text-2xl;
-        color: rgb(var(--ink));
-        background-color: rgb(var(--surface));
-    }
-
-    .nes-input::placeholder {
-        color: rgb(var(--muted) / 0.7);
-    }
-
-    .nes-input:focus {
-        outline: 4px solid rgb(var(--primary) / 0.4);
-        outline-offset: 2px;
-    }
-
-    .nes-input:disabled {
-        opacity: 0.6;
-    }
-
-    .nes-input.is-error {
-        border-image-source: url('data:image/svg+xml;utf8,<svg version="1.1" width="5" height="5" xmlns="http://www.w3.org/2000/svg"><path d="M2 1 h1 v1 h-1 z M1 2 h1 v1 h-1 z M3 2 h1 v1 h-1 z M2 3 h1 v1 h-1 z" fill="rgb(231,110,85)" /></svg>');
-    }
-
-    .nes-progress {
-        width: calc(100% - 8px);
-        height: 1.5rem;
-        color: rgb(var(--ink));
-        background-color: rgb(var(--surface));
-    }
-
-    .nes-progress.is-small {
-        height: 1rem;
-    }
-
-    .nes-progress::-webkit-progress-bar {
-        background-color: rgb(var(--surface)) !important;
-    }
-
-    .nes-table {
-        color: rgb(var(--ink));
-        background-color: rgb(var(--surface));
-    }
-
-    .nes-table th,
-    .nes-table td {
-        border-color: rgb(var(--line));
-    }
-
-    .nes-table th::after,
-    .nes-table th::before,
-    .nes-table td::after,
-    .nes-table td::before {
-        background-color: rgb(var(--line));
-    }
-
-    /* Buttons keep NES.css colors in both schemes; these adapt them to the app */
-    .nes-btn {
-        @apply text-lg leading-snug uppercase tracking-wider;
-        margin: 4px;
-        padding: 8px 12px;
-    }
-
-    .nes-btn:focus-visible {
-        outline: none;
-        box-shadow: 0 0 0 6px rgb(var(--primary) / 0.4);
-    }
-
-    .nes-btn:disabled {
-        cursor: not-allowed;
-        opacity: 0.6;
-    }
-
-    /* Icon-only buttons */
-    .nes-btn.is-icon {
-        padding: 6px;
-        line-height: 0;
-    }
-
-    /* Plain square checkbox drawn with borders, so it follows the theme */
-    .px-checkbox {
-        appearance: none;
-        width: 1.25rem;
-        height: 1.25rem;
-        flex-shrink: 0;
-        border: 4px solid rgb(var(--line));
-        background-color: rgb(var(--surface));
-    }
-
-    .px-checkbox:checked {
-        box-shadow: inset 0 0 0 3px rgb(var(--surface));
-        background-color: rgb(var(--primary));
-    }
-
-    /* Notice boxes in the color of their text */
-    .px-alert {
-        @apply p-3 text-lg;
-        border: 4px solid currentColor;
-    }
-
-    /* Rows inside a container, separated by a dashed pixel line */
-    .px-list > * + * {
-        border-top: 4px dashed rgb(var(--line) / 0.25);
-    }
-
-    .px-link {
-        @apply text-primary underline decoration-2 underline-offset-4 hover:decoration-4;
-    }
-
-    /* nes.css draws the radio arrow in currentColor */
-    .nes-radio:checked + span::before {
-        color: rgb(var(--ink));
-    }
-
-    /* The arrow is 16px tall; center it on the larger VT323 line */
-    .nes-radio:checked + span::before,
-    .nes-radio:checked:focus + span::before {
-        top: calc(50% - 9px);
-    }
-
-    .nes-radio:focus-visible + span {
-        outline: 4px solid rgb(var(--primary) / 0.4);
-        outline-offset: 4px;
-    }
-}
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";

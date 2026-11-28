@@ -24,7 +24,7 @@ const links =
         <template v-for="(link, index) in links" :key="index">
             <Link
                 v-if="link.url"
-                class="nes-btn"
+                class="btn"
                 :class="{ 'is-primary': link.active }"
                 :href="link.url"
                 v-html="link.label"

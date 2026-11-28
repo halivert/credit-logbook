@@ -52,31 +52,31 @@ const paymentState = computed<PaymentState>(() => {
 
 <template>
     <div>
-        <p v-if="showName" class="mb-3 text-2xl">{{ creditCard.name }}</p>
+        <p v-if="showName" class="mb-3 text-large">{{ creditCard.name }}</p>
 
-        <p class="text-base text-muted">
+        <p class="text-note text-muted">
             {{ overLimit ? "Excedido" : "Disponible" }}
         </p>
         <p
-            class="text-3xl sm:text-4xl leading-none"
+            class="text-title sm:text-display leading-none"
             :class="{ 'text-error': overLimit }"
         >
             {{ toCurrency(Math.abs(creditCard.available_credit ?? 0)) }}
         </p>
 
         <progress
-            class="nes-progress is-small mt-3"
+            class="meter is-small mt-3"
             :class="usage >= 90 ? 'is-error' : 'is-primary'"
             :value="Math.round(usage)"
             max="100"
             aria-label="Crédito usado"
         />
-        <p class="mt-1 text-lg text-muted">
+        <p class="mt-1 text-small text-muted">
             {{ toCurrency(creditCard.balance_used ?? 0) }} usados de
             {{ toCurrency(creditCard.limit) }}
         </p>
 
-        <dl v-if="statement" class="mt-4 grid grid-cols-2 gap-3 text-lg">
+        <dl v-if="statement" class="mt-4 grid grid-cols-2 gap-3 text-small">
             <div>
                 <dt class="text-muted">
                     <template v-if="paymentState === 'overdue'">
@@ -108,7 +108,7 @@ const paymentState = computed<PaymentState>(() => {
                 </dd>
                 <dd
                     v-if="statement.paid_since_closing > 0 && statement.remaining > 0"
-                    class="text-base text-muted"
+                    class="text-note text-muted"
                 >
                     de {{ toCurrency(statement.to_avoid_interest) }}
                 </dd>
@@ -129,7 +129,7 @@ const paymentState = computed<PaymentState>(() => {
 
         <p
             v-if="statement?.bank_difference"
-            class="mt-3 text-lg text-warning"
+            class="mt-3 text-small text-warning"
         >
             No cuadra con tu estado de cuenta por
             {{ toCurrency(Math.abs(statement.bank_difference)) }}

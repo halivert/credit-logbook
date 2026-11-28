@@ -66,7 +66,7 @@ const open = ref(false);
                 style="display: none"
                 @click="open = false"
             >
-                <div class="border-4 border-line bg-surface shadow-[4px_4px_0_0] shadow-shade" :class="contentClasses">
+                <div class="menu" :class="contentClasses">
                     <slot name="content" />
                 </div>
             </div>

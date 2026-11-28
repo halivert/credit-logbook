@@ -68,7 +68,7 @@ function submit() {
     <AuthenticatedLayout>
         <template #header>
             <h2
-                class="text-2xl sm:text-3xl text-ink truncate"
+                class="text-large sm:text-title text-ink truncate"
             >
                 {{ creditCard.name }}
             </h2>
@@ -77,15 +77,15 @@ function submit() {
         <div class="py-6 sm:py-12">
             <div class="max-w-lg mx-auto px-4 sm:px-6">
                 <div
-                    class="nes-container is-tight"
+                    class="card is-compact"
                 >
                     <form class="space-y-5" @submit.prevent="submit">
                         <div
-                            class="nes-container with-title is-tight"
+                            class="card has-title is-compact"
                             role="radiogroup"
                             aria-labelledby="kind-title"
                         >
-                            <p id="kind-title" class="title">Tipo</p>
+                            <p id="kind-title" class="card-title">Tipo</p>
 
                             <div
                                 class="flex flex-col gap-3"
@@ -93,11 +93,11 @@ function submit() {
                                 <label
                                     v-for="kind in kinds"
                                     :key="kind.value"
-                                    class="text-2xl"
+                                    class="text-large"
                                 >
                                     <input
                                         type="radio"
-                                        class="nes-radio"
+                                        class="choice"
                                         name="kind"
                                         :value="kind.value"
                                         v-model="form.kind"
@@ -160,7 +160,7 @@ function submit() {
 
                                 <div class="relative mt-1">
                                     <span
-                                        class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted text-2xl"
+                                        class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted text-large"
                                         >$</span
                                     >
                                     <TextInput
@@ -214,7 +214,7 @@ function submit() {
 
                                     <div class="relative mt-1">
                                         <span
-                                            class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted text-2xl"
+                                            class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted text-large"
                                             >$</span
                                         >
                                         <TextInput
@@ -238,7 +238,7 @@ function submit() {
 
                                 <p
                                     v-if="suggestedInstallment"
-                                    class="col-span-2 -mt-2 text-lg text-muted"
+                                    class="col-span-2 -mt-2 text-small text-muted"
                                 >
                                     Si la dejas vacía:
                                     {{ toCurrency(suggestedInstallment) }} al
@@ -257,7 +257,7 @@ function submit() {
 
                                 <div class="relative mt-1 w-1/2 pr-2">
                                     <span
-                                        class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted text-2xl"
+                                        class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted text-large"
                                         >$</span
                                     >
                                     <TextInput
@@ -279,7 +279,7 @@ function submit() {
 
                         <p
                             v-if="form.kind === 'refund'"
-                            class="text-lg text-muted"
+                            class="text-small text-muted"
                         >
                             Se abona a la tarjeta: baja tu saldo y libera
                             crédito.

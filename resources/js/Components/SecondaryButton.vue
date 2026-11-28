@@ -10,7 +10,7 @@ withDefaults(
 </script>
 
 <template>
-    <button :type="type" class="nes-btn inline-flex items-center"
+    <button :type="type" class="btn inline-flex items-center"
     >
         <slot />
     </button>

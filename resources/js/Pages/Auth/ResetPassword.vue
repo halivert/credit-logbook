@@ -29,7 +29,7 @@ function submit() {
     <GuestLayout>
         <Head title="Nueva contraseña" />
 
-        <h1 class="mb-4 text-3xl">Elige una nueva contraseña</h1>
+        <h1 class="mb-4 text-title">Elige una nueva contraseña</h1>
 
         <form class="space-y-4" @submit.prevent="submit">
             <div>

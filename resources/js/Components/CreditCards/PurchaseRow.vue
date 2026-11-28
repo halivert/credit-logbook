@@ -22,19 +22,19 @@ const { toCurrency, toDate, toShortDate } = useFormat()
             <p class="truncate font-medium">{{ purchase.concept }}</p>
 
             <template v-if="purchase.is_installment_purchase">
-                <p class="text-lg text-muted">
+                <p class="text-small text-muted">
                     {{ purchase.billed_installments ?? 0 }} de
                     {{ purchase.installment_count }} cargadas · faltan
                     {{ toCurrency(purchase.remaining_amount) }}
                 </p>
                 <progress
-                    class="nes-progress is-small is-primary mt-2"
+                    class="meter is-small is-primary mt-2"
                     :value="purchase.billed_installments ?? 0"
                     :max="purchase.installment_count ?? 0"
                     aria-label="Mensualidades cargadas"
                 />
             </template>
-            <p v-else class="text-lg text-muted">
+            <p v-else class="text-small text-muted">
                 {{ toDate(purchase.date) }}
                 <span
                     v-if="purchase.applied_on && purchase.applied_on !== purchase.date"
@@ -50,7 +50,7 @@ const { toCurrency, toDate, toShortDate } = useFormat()
                 <p class="font-semibold">
                     {{ toCurrency(purchase.installment_amount ?? 0) }}
                 </p>
-                <p class="text-base text-muted">al mes</p>
+                <p class="text-note text-muted">al mes</p>
             </template>
             <p
                 v-else
@@ -65,14 +65,14 @@ const { toCurrency, toDate, toShortDate } = useFormat()
         <div class="flex shrink-0 gap-1">
             <Link
                 :href="route('purchases.edit', purchase)"
-                class="nes-btn is-icon !m-0 shrink-0"
+                class="btn is-icon !m-0 shrink-0"
             >
                 <PencilIcon class="size-4" />
                 <span class="sr-only">Editar {{ purchase.concept }}</span>
             </Link>
             <button
                 type="button"
-                class="nes-btn is-error is-icon !m-0"
+                class="btn is-error is-icon !m-0"
                 @click="$emit('delete', purchase)"
             >
                 <TrashIcon class="size-4" />
