@@ -23,57 +23,18 @@ Al crear el servidor en Forge:
 
 ## 3. Variables de entorno
 
-En *Environment*:
+Forge copia `.env.example`, que ya trae los valores de producción. En
+*Environment* solo llena lo que está vacío y revisa lo marcado:
 
-```dotenv
-APP_NAME=Tarjetero
-APP_ENV=production
-APP_KEY=            # php artisan key:generate --show
-# Identificador de las passkeys, aparte de APP_KEY para que no cambie al rotarla
-PASSKEYS_USER_HANDLE_SECRET=   # openssl rand -hex 32
-APP_DEBUG=false
-APP_URL=https://tarjetero.halivert.dev
-# Nombre en la pestaña del navegador; se lee al compilar (npm run build)
-VITE_APP_NAME="${APP_NAME}"
-
-REGISTRATION=false
-
-DB_CONNECTION=mariadb
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=tarjetero
-DB_USERNAME=tarjetero
-DB_PASSWORD=
-
-REDIS_HOST=127.0.0.1
-REDIS_PASSWORD=null
-REDIS_PORT=6379
-
-SESSION_DRIVER=redis
-SESSION_SECURE_COOKIE=true
-CACHE_DRIVER=redis
-QUEUE_CONNECTION=redis
-
-LOG_CHANNEL=daily
-LOG_LEVEL=warning
-
-# Resend por SMTP, ver "Correo" abajo
-MAIL_MAILER=smtp
-MAIL_HOST=smtp.resend.com
-MAIL_PORT=587
-MAIL_ENCRYPTION=tls
-MAIL_USERNAME=resend
-MAIL_PASSWORD=re_…    # API key de Resend
-MAIL_FROM_ADDRESS=no-reply@tarjetero.halivert.dev
-MAIL_FROM_NAME="${APP_NAME}"
-
-# A quién avisar si una hora tiene muchos más intentos sospechosos de lo normal
-SECURITY_ALERT_EMAIL=tu@correo.com
-
-# Aviso de privacidad (/privacidad): tu nombre y el correo para solicitudes
-PRIVACY_OWNER="Tu nombre"
-PRIVACY_EMAIL=privacidad@tu-dominio
-```
+| Variable | Valor |
+|---|---|
+| `APP_KEY` | `php artisan key:generate --show` (Forge suele ponerla) |
+| `PASSKEYS_USER_HANDLE_SECRET` | `openssl rand -hex 32` |
+| `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD` | los de la base que creaste en Forge |
+| `MAIL_PASSWORD` | la API key de Resend (ver "Correo") |
+| `SECURITY_ALERT_EMAIL` | tu correo |
+| `PRIVACY_OWNER`, `PRIVACY_EMAIL` | tu nombre y un correo que revises |
+| `APP_URL` | revisa que sea el dominio del sitio |
 
 **Guarda la `APP_KEY` en un gestor de contraseñas.** El límite de las tarjetas
 se guarda cifrado con ella: si se pierde, no se puede recuperar ni desde un
@@ -126,7 +87,7 @@ alertas de seguridad), así que alcanza el plan gratis de
 3. DMARC: no hace falta otro. El de `halivert.dev` ya cubre sus subdominios
    (`sp=`), y uno con `p=none` en el subdominio lo debilitaría.
 4. *API Keys → Create*: permiso *Sending access*, solo para ese dominio. Va
-   en `MAIL_PASSWORD`; el usuario SMTP siempre es `resend`.
+   en `MAIL_PASSWORD`; lo demás de `MAIL_*` ya viene en `.env.example`.
 5. Prueba desde el servidor:
 
    ```sh
@@ -136,13 +97,14 @@ alertas de seguridad), así que alcanza el plan gratis de
 
 Se usa por SMTP a propósito, sin el paquete ni las funciones propias de
 Resend: para cambiar de proveedor (por ejemplo a Amazon SES) basta cambiar
-estas variables y los registros DNS. Un dominio solo puede tener un registro
+las variables `MAIL_*` y los registros DNS. Un dominio solo puede tener un registro
 SPF; si un día usas dos proveedores, inclúyelos en el mismo.
 
 ## 5. Worker y scheduler
 
 - *Queues*: conexión `redis`, cola `default`, `--tries=3`.
-- *Scheduler*: `php artisan schedule:run` cada minuto.
+- *Scheduler*: `php artisan schedule:run` cada minuto. Corre los respaldos,
+  la limpieza de eventos de seguridad viejos y las alertas.
 
 ## 6. Usuarios
 
@@ -161,41 +123,31 @@ ya invitado. Sirve también para tu propia cuenta.
 
 ## 7. Respaldos
 
-Nada en el código hace respaldos: el scheduler de Laravel solo poda datos
-viejos y manda alertas. Elige una opción y configúrala en Forge.
+El scheduler corre `php artisan db:backup` todos los días a las 4:00 (hora
+del servidor): respalda la base comprimida en `BACKUP_PATH` y borra los de más
+de `BACKUP_KEEP_DAYS` días. No hay nada que configurar en Forge aparte del
+scheduler. Si un respaldo falla, llega un correo a `SECURITY_ALERT_EMAIL`.
 
-**A. *Database Backups* de Forge** hacia un almacenamiento externo (S3,
-Backblaze…), con retención de 30 días o menos. Es la mejor: el respaldo no
-vive en el mismo servidor.
+El aviso de privacidad promete que lo que alguien borra desaparece de los
+respaldos en máximo 30 días: no subas `BACKUP_KEEP_DAYS` sin cambiarlo
+también ahí.
 
-**B. Un cron diario en *Scheduler***, usuario `forge`, que deja los respaldos
-en el mismo servidor. Antes, por SSH:
-
-```sh
-mkdir -p /home/forge/backups && chmod 700 /home/forge/backups
-```
-
-El comando del cron:
+Los respaldos viven en el mismo servidor: si el servidor se pierde, se
+pierden con él. Cópialos a otro lado de vez en cuando, por ejemplo desde tu
+computadora:
 
 ```sh
-mariadb-dump --defaults-extra-file=/home/forge/.backup.cnf --single-transaction tarjetero | gzip > /home/forge/backups/tarjetero-$(date +\%F).sql.gz && find /home/forge/backups -name 'tarjetero-*.sql.gz' -mtime +30 -delete
+rsync -av forge@tarjetero.halivert.dev:/home/forge/backups/ ~/Respaldos/tarjetero/
 ```
 
-El aviso de privacidad promete que los respaldos se borran en máximo 30
-días (por quien borra su cuenta): el `find` del final se encarga, y si usas
-*Database Backups* de Forge, pon la retención en 30 días o menos.
+Para probarlo a mano y para restaurar (prueba restaurar al menos una vez):
 
-`/home/forge/.backup.cnf` guarda las credenciales fuera del comando (que se ve
-en `ps`), con permisos `600`:
-
-```ini
-[client]
-user=tarjetero
-password=…
+```sh
+php artisan db:backup
+gunzip -c /home/forge/backups/tarjetero-AAAA-MM-DD-HHMMSS.sql.gz | mariadb -u tarjetero -p tarjetero
 ```
 
-Prueba restaurar un respaldo al menos una vez. Sin la `APP_KEY`, el respaldo
-no sirve para el límite cifrado.
+Sin la `APP_KEY`, el respaldo no sirve para el límite cifrado.
 
 ## 8. Monitoreo de seguridad
 

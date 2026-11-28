@@ -1,4 +1,4 @@
-# Bitácora de crédito
+# Tarjetero
 
 Registro personal de tarjetas de crédito: compras, compras a meses y pagos.
 

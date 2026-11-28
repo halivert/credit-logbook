@@ -29,8 +29,7 @@ defineProps<{
                 <h2 class="section-label text-body">Quién es responsable</h2>
                 <p>
                     {{ owner ?? "Quien administra esta aplicación" }} es
-                    responsable de tus datos personales en Bitácora de
-                    crédito.
+                    responsable de tus datos personales en Tarjetero.
                     <template v-if="email">
                         Para cualquier duda o solicitud escribe a
                         <a :href="`mailto:${email}`" class="link">{{ email }}</a>.

@@ -33,7 +33,7 @@ const features = [
         >
             <ApplicationLogo class="size-32 fill-current text-ink" />
 
-            <h1 class="reading text-display sm:text-hero">Bitácora de crédito</h1>
+            <h1 class="reading text-display sm:text-hero">Tarjetero</h1>
 
             <p class="reading max-w-xl text-large text-muted">
                 Lleva tus tarjetas de crédito al día: cuánto debes, cuánto te
