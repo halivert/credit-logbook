@@ -41,11 +41,6 @@ export type Payment = {
     amount: Decimal
     created_at: DateString
     updated_at: DateString
-    pivot?: {
-        payment_id: string
-        purchase_id: string
-        installment_number: number | null
-    }
 }
 
 export type Purchase = {
@@ -53,21 +48,23 @@ export type Purchase = {
     credit_card_id: string
     concept: string
     datetime: DateString
+    /** Negative for returns */
     amount: Decimal
     installment_count: number | null
-    installment_amount: Money
+    /** Next installment to be billed (includes the commission on the first) */
+    installment_amount: Money | null
     commission: Decimal | null
     interest_rate: Decimal | null
-    paid_at: DateString | null
     applied_at: DateString
     created_at: DateString
     updated_at: DateString
     is_installment_purchase: boolean
-    paid_months: number | null
-    remaining_months: number
-    paid_amount: Money
+    is_refund: boolean
+    /** Installments already billed, one per closing date */
+    billed_installments: number | null
+    remaining_installments: number | null
+    /** Still to be billed in future statements */
     remaining_amount: Money
-    payments: Payment[]
 }
 
 export type PaginationLink = {
@@ -89,10 +86,4 @@ export type LengthAwarePaginator<T> = SimplePaginator<T> & {
     links: PaginationLink[]
     last_page: number
     total: number
-}
-
-/** An installment purchase selected in the payment form */
-export type InstallmentPayment = {
-    id: string
-    installment_number: number
 }

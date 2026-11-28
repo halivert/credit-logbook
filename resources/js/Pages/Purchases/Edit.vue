@@ -11,6 +11,7 @@ import Checkbox from "@/Components/Checkbox.vue"
 const props = defineProps<{
     creditCard: CreditCard
     purchase: Purchase
+    baseInstallmentAmount: string | null
 }>()
 
 function getDate(
@@ -23,9 +24,10 @@ function getDate(
 const form = useForm({
     concept: props.purchase.concept,
     datetime: getDate(props.purchase.datetime),
-    amount: props.purchase.amount,
+    // Returns are negative, the form edits how much was returned
+    amount: Math.abs(Number(props.purchase.amount)).toFixed(2),
     installment_count: props.purchase.installment_count,
-    installment_amount: props.purchase.installment_amount ?? "",
+    installment_amount: props.baseInstallmentAmount ?? "",
     commission: props.purchase.commission ?? "",
     interest_rate: props.purchase.interest_rate ?? "",
     applied_at: getDate(props.purchase.applied_at),
@@ -37,14 +39,15 @@ function submit() {
 </script>
 
 <template>
-    <Head title="Nueva compra" />
+    <Head :title="purchase.is_refund ? 'Editar devolución' : 'Editar compra'" />
 
     <AuthenticatedLayout>
         <template #header>
             <h2
                 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight"
             >
-                Agregar compra: {{ creditCard.name }}
+                {{ purchase.is_refund ? "Editar devolución" : "Editar compra" }}:
+                {{ creditCard.name }}
             </h2>
         </template>
 
