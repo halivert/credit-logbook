@@ -1,7 +1,14 @@
 <script setup lang="ts">
 import type { CreditCard, Decimal, Purchase } from "@/types"
-import { computed, ref } from "vue"
+import { computed, ref, watch } from "vue"
 import { today, useFormat } from "@/format"
+import {
+    addDays,
+    BillingCycle,
+    calculateStatement,
+    InstallmentPlan,
+    type Day,
+} from "./logbook"
 import CreditCardSummary from "@/Components/CreditCards/CreditCardSummary.vue"
 import PurchaseRow from "@/Components/CreditCards/PurchaseRow.vue"
 import InputError from "@/Components/InputError.vue"
@@ -11,181 +18,183 @@ import PrimaryButton from "@/Components/PrimaryButton.vue"
 import SecondaryButton from "@/Components/SecondaryButton.vue"
 
 /**
- * A pretend card to show how the logbook works. Everything happens in the
+ * A pretend card to show how the logbook works, with the same forms, rules
+ * and math as the app (see ./logbook.ts). Everything happens in the
  * browser: nothing is sent to the server and it's gone on reload.
  */
 
-const { toCurrency, toDate } = useFormat()
+const { toCurrency, toShortDate } = useFormat()
 
-const LIMIT = 30000
-/** What the last statement asked to pay to avoid interest */
-const TO_AVOID_INTEREST = 4350
+const LIMIT_CENTS = 3000000
+/** Same limits as the server: App\Support\Money and StorePurchaseRequest */
+const MAX_CENTS = 99999999999
+const MAX_INSTALLMENTS = 60
 
-/** "Y-m-d" some days from today */
-function day(offset: number): string {
-    const [y, m, d] = today().split("-").map(Number)
+const TODAY = today()
 
-    return new Date(Date.UTC(y, m - 1, d + offset)).toISOString().slice(0, 10)
+// Closed two weeks ago and due in a few days, so the reminder shows up
+const cycle = new BillingCycle(
+    Number(addDays(TODAY, -15).slice(8)),
+    Number(addDays(TODAY, 5).slice(8)),
+)
+
+type DemoPurchase = {
+    id: number
+    concept: string
+    date: Day
+    /** Negative for returns */
+    cents: number
+    installmentCount: number | null
+    installmentCents: number | null
+    commissionCents: number
 }
 
-const closingDate = day(-15)
-const dueDate = day(5)
-const nextClosingDate = day(15)
-
-const cents = (amount: number) => Math.round(amount * 100) / 100
-const decimal = (amount: number) => amount.toFixed(2) as Decimal
+type DemoPayment = { id: number; date: Day; cents: number }
 
 let nextId = 0
 
-function makePurchase(
-    data: Pick<Purchase, "concept" | "date" | "amount"> & Partial<Purchase>,
-): Purchase {
+function purchase(
+    concept: string,
+    date: Day,
+    cents: number,
+    installments?: { count: number; installmentCents?: number; commissionCents?: number },
+): DemoPurchase {
     return {
-        id: `demo-${nextId++}`,
+        id: nextId++,
+        concept,
+        date,
+        cents,
+        installmentCount: installments?.count ?? null,
+        installmentCents: installments
+            ? (installments.installmentCents ??
+              InstallmentPlan.evenInstallmentCents(cents, installments.count))
+            : null,
+        commissionCents: installments?.commissionCents ?? 0,
+    }
+}
+
+function payment(date: Day, cents: number): DemoPayment {
+    return { id: nextId++, date, cents }
+}
+
+function seed() {
+    return {
+        purchases: [
+            purchase("Pantalla", addDays(TODAY, -100), 960000, { count: 12 }),
+            purchase("Farmacia", addDays(TODAY, -48), 65000),
+            purchase("Restaurante", addDays(TODAY, -22), 185000),
+            purchase("Gasolina", addDays(TODAY, -6), 80000),
+            purchase("Súper", addDays(TODAY, -2), 124050),
+        ],
+        payments: [payment(addDays(TODAY, -38), 225000)],
+    }
+}
+
+const data = ref(seed())
+
+const plan = (p: DemoPurchase) =>
+    p.installmentCount
+        ? new InstallmentPlan(
+              p.cents,
+              p.installmentCount,
+              p.installmentCents ?? 0,
+              p.commissionCents,
+          )
+        : null
+
+const statement = computed(() =>
+    calculateStatement(
+        cycle,
+        TODAY,
+        data.value.purchases.map((p) => ({ day: p.date, cents: p.cents, plan: plan(p) })),
+        data.value.payments.map((p) => ({ day: p.date, cents: p.cents })),
+    ),
+)
+
+/** Every charge, commissions included, minus every payment */
+const balanceCents = computed(
+    () =>
+        data.value.purchases.reduce((sum, p) => sum + p.cents + p.commissionCents, 0) -
+        data.value.payments.reduce((sum, p) => sum + p.cents, 0),
+)
+
+const money = (cents: number) => cents / 100
+const decimal = (cents: number) => (cents / 100).toFixed(2) as Decimal
+
+/** As the server serializes it to the card page */
+function toPurchase(p: DemoPurchase): Purchase {
+    const installments = plan(p)
+    const billed = installments
+        ? Math.min(cycle.closingsBetween(p.date, TODAY), installments.count)
+        : null
+
+    return {
+        id: String(p.id),
         credit_card_id: "demo",
-        installment_count: null,
-        installment_amount: null,
-        commission: null,
+        concept: p.concept,
+        date: p.date,
+        amount: decimal(p.cents),
+        installment_count: p.installmentCount,
+        installment_amount:
+            installments && billed !== null
+                ? money(installments.nextInstallmentCents(billed))
+                : null,
+        commission: p.commissionCents ? decimal(p.commissionCents) : null,
         interest_rate: null,
         applied_on: null,
         created_at: "",
         updated_at: "",
-        is_installment_purchase: false,
-        is_refund: false,
-        billed_installments: null,
-        remaining_installments: null,
-        remaining_amount: 0,
-        ...data,
-    }
-}
-
-function makeInstallments(
-    concept: string,
-    date: string,
-    amount: number,
-    count: number,
-    billed = 0,
-): Purchase {
-    const monthly = Math.ceil(Number(((amount * 100) / count).toFixed(6))) / 100
-
-    return makePurchase({
-        concept,
-        date,
-        amount: decimal(amount),
-        is_installment_purchase: true,
-        installment_count: count,
-        installment_amount: monthly,
+        is_installment_purchase: installments !== null,
+        is_refund: p.cents < 0,
         billed_installments: billed,
-        remaining_installments: count - billed,
-        remaining_amount: cents(amount - monthly * billed),
-    })
-}
-
-type Payment = { id: string; date: string; amount: number }
-
-type Movement =
-    | { type: "purchase"; purchase: Purchase }
-    | { type: "payment"; payment: Payment }
-
-function seed(): Movement[] {
-    return [
-        {
-            type: "purchase",
-            purchase: makePurchase({
-                concept: "Súper",
-                date: day(-2),
-                amount: "1240.50",
-            }),
-        },
-        {
-            type: "purchase",
-            purchase: makePurchase({
-                concept: "Gasolina",
-                date: day(-6),
-                amount: "800.00",
-            }),
-        },
-        {
-            type: "purchase",
-            purchase: makeInstallments("Pantalla", day(-100), 9600, 12, 3),
-        },
-    ]
-}
-
-const movements = ref<Movement[]>(seed())
-
-const purchases = computed(() =>
-    movements.value.flatMap((m) => (m.type === "purchase" ? [m.purchase] : [])),
-)
-const installmentPurchases = computed(() =>
-    purchases.value.filter((p) => p.is_installment_purchase),
-)
-/** Single purchases, refunds and payments, newest first */
-const recent = computed(() =>
-    movements.value.filter(
-        (m) => m.type === "payment" || !m.purchase.is_installment_purchase,
-    ),
-)
-
-const sum = (values: number[]) => cents(values.reduce((a, b) => a + b, 0))
-
-const paid = computed(() =>
-    sum(
-        movements.value.map((m) => (m.type === "payment" ? m.payment.amount : 0)),
-    ),
-)
-const singleCharges = computed(() =>
-    sum(
-        purchases.value
-            .filter((p) => !p.is_installment_purchase)
-            .map((p) => Number(p.amount)),
-    ),
-)
-const remaining = computed(() =>
-    Math.max(0, cents(TO_AVOID_INTEREST - paid.value)),
-)
-
-const creditCard = computed<CreditCard>(() => {
-    // Each installment purchase bills one monthly payment per closing
-    const nextInstallments = sum(
-        installmentPurchases.value.map((p) => Number(p.installment_amount)),
-    )
-    const installmentsLeft = sum(
-        installmentPurchases.value.map((p) => Number(p.remaining_amount)),
-    )
-    const balanceUsed = cents(
-        TO_AVOID_INTEREST - paid.value + singleCharges.value + installmentsLeft,
-    )
-
-    return {
-        id: "demo",
-        user_id: "demo",
-        name: "Tarjeta de ejemplo",
-        due_date: Number(dueDate.slice(8)),
-        closing_date: Number(closingDate.slice(8)),
-        interest_rate: "45.00",
-        limit: decimal(LIMIT),
-        timezone: "America/Mexico_City",
-        next_due_date: dueDate,
-        next_closing_date: nextClosingDate,
-        balance_used: balanceUsed,
-        available_credit: cents(LIMIT - balanceUsed),
-        current_statement: {
-            closing_date: closingDate,
-            due_date: dueDate,
-            next_closing_date: nextClosingDate,
-            to_avoid_interest: TO_AVOID_INTEREST,
-            paid_since_closing: paid.value,
-            remaining: remaining.value,
-            period_charges: cents(singleCharges.value + nextInstallments),
-            is_overdue: false,
-            bank_difference: null,
-        },
-        deleted_at: null,
-        created_at: "",
-        updated_at: "",
+        remaining_installments:
+            installments && billed !== null ? installments.count - billed : null,
+        remaining_amount:
+            installments && billed !== null
+                ? money(installments.remainingCents(billed))
+                : 0,
     }
-})
+}
+
+/** Newest first, like the card page */
+const sorted = computed(() =>
+    [...data.value.purchases]
+        .sort((a, b) => (a.date === b.date ? b.id - a.id : a.date < b.date ? 1 : -1))
+        .map(toPurchase),
+)
+const purchases = computed(() => sorted.value.filter((p) => !p.is_installment_purchase))
+const installmentPurchases = computed(() =>
+    sorted.value.filter((p) => (p.remaining_installments ?? 0) > 0),
+)
+
+const creditCard = computed<CreditCard>(() => ({
+    id: "demo",
+    user_id: "demo",
+    name: "Tarjeta de ejemplo",
+    due_date: cycle.dueDay,
+    closing_date: cycle.closingDay,
+    interest_rate: "45.00",
+    limit: decimal(LIMIT_CENTS),
+    timezone: "America/Mexico_City",
+    next_due_date: cycle.nextDue(TODAY),
+    next_closing_date: cycle.nextClosing(TODAY),
+    balance_used: money(balanceCents.value),
+    available_credit: money(LIMIT_CENTS - balanceCents.value),
+    current_statement: {
+        closing_date: statement.value.closing,
+        due_date: statement.value.due,
+        next_closing_date: statement.value.nextClosing,
+        to_avoid_interest: money(statement.value.toAvoidInterest),
+        paid_since_closing: money(statement.value.paidSinceClosing),
+        remaining: money(statement.value.remaining),
+        period_charges: money(statement.value.periodCharges),
+        is_overdue: statement.value.isOverdue,
+        bank_difference: null,
+    },
+    deleted_at: null,
+    created_at: "",
+    updated_at: "",
+}))
 
 type Kind = "purchase" | "installments" | "refund" | "payment"
 
@@ -196,123 +205,200 @@ const kinds: { value: Kind; label: string }[] = [
     { value: "payment", label: "Pago" },
 ]
 
-const placeholders: Record<Kind, string> = {
-    purchase: "Ej. Cena",
-    installments: "Ej. Laptop",
-    refund: "Ej. Devolución Amazon",
-    payment: "",
+function blankForm(kind: Kind = "purchase") {
+    return {
+        kind,
+        concept: "",
+        date: TODAY,
+        amount: "",
+        months: "",
+        installment: "",
+        commission: "",
+    }
 }
 
-const form = ref({ kind: "purchase" as Kind, concept: "", amount: "", months: "6" })
+const form = ref(blankForm())
 const message = ref("")
 
-/** Same limits as the server (App\Support\Money and StorePurchaseRequest) */
-const MAX_AMOUNT = 999999999.99
-const MAX_INSTALLMENTS = 60
-
-const amount = computed(() => cents(Number(form.value.amount)))
-const months = computed(() => Number(form.value.months))
-
-/** Only once something was typed, so an empty form isn't all red */
-const amountError = computed(() => {
-    const value = form.value.amount.trim()
-
-    if (value === "") return ""
-    if (!/^\d+(\.\d{1,2})?$/.test(value))
-        return "Solo números, con hasta dos decimales y sin comas."
-    if (amount.value < 0.01) return "Debe ser al menos $0.01."
-    if (amount.value > MAX_AMOUNT) return "Es demasiado."
-
-    return ""
-})
-
-const monthsError = computed(() => {
-    if (form.value.kind !== "installments" || form.value.months === "") return ""
-    if (!Number.isInteger(months.value) || months.value < 1 || months.value > MAX_INSTALLMENTS)
-        return `De 1 a ${MAX_INSTALLMENTS} meses.`
-
-    return ""
-})
-
-const valid = computed(
-    () =>
-        form.value.amount.trim() !== "" &&
-        !amountError.value &&
-        (form.value.kind === "payment" || form.value.concept.trim() !== "") &&
-        (form.value.kind !== "installments" ||
-            (form.value.months !== "" && !monthsError.value)),
+// The payment form starts with what's missing to avoid interest
+watch(
+    () => form.value.kind,
+    (kind) => {
+        if (kind === "payment" && form.value.amount === "" && statement.value.remaining > 0) {
+            form.value.amount = (statement.value.remaining / 100).toFixed(2)
+        }
+    },
 )
 
-function add() {
+/** Whole cents from what was typed, null when it isn't a valid amount */
+function parseCents(value: string): number | null {
+    if (!/^\d+(\.\d{1,2})?$/.test(value.trim())) return null
+
+    return Math.round(Number(value) * 100)
+}
+
+/** Errors only show once something was typed, like after submitting */
+function moneyError(value: string, minCents: number): string {
+    if (value.trim() === "") return ""
+
+    const cents = parseCents(value)
+
+    if (cents === null) return "Solo números, con hasta dos decimales y sin comas."
+    if (cents < minCents) return `Debe ser al menos ${toCurrency(minCents / 100)}.`
+    if (cents > MAX_CENTS) return `No puede ser mayor que ${toCurrency(MAX_CENTS / 100)}.`
+
+    return ""
+}
+
+const isInstallments = computed(() => form.value.kind === "installments")
+
+const errors = computed(() => {
+    const f = form.value
+    const amountCents = parseCents(f.amount)
+    const installmentCents = parseCents(f.installment)
+    const months = Number(f.months)
+
+    return {
+        date:
+            f.date === ""
+                ? "La fecha es obligatoria."
+                : f.date > TODAY
+                  ? "No puede ser después de hoy."
+                  : "",
+        amount: moneyError(f.amount, 1),
+        months:
+            isInstallments.value &&
+            f.months !== "" &&
+            (!Number.isInteger(months) || months < 1 || months > MAX_INSTALLMENTS)
+                ? `De 1 a ${MAX_INSTALLMENTS} meses.`
+                : "",
+        installment: !isInstallments.value
+            ? ""
+            : moneyError(f.installment, 1) ||
+              (installmentCents !== null &&
+              amountCents !== null &&
+              installmentCents > amountCents
+                  ? "No puede ser mayor que el importe."
+                  : ""),
+        commission: isInstallments.value ? moneyError(f.commission, 0) : "",
+    }
+})
+
+const valid = computed(() => {
+    const f = form.value
+
+    return (
+        Object.values(errors.value).every((error) => error === "") &&
+        f.amount.trim() !== "" &&
+        (f.kind === "payment" || f.concept.trim() !== "") &&
+        (!isInstallments.value || f.months !== "")
+    )
+})
+
+/** What the bank usually charges: the amount split evenly, rounded up */
+const suggestedInstallment = computed(() => {
+    const amountCents = parseCents(form.value.amount)
+    const months = Number(form.value.months)
+
+    if (!amountCents || !Number.isInteger(months) || months < 1) return null
+
+    return money(InstallmentPlan.evenInstallmentCents(amountCents, months))
+})
+
+function save() {
     if (!valid.value) return
 
-    const { kind } = form.value
-    const concept = form.value.concept.trim()
-    let movement: Movement
+    const f = form.value
+    const cents = parseCents(f.amount) ?? 0
+    const before = { ...statement.value, available: LIMIT_CENTS - balanceCents.value }
 
-    if (kind === "payment") {
-        movement = {
-            type: "payment",
-            payment: { id: `demo-${nextId++}`, date: today(), amount: amount.value },
-        }
-    } else if (kind === "installments") {
-        movement = {
-            type: "purchase",
-            purchase: makeInstallments(concept, today(), amount.value, months.value),
-        }
+    let added: DemoPurchase | null = null
+
+    if (f.kind === "payment") {
+        data.value.payments.push(payment(f.date, cents))
     } else {
-        movement = {
-            type: "purchase",
-            purchase: makePurchase({
-                concept,
-                date: today(),
-                amount: decimal(kind === "refund" ? -amount.value : amount.value),
-                is_refund: kind === "refund",
-            }),
-        }
+        added = purchase(
+            f.concept.trim(),
+            f.date,
+            f.kind === "refund" ? -cents : cents,
+            f.kind === "installments"
+                ? {
+                      count: Number(f.months),
+                      installmentCents: parseCents(f.installment) ?? undefined,
+                      commissionCents: parseCents(f.commission) ?? 0,
+                  }
+                : undefined,
+        )
+        data.value.purchases.push(added)
     }
 
-    movements.value = [movement, ...movements.value]
-    message.value = explain(movement)
-    form.value = { ...form.value, concept: "", amount: "" }
+    message.value = explain(before, added)
+    form.value = blankForm(f.kind)
 }
 
 /** What just changed on the card, in words */
-function explain(movement: Movement): string {
-    if (movement.type === "payment") {
-        return remaining.value > 0
-            ? `Te faltan ${toCurrency(remaining.value)} para no generar intereses.`
-            : "Listo: este mes no generas intereses."
+function explain(
+    before: { available: number; remaining: number; periodCharges: number },
+    added: DemoPurchase | null,
+): string {
+    const after = statement.value
+    const available = LIMIT_CENTS - balanceCents.value
+    const lines: string[] = []
+
+    const availableChange = available - before.available
+    if (availableChange < 0) {
+        lines.push(`Tu disponible baja ${toCurrency(-availableChange / 100)}.`)
+    } else if (availableChange > 0) {
+        lines.push(`Liberas ${toCurrency(availableChange / 100)} de crédito.`)
     }
 
-    const purchase = movement.purchase
-
-    if (purchase.is_installment_purchase) {
-        return `Apartas ${toCurrency(purchase.amount)} de tu crédito, pero cada corte solo se suman ${toCurrency(purchase.installment_amount ?? 0)}.`
+    if (after.remaining !== before.remaining) {
+        lines.push(
+            after.remaining === 0
+                ? "Ya cubriste el pago para no generar intereses."
+                : `Para no generar intereses: ${toCurrency(after.remaining / 100)} antes del ${toShortDate(after.due)}.`,
+        )
     }
 
-    if (purchase.is_refund) {
-        return "Se abona a la tarjeta y liberas crédito."
+    const periodChange = after.periodCharges - before.periodCharges
+    if (periodChange !== 0) {
+        lines.push(
+            `Se cobra en el corte del ${toShortDate(after.nextClosing)}: ${periodChange > 0 ? "+" : "−"}${toCurrency(Math.abs(periodChange) / 100)} este periodo.`,
+        )
     }
 
-    return "Baja tu disponible y se suma a lo que pagarás después del siguiente corte."
+    const installments = added && plan(added)
+    if (added && installments) {
+        const billed = Math.min(cycle.closingsBetween(added.date, TODAY), installments.count)
+
+        if (billed === 0) {
+            lines.push(
+                `La primera mensualidad, ${toCurrency(installments.nextInstallmentCents(0) / 100)}, se cobra en el corte del ${toShortDate(cycle.nextClosing(added.date))}.`,
+            )
+        }
+    }
+
+    return lines.join(" ")
 }
 
 function reset() {
-    movements.value = seed()
+    data.value = seed()
     message.value = ""
-    form.value = { kind: "purchase", concept: "", amount: "", months: "6" }
+    form.value = blankForm()
 }
+
+const balance = computed(() => money(balanceCents.value))
+const remaining = computed(() => money(statement.value.remaining))
 </script>
 
 <template>
     <div class="grid gap-6 lg:grid-cols-2 lg:items-start">
-        <form class="card is-compact space-y-5" @submit.prevent="add">
+        <form class="card is-compact space-y-5" @submit.prevent="save">
             <div>
                 <h3 class="section-label text-body">Pruébalo</h3>
                 <p class="mt-1 text-small text-muted">
                     Anota algo y mira cómo cambia la tarjeta. Es un ejemplo:
-                    no se guarda nada.
+                    se queda en tu navegador y se borra al recargar.
                 </p>
             </div>
 
@@ -341,72 +427,184 @@ function reset() {
                 </div>
             </div>
 
-            <div v-if="form.kind !== 'payment'">
-                <InputLabel for="demo-concept" value="Concepto" />
-                <TextInput
-                    id="demo-concept"
-                    class="mt-1 block w-full"
-                    v-model="form.concept"
-                    maxlength="255"
-                    :placeholder="placeholders[form.kind]"
-                    required
-                />
-            </div>
+            <!-- Payment: same fields as Payments/Create -->
+            <template v-if="form.kind === 'payment'">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <InputLabel for="demo-amount" value="Pagaste" />
+                        <div class="relative mt-1">
+                            <span
+                                class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted text-large"
+                                >$</span
+                            >
+                            <TextInput
+                                id="demo-amount"
+                                inputmode="decimal"
+                                class="block w-full pl-8"
+                                v-model="form.amount"
+                                required
+                            />
+                        </div>
+                        <InputError class="mt-2" :message="errors.amount" />
+                    </div>
 
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <InputLabel
-                        for="demo-amount"
-                        :value="
-                            form.kind === 'refund'
-                                ? 'Te devuelven'
-                                : form.kind === 'payment'
-                                  ? 'Pagas'
-                                  : 'Importe'
-                        "
-                    />
-                    <div class="relative mt-1">
-                        <span
-                            class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted text-large"
-                            >$</span
-                        >
+                    <div>
+                        <InputLabel for="demo-date" value="Fecha" />
                         <TextInput
-                            id="demo-amount"
-                            inputmode="decimal"
-                            class="block w-full pl-8"
-                            v-model="form.amount"
-                            placeholder="0.00"
+                            id="demo-date"
+                            type="date"
+                            class="mt-1 block w-full"
+                            :max="TODAY"
+                            v-model="form.date"
                             required
                         />
+                        <InputError class="mt-2" :message="errors.date" />
                     </div>
-                    <InputError class="mt-2" :message="amountError" />
                 </div>
 
-                <div v-if="form.kind === 'installments'">
-                    <InputLabel for="demo-months" value="Meses" />
+                <div class="flex flex-col items-start gap-2 text-small">
+                    <button
+                        v-if="remaining > 0"
+                        type="button"
+                        class="link"
+                        @click="form.amount = remaining.toFixed(2)"
+                    >
+                        Para no generar intereses ({{ toCurrency(remaining) }})
+                    </button>
+                    <button
+                        v-if="balance > 0"
+                        type="button"
+                        class="link"
+                        @click="form.amount = balance.toFixed(2)"
+                    >
+                        Todo el saldo ({{ toCurrency(balance) }})
+                    </button>
+                </div>
+            </template>
+
+            <!-- Purchase, installments or refund: same fields as Purchases/Create -->
+            <template v-else>
+                <div>
+                    <InputLabel for="demo-concept" value="Concepto" />
                     <TextInput
-                        id="demo-months"
-                        type="number"
-                        inputmode="numeric"
-                        min="1"
-                        :max="MAX_INSTALLMENTS"
+                        id="demo-concept"
                         class="mt-1 block w-full"
-                        v-model="form.months"
+                        v-model="form.concept"
+                        maxlength="255"
+                        :placeholder="
+                            form.kind === 'refund'
+                                ? 'Ej. Devolución Amazon'
+                                : 'Ej. Súper, gasolina'
+                        "
                         required
                     />
-                    <InputError class="mt-2" :message="monthsError" />
                 </div>
-            </div>
 
-            <button
-                v-if="form.kind === 'payment' && remaining > 0"
-                type="button"
-                class="link text-small"
-                @click="form.amount = remaining.toFixed(2)"
-            >
-                Lo que falta para no generar intereses:
-                {{ toCurrency(remaining) }}
-            </button>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <InputLabel for="demo-date" value="Fecha" />
+                        <TextInput
+                            id="demo-date"
+                            type="date"
+                            class="mt-1 block w-full"
+                            :max="TODAY"
+                            v-model="form.date"
+                            required
+                        />
+                        <InputError class="mt-2" :message="errors.date" />
+                    </div>
+
+                    <div>
+                        <InputLabel
+                            for="demo-amount"
+                            :value="form.kind === 'refund' ? 'Te devuelven' : 'Importe'"
+                        />
+                        <div class="relative mt-1">
+                            <span
+                                class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted text-large"
+                                >$</span
+                            >
+                            <TextInput
+                                id="demo-amount"
+                                inputmode="decimal"
+                                class="block w-full pl-8"
+                                v-model="form.amount"
+                                required
+                            />
+                        </div>
+                        <InputError class="mt-2" :message="errors.amount" />
+                    </div>
+                </div>
+
+                <template v-if="isInstallments">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <InputLabel for="demo-months" value="Meses" />
+                            <TextInput
+                                id="demo-months"
+                                type="number"
+                                inputmode="numeric"
+                                min="1"
+                                :max="MAX_INSTALLMENTS"
+                                class="mt-1 block w-full"
+                                v-model="form.months"
+                                required
+                            />
+                            <InputError class="mt-2" :message="errors.months" />
+                        </div>
+
+                        <div>
+                            <InputLabel for="demo-installment" value="Mensualidad" />
+                            <div class="relative mt-1">
+                                <span
+                                    class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted text-large"
+                                    >$</span
+                                >
+                                <TextInput
+                                    id="demo-installment"
+                                    inputmode="decimal"
+                                    class="block w-full pl-8"
+                                    v-model="form.installment"
+                                    :placeholder="suggestedInstallment?.toFixed(2)"
+                                />
+                            </div>
+                            <InputError class="mt-2" :message="errors.installment" />
+                        </div>
+
+                        <p
+                            v-if="suggestedInstallment"
+                            class="col-span-2 -mt-2 text-small text-muted"
+                        >
+                            Si la dejas vacía:
+                            {{ toCurrency(suggestedInstallment) }} al mes.
+                        </p>
+                    </div>
+
+                    <div>
+                        <InputLabel for="demo-commission">
+                            Comisión por apertura
+                            <span class="font-normal text-muted">(opcional)</span>
+                        </InputLabel>
+                        <div class="relative mt-1 w-1/2 pr-2">
+                            <span
+                                class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted text-large"
+                                >$</span
+                            >
+                            <TextInput
+                                id="demo-commission"
+                                inputmode="decimal"
+                                class="block w-full pl-8"
+                                v-model="form.commission"
+                            />
+                        </div>
+                        <InputError class="mt-2" :message="errors.commission" />
+                    </div>
+                </template>
+
+                <p v-if="form.kind === 'refund'" class="text-small text-muted">
+                    Se abona a la tarjeta: baja tu saldo y libera crédito.
+                </p>
+            </template>
 
             <p
                 v-if="message"
@@ -421,7 +619,7 @@ function reset() {
                     type="submit"
                     class="!m-0 justify-center"
                     :disabled="!valid"
-                    >Anotar</PrimaryButton
+                    >Guardar</PrimaryButton
                 >
                 <SecondaryButton type="button" class="!m-0" @click="reset"
                     >Reiniciar</SecondaryButton
@@ -438,41 +636,27 @@ function reset() {
                 <h3 class="mb-3 section-label text-body">A meses</h3>
                 <ul class="card is-list">
                     <PurchaseRow
-                        v-for="purchase in installmentPurchases"
-                        :key="purchase.id"
-                        :purchase="purchase"
+                        v-for="p in installmentPurchases"
+                        :key="p.id"
+                        :purchase="p"
                         readonly
                     />
                 </ul>
             </section>
 
             <section>
-                <h3 class="mb-3 section-label text-body">Movimientos</h3>
-                <ul v-if="recent.length" class="card is-list">
-                    <template v-for="movement in recent">
-                        <PurchaseRow
-                            v-if="movement.type === 'purchase'"
-                            :key="movement.purchase.id"
-                            :purchase="movement.purchase"
-                            readonly
-                        />
-                        <li
-                            v-else
-                            :key="movement.payment.id"
-                            class="flex items-start gap-3 py-3"
-                        >
-                            <div class="min-w-0 flex-1">
-                                <p class="font-medium">Pago</p>
-                                <p class="text-small text-muted">
-                                    {{ toDate(movement.payment.date) }}
-                                </p>
-                            </div>
-                            <p class="font-semibold text-success">
-                                +{{ toCurrency(movement.payment.amount) }}
-                            </p>
-                        </li>
-                    </template>
+                <h3 class="mb-3 section-label text-body">Compras</h3>
+                <ul v-if="purchases.length" class="card is-list">
+                    <PurchaseRow
+                        v-for="p in purchases"
+                        :key="p.id"
+                        :purchase="p"
+                        readonly
+                    />
                 </ul>
+                <p v-else class="card is-empty text-center text-small text-muted">
+                    Aún no hay compras en esta tarjeta.
+                </p>
             </section>
         </div>
     </div>
