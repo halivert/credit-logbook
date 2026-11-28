@@ -2,6 +2,7 @@
 
 namespace App\Purchases;
 
+use App\Support\Money;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 
@@ -49,20 +50,7 @@ trait HasInstallments
      */
     protected function billedAmount(): Attribute
     {
-        return new Attribute(function () {
-            if (! $this->installment_count) {
-                return (float) $this->amount;
-            }
-
-            // Once every installment is billed, the whole purchase is
-            if ($this->billed_installments >= $this->installment_count) {
-                return (float) $this->amount;
-            }
-
-            $billed = $this->billed_installments * $this->getRawOriginal('installment_amount');
-
-            return round(min($billed, $this->amount), 2);
-        });
+        return new Attribute(fn () => Money::fromCents($this->billedCents()));
     }
 
     /**
@@ -70,9 +58,7 @@ trait HasInstallments
      */
     protected function remainingAmount(): Attribute
     {
-        return new Attribute(
-            fn () => round(max(0, $this->amount - $this->billed_amount), 2)
-        );
+        return new Attribute(fn () => Money::fromCents($this->remainingCents()));
     }
 
     /**
@@ -89,16 +75,35 @@ trait HasInstallments
 
             $isLast = $this->billed_installments === $this->installment_count - 1;
 
-            $installmentAmount = $isLast
-                ? $this->remaining_amount
-                : min($this->remaining_amount, (float) $amount);
+            $cents = $isLast
+                ? $this->remainingCents()
+                : min($this->remainingCents(), Money::toCents($amount));
 
             if ($this->billed_installments < 1) {
-                return round($installmentAmount + $this->commission, 2);
+                $cents += Money::toCents($this->commission);
             }
 
-            return round($installmentAmount, 2);
+            return Money::fromCents($cents);
         });
+    }
+
+    private function billedCents(): int
+    {
+        $amount = Money::toCents($this->getRawOriginal('amount'));
+
+        // Single payment purchases and fully billed installments
+        if (! $this->installment_count || $this->billed_installments >= $this->installment_count) {
+            return $amount;
+        }
+
+        $installment = Money::toCents($this->getRawOriginal('installment_amount'));
+
+        return min($this->billed_installments * $installment, $amount);
+    }
+
+    private function remainingCents(): int
+    {
+        return max(0, Money::toCents($this->getRawOriginal('amount')) - $this->billedCents());
     }
 
     /**

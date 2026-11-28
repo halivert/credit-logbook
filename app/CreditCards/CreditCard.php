@@ -5,6 +5,7 @@ namespace App\CreditCards;
 use App\Models\User;
 use App\Payments\Payment;
 use App\Purchases\Purchase;
+use App\Support\Money;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -73,7 +74,9 @@ class CreditCard extends Model
 
     protected function availableCredit(): Attribute
     {
-        return new Attribute(fn () => $this->limit - $this->balance_used);
+        return new Attribute(
+            fn () => Money::fromCents(Money::toCents($this->limit) - $this->balanceCents())
+        );
     }
 
     /**
@@ -103,15 +106,22 @@ class CreditCard extends Model
      */
     protected function balanceUsed(): Attribute
     {
-        return new Attribute(function () {
-            $charges = (float) $this->purchases()
-                ->toBase()
-                ->sum(DB::raw('amount + coalesce(commission, 0)'));
+        return new Attribute(fn () => Money::fromCents($this->balanceCents()));
+    }
 
-            $payments = (float) $this->payments()->toBase()->sum('amount');
+    /**
+     * The sums are exact in the database (decimal columns), each one is turned
+     * into cents before subtracting.
+     */
+    private function balanceCents(): int
+    {
+        $charges = $this->purchases()
+            ->toBase()
+            ->sum(DB::raw('amount + coalesce(commission, 0)'));
 
-            return round($charges - $payments, 2);
-        });
+        $payments = $this->payments()->toBase()->sum('amount');
+
+        return Money::toCents($charges) - Money::toCents($payments);
     }
 
     /**
