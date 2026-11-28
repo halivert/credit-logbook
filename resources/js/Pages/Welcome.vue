@@ -28,7 +28,7 @@ const features = [
 <template>
     <Head title="Bienvenido" />
 
-    <div class="min-h-screen bg-page">
+    <div class="min-h-screen flex flex-col bg-page">
         <header
             class="flex flex-col items-center gap-6 px-4 pt-16 pb-12 text-center"
         >
@@ -72,7 +72,7 @@ const features = [
             </p>
         </header>
 
-        <main class="max-w-5xl mx-auto px-4 sm:px-6 pb-16 space-y-12">
+        <main class="w-full max-w-5xl mx-auto px-4 sm:px-6 pb-16 space-y-12">
             <ul class="grid gap-4 sm:grid-cols-3">
                 <li
                     v-for="feature in features"
@@ -98,7 +98,7 @@ const features = [
             </section>
         </main>
 
-        <footer class="pb-10">
+        <footer class="mt-auto pb-10">
             <LegalLinks />
         </footer>
     </div>
