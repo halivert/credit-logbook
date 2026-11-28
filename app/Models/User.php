@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\CreditCards\CreditCard;
 use App\Enums\Subscription;
+use App\Notifications\ResetPassword;
 use App\Security\SecurityEvent;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -71,6 +72,14 @@ class User extends Authenticatable implements PasskeyUser
     protected function email(): Attribute
     {
         return Attribute::set(fn (?string $email) => $email === null ? null : Str::lower($email));
+    }
+
+    /**
+     * Queued, see App\Notifications\ResetPassword.
+     */
+    public function sendPasswordResetNotification(#[\SensitiveParameter] $token): void
+    {
+        $this->notify(new ResetPassword($token));
     }
 
     public function securityEvents(): HasMany

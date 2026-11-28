@@ -102,7 +102,9 @@ SPF; si un día usas dos proveedores, inclúyelos en el mismo.
 
 ## 5. Worker y scheduler
 
-- *Queues*: conexión `redis`, cola `default`, `--tries=3`.
+- *Queues*: conexión `redis`, cola `default`, `--tries=3`. Manda los correos
+  de restablecer contraseña, para que la página no espere al servidor de
+  correo; sin worker, esos correos no salen.
 - *Scheduler*: `php artisan schedule:run` cada minuto. Corre los respaldos,
   la limpieza de eventos de seguridad viejos y las alertas.
 

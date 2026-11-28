@@ -3,7 +3,9 @@
 namespace Tests\Feature\Auth;
 
 use App\Models\User;
-use Illuminate\Auth\Notifications\ResetPassword;
+use App\Notifications\ResetPassword;
+use Illuminate\Notifications\SendQueuedNotifications;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
@@ -62,5 +64,20 @@ class PasswordResetTest extends TestCase
 
         Notification::assertSentToTimes($user, ResetPassword::class, 1);
         Notification::assertCount(1);
+    }
+
+    public function test_the_reset_email_goes_through_the_queue(): void
+    {
+        Queue::fake();
+
+        $user = User::factory()->create();
+
+        $this->post(route('password.email'), ['email' => $user->email]);
+
+        // The page doesn't wait for the mail server: the worker sends it
+        Queue::assertPushed(
+            SendQueuedNotifications::class,
+            fn (SendQueuedNotifications $job) => $job->notification instanceof ResetPassword,
+        );
     }
 }
