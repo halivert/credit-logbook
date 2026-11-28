@@ -20,7 +20,7 @@ const links =
 </script>
 
 <template>
-    <div class="flex flex-wrap -m-1">
+    <div class="actions is-compact">
         <template v-for="(link, index) in links" :key="index">
             <Link
                 v-if="link.url"

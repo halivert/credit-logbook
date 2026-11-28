@@ -35,7 +35,7 @@ function deletePurchase(purchase: Purchase) {
 
                 <Link
                     :href="route('credit-cards.edit', creditCard)"
-                    class="btn is-icon !m-0 shrink-0"
+                    class="btn is-icon shrink-0"
                 >
                     <PencilIcon class="size-4" />
                     <span class="sr-only">Editar tarjeta</span>
@@ -57,13 +57,13 @@ function deletePurchase(purchase: Purchase) {
                 <div class="grid grid-cols-2 gap-4 px-1">
                     <Link
                         :href="route('credit-cards.purchases.create', creditCard)"
-                        class="btn is-primary flex justify-center items-center !m-0"
+                        class="btn is-primary flex justify-center items-center"
                     >
                         Agregar compra
                     </Link>
                     <Link
                         :href="route('credit-cards.payments.create', creditCard)"
-                        class="btn flex justify-center items-center !m-0"
+                        class="btn flex justify-center items-center"
                     >
                         Registrar pago
                     </Link>

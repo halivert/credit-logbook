@@ -40,7 +40,7 @@ const features = [
                 queda y cuándo pagar.
             </p>
 
-            <nav v-if="canLogin" class="flex flex-wrap justify-center gap-2">
+            <nav v-if="canLogin" class="actions justify-center">
                 <Link
                     v-if="$page.props.auth.user"
                     :href="route('credit-cards.index')"

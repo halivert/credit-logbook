@@ -88,13 +88,12 @@ const closeModal = () => {
                     <InputError :message="form.errors.password" class="mt-2" />
                 </div>
 
-                <div class="mt-6 flex justify-end">
+                <div class="mt-6 actions justify-end">
                     <SecondaryButton @click="closeModal">
                         Cancelar
                     </SecondaryButton>
 
                     <DangerButton
-                        class="ml-3"
                         :class="{ 'opacity-25': form.processing }"
                         :disabled="form.processing"
                         @click="deleteUser"

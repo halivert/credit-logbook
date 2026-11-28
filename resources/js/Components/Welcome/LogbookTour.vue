@@ -219,14 +219,13 @@ function next() {
                 </p>
             </div>
 
-            <div class="flex flex-wrap gap-2">
+            <div class="actions">
                 <SecondaryButton
-                    class="!m-0"
                     :disabled="current === 0"
                     @click="current--"
                     >Anterior</SecondaryButton
                 >
-                <PrimaryButton type="button" class="!m-0" @click="next">
+                <PrimaryButton type="button" @click="next">
                     {{ isLast ? "Otra vez" : "Siguiente" }}
                 </PrimaryButton>
             </div>

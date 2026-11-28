@@ -78,7 +78,7 @@ function submit() {
                 <InputError class="mt-2" :message="form.errors.password" />
             </div>
 
-            <div class="flex items-center justify-between">
+            <div class="flex items-center justify-between gap-4">
                 <label class="flex items-center">
                     <Checkbox name="remember" v-model:checked="form.remember" />
                     <span class="ms-2 text-small text-muted"
@@ -89,7 +89,7 @@ function submit() {
                 <Link
                     v-if="canResetPassword"
                     :href="route('password.request')"
-                    class="text-small text-primary hover:underline"
+                    class="text-small text-primary text-right hover:underline"
                 >
                     ¿Olvidaste tu contraseña?
                 </Link>
@@ -112,7 +112,7 @@ function submit() {
 
                 <button
                     type="button"
-                    class="btn flex w-full justify-center items-center !mx-0"
+                    class="btn flex w-full justify-center items-center"
                     :disabled="passkey.isLoading.value"
                     @click="passkey.verify"
                 >

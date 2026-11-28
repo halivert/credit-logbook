@@ -14,6 +14,8 @@
  * Classes
  *   .btn            button or link that looks like one
  *                   .is-primary .is-error .is-icon
+ *   .actions        row of buttons with room between them
+ *                   .is-compact (icon buttons)
  *   .card           box around content
  *                   .is-compact .is-list (rows with dividers) .is-empty
  *                   .is-link (whole card clickable) .is-flush (no padding)
