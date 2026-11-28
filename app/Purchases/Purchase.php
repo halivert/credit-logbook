@@ -4,15 +4,12 @@ namespace App\Purchases;
 
 use App\CreditCards\CreditCard;
 use App\Models\User;
-use App\Payments\Payment;
-use App\Payments\PaymentPurchase;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 
 class Purchase extends Model
@@ -21,51 +18,39 @@ class Purchase extends Model
 
     protected $fillable = [
         'concept',
-        'datetime',
+        'date',
         'amount',
         'installment_count',
         'installment_amount',
         'commission',
         'interest_rate',
-        'paid_at',
-        'applied_at',
+        'applied_on',
     ];
 
     protected $casts = [
-        'datetime' => 'datetime',
+        'date' => 'date:Y-m-d',
         'amount' => 'decimal:2',
         'installment_count' => 'integer',
         'installment_amount' => 'decimal:2',
         'commission' => 'decimal:2',
         'interest_rate' => 'decimal:2',
-        'paid_at' => 'datetime',
-        'applied_at' => 'datetime',
+        'applied_on' => 'date:Y-m-d',
     ];
 
     protected $appends = [
         'is_installment_purchase',
-        'paid_months',
-        'remaining_months',
-        'paid_amount',
+        'is_refund',
+        'billed_installments',
+        'remaining_installments',
         'remaining_amount',
     ];
 
-    protected $with = [
-        'payments',
-    ];
 
     public function creditCard(): BelongsTo
     {
         return $this->belongsTo(CreditCard::class);
     }
 
-    public function payments(): BelongsToMany
-    {
-        return $this->belongsToMany(Payment::class)
-            ->using(PaymentPurchase::class)
-            ->withPivot('installment_number')
-            ->orderByPivot('installment_number', 'desc');
-    }
 
     public function user(): HasOneThrough
     {
@@ -79,20 +64,17 @@ class Purchase extends Model
         );
     }
 
-    protected function appliedAt(): Attribute
+    /**
+     * Returns are stored as negative purchases: they're a credit to the card.
+     */
+    protected function isRefund(): Attribute
     {
-        return new Attribute(fn ($value) => $value ?? $this->datetime);
+        return new Attribute(fn () => $this->amount < 0);
     }
 
     /**
      * Create a new factory instance for the model.
      */
-    protected static function booted(): void
-    {
-        // The money of its payments was still paid: keep them, unlinked.
-        static::deleting(fn (Purchase $purchase) => $purchase->payments()->detach());
-    }
-
     protected static function newFactory(): Factory
     {
         return PurchaseFactory::new();

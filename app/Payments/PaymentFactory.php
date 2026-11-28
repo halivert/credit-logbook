@@ -2,6 +2,7 @@
 
 namespace App\Payments;
 
+use App\CreditCards\CreditCard;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -19,7 +20,8 @@ class PaymentFactory extends Factory
     public function definition(): array
     {
         return [
-            'datetime' => fake()->dateTimeBetween('-1 week'),
+            'credit_card_id' => CreditCard::factory(),
+            'date' => fake()->dateTimeBetween('-1 week')->format('Y-m-d'),
             'amount' => fake()->randomNumber(4),
         ];
     }

@@ -2,6 +2,7 @@
 
 namespace App\Purchases;
 
+use App\Support\Money;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
@@ -25,18 +26,18 @@ class UpdatePurchaseRequest extends FormRequest
     {
         $rules = [
             'concept' => 'required|string|max:255',
-            'datetime' => 'required|date|before_or_equal:now',
-            'applied_at' => 'date|nullable|before_or_equal:now',
-            'amount' => 'required|decimal:0,2|min:1',
+            'date' => 'required|date_format:Y-m-d|before_or_equal:today',
+            'applied_on' => 'nullable|date_format:Y-m-d|after_or_equal:date|before_or_equal:today',
+            'amount' => ['required', ...Money::rules()],
         ];
 
         if ($this->purchase->is_installment_purchase) {
             return [
                 ...$rules,
-                'installment_amount' => "required|decimal:0,2|min:1|lte:amount",
-                'installment_count' => "required|integer",
-                'commission' => "decimal:0,2|nullable",
-                'interest_rate' => "decimal:0,2|nullable",
+                'installment_amount' => ['required', ...Money::rules(), 'lte:amount'],
+                'installment_count' => ['required', 'integer', 'min:1', 'max:'.StorePurchaseRequest::MAX_INSTALLMENTS],
+                'commission' => ['nullable', ...Money::rules('0')],
+                'interest_rate' => ['nullable', 'decimal:0,2', 'min:0', 'max:200'],
             ];
         }
 
@@ -47,13 +48,27 @@ class UpdatePurchaseRequest extends FormRequest
     {
         return [
             'concept' => __('labels.concept'),
-            'datetime' => __('labels.datetime'),
-            'applied_at' => __('fecha de aplicación'),
+            'date' => __('labels.date'),
+            'applied_on' => __('labels.applied_on'),
             'amount' => __('labels.amount'),
             'installment_amount' => __('labels.installment_amount'),
             'installment_count' => __('labels.installment_count'),
             'commission' => __('labels.commission'),
             'interest_rate' => __('labels.interest_rate'),
         ];
+    }
+
+    /**
+     * A return keeps being a return: the form shows its amount as positive.
+     */
+    public function validated($key = null, $default = null)
+    {
+        $validated = parent::validated();
+
+        if ($this->purchase->is_refund) {
+            $validated['amount'] = -abs($validated['amount']);
+        }
+
+        return data_get($validated, $key, $default);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\CreditCards;
 
+use App\Support\Money;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
@@ -38,7 +39,7 @@ class UpdateCreditCardRequest extends FormRequest
             'due_date' => 'sometimes|required|integer|min:1|max:28',
             'closing_date' => 'sometimes|required|integer|min:1|max:28',
             'interest_rate' => 'sometimes|nullable|decimal:0,2|min:0|max:200',
-            'limit' => 'sometimes|required|decimal:0,2|min:0',
+            'limit' => ['sometimes', 'required', ...Money::rules('0')],
         ];
     }
 

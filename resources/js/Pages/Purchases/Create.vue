@@ -1,34 +1,58 @@
 <script setup lang="ts">
 import type { CreditCard } from "@/types"
-import { Head, Link, useForm } from "@inertiajs/vue3"
+import { computed } from "vue"
+import { Head, useForm } from "@inertiajs/vue3"
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue"
 import PrimaryButton from "@/Components/PrimaryButton.vue"
 import InputError from "@/Components/InputError.vue"
 import InputLabel from "@/Components/InputLabel.vue"
 import TextInput from "@/Components/TextInput.vue"
-import Checkbox from "@/Components/Checkbox.vue"
+import { today, useFormat } from "@/format"
 
 const props = defineProps<{
     creditCard: CreditCard
 }>()
 
-const datetime = new Date().toISOString().split("T")[0]
+type Kind = "purchase" | "installments" | "refund"
+
+const kinds: { value: Kind; label: string }[] = [
+    { value: "purchase", label: "Compra" },
+    { value: "installments", label: "A meses" },
+    { value: "refund", label: "Devolución" },
+]
+
+const { toCurrency } = useFormat()
+
 
 const form = useForm({
-    is_installment_purchase: false,
+    kind: "purchase" as Kind,
     concept: "",
-    datetime,
+    date: today(),
     amount: "",
     installment_count: "",
     installment_amount: "",
     commission: "",
-    interest_rate: "",
+})
+
+/**
+ * What the bank usually charges: the amount split evenly, rounded up. The
+ * server uses the same split when the field is left empty.
+ */
+const suggestedInstallment = computed(() => {
+    const amount = Number(form.amount)
+    const count = Number(form.installment_count)
+
+    if (!amount || !count) return null
+
+    // Rounded to 6 decimals first so float noise doesn't add a cent
+    return Math.ceil(Number(((amount * 100) / count).toFixed(6))) / 100
 })
 
 function submit() {
-    form.transform((data) => ({
+    form.transform(({ kind, ...data }) => ({
         ...data,
-        datetime: new Date(data.datetime + "T00:00"),
+        is_installment_purchase: kind === "installments",
+        is_refund: kind === "refund",
     })).post(route("credit-cards.purchases.store", props.creditCard))
 }
 </script>
@@ -39,38 +63,39 @@ function submit() {
     <AuthenticatedLayout>
         <template #header>
             <h2
-                class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight"
+                class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight truncate"
             >
-                Agregar compra: {{ creditCard.name }}
+                {{ creditCard.name }}
             </h2>
         </template>
 
-        <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="py-6 sm:py-12">
+            <div class="max-w-lg mx-auto px-4 sm:px-6">
                 <div
-                    class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-3"
+                    class="bg-white dark:bg-gray-800 shadow-sm rounded-lg p-4 sm:p-6"
                 >
-                    <form class="space-y-2" @submit.prevent="submit">
-                        <div>
-                            <div class="flex gap-2 flex-wrap items-center">
-                                <InputLabel
-                                    class="inline-block"
-                                    for="is_installment_purchase"
-                                    value="Compra a plazos"
-                                />
-
-                                <Checkbox
-                                    id="is_installment_purchase"
-                                    class="rounded accent-red-700"
-                                    v-model="form.is_installment_purchase"
-                                    :checked="form.is_installment_purchase"
-                                />
-                            </div>
-
-                            <InputError
-                                class="mt-2"
-                                :message="form.errors.is_installment_purchase"
-                            />
+                    <form class="space-y-5" @submit.prevent="submit">
+                        <div
+                            class="grid grid-cols-3 gap-1 rounded-lg bg-gray-100 dark:bg-gray-900 p-1"
+                            role="radiogroup"
+                            aria-label="Tipo"
+                        >
+                            <button
+                                v-for="kind in kinds"
+                                :key="kind.value"
+                                type="button"
+                                role="radio"
+                                :aria-checked="form.kind === kind.value"
+                                class="rounded-md py-2 text-sm font-medium transition focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                :class="
+                                    form.kind === kind.value
+                                        ? 'bg-white dark:bg-gray-700 shadow-sm'
+                                        : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
+                                "
+                                @click="form.kind = kind.value"
+                            >
+                                {{ kind.label }}
+                            </button>
                         </div>
 
                         <div>
@@ -81,6 +106,11 @@ function submit() {
                                 type="text"
                                 class="mt-1 block w-full"
                                 v-model="form.concept"
+                                :placeholder="
+                                    form.kind === 'refund'
+                                        ? 'Ej. Devolución Amazon'
+                                        : 'Ej. Súper, gasolina'
+                                "
                                 required
                                 autofocus
                             />
@@ -91,141 +121,170 @@ function submit() {
                             />
                         </div>
 
-                        <div>
-                            <InputLabel for="datetime" value="Fecha" />
-
-                            <TextInput
-                                id="datetime"
-                                type="date"
-                                class="mt-1 block w-full"
-                                v-model="form.datetime"
-                                required
-                            />
-
-                            <InputError
-                                class="mt-2"
-                                :message="form.errors.datetime"
-                            />
-                        </div>
-
-                        <div>
-                            <InputLabel for="amount" value="Importe" />
-
-                            <TextInput
-                                id="amount"
-                                type="number"
-                                class="mt-1 block w-full"
-                                v-model="form.amount"
-                                required
-                            />
-
-                            <InputError
-                                class="mt-2"
-                                :message="form.errors.amount"
-                            />
-                        </div>
-
-                        <div
-                            class="flex flex-wrap gap-2"
-                            v-if="form.is_installment_purchase"
-                        >
-                            <div class="flex-1 min-w-32">
-                                <InputLabel
-                                    for="installment_count"
-                                    value="Plazos"
-                                />
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <InputLabel for="date" value="Fecha" />
 
                                 <TextInput
-                                    id="installment_count"
-                                    type="number"
-                                    min="1"
+                                    id="date"
+                                    type="date"
                                     class="mt-1 block w-full"
-                                    v-model="form.installment_count"
+                                    v-model="form.date"
                                     required
                                 />
 
                                 <InputError
                                     class="mt-2"
-                                    :message="form.errors.installment_count"
+                                    :message="form.errors.date"
                                 />
                             </div>
 
-                            <div class="flex-1 min-w-32">
+                            <div>
                                 <InputLabel
-                                    for="installment_amount"
-                                    value="Importe de plazo"
+                                    for="amount"
+                                    :value="
+                                        form.kind === 'refund'
+                                            ? 'Te devuelven'
+                                            : 'Importe'
+                                    "
                                 />
 
-                                <TextInput
-                                    id="installment_amount"
-                                    type="number"
-                                    min="0"
-                                    :max="form.amount"
-                                    step="0.01"
-                                    class="mt-1 block w-full"
-                                    v-model="form.installment_amount"
-                                    required
-                                />
+                                <div class="relative mt-1">
+                                    <span
+                                        class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-gray-500 dark:text-gray-400"
+                                        >$</span
+                                    >
+                                    <TextInput
+                                        id="amount"
+                                        type="number"
+                                        inputmode="decimal"
+                                        step="0.01"
+                                        min="0.01"
+                                        class="block w-full pl-7"
+                                        v-model="form.amount"
+                                        required
+                                    />
+                                </div>
 
                                 <InputError
                                     class="mt-2"
-                                    :message="form.errors.installment_amount"
+                                    :message="form.errors.amount"
                                 />
                             </div>
                         </div>
 
-                        <div
-                            class="flex flex-wrap gap-2"
-                            v-if="form.is_installment_purchase"
-                        >
-                            <div class="flex-1 min-w-32">
-                                <InputLabel
-                                    for="commission"
-                                    value="% Comisión"
-                                />
+                        <template v-if="form.kind === 'installments'">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <InputLabel
+                                        for="installment_count"
+                                        value="Meses"
+                                    />
 
-                                <TextInput
-                                    id="commission"
-                                    type="number"
-                                    min="1"
-                                    class="mt-1 block w-full"
-                                    v-model="form.commission"
-                                />
+                                    <TextInput
+                                        id="installment_count"
+                                        type="number"
+                                        inputmode="numeric"
+                                        min="1"
+                                        max="60"
+                                        class="mt-1 block w-full"
+                                        v-model="form.installment_count"
+                                        required
+                                    />
+
+                                    <InputError
+                                        class="mt-2"
+                                        :message="form.errors.installment_count"
+                                    />
+                                </div>
+
+                                <div>
+                                    <InputLabel
+                                        for="installment_amount"
+                                        value="Mensualidad"
+                                    />
+
+                                    <div class="relative mt-1">
+                                        <span
+                                            class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-gray-500 dark:text-gray-400"
+                                            >$</span
+                                        >
+                                        <TextInput
+                                            id="installment_amount"
+                                            type="number"
+                                            inputmode="decimal"
+                                            min="0.01"
+                                            step="0.01"
+                                            class="block w-full pl-7"
+                                            v-model="form.installment_amount"
+                                            :placeholder="
+                                                suggestedInstallment?.toFixed(2)
+                                            "
+                                        />
+                                    </div>
+
+                                    <InputError
+                                        class="mt-2"
+                                        :message="form.errors.installment_amount"
+                                    />
+                                </div>
+
+                                <p
+                                    v-if="suggestedInstallment"
+                                    class="col-span-2 -mt-2 text-sm text-gray-500 dark:text-gray-400"
+                                >
+                                    Si la dejas vacía:
+                                    {{ toCurrency(suggestedInstallment) }} al
+                                    mes.
+                                </p>
+                            </div>
+
+                            <div>
+                                <InputLabel for="commission">
+                                    Comisión por apertura
+                                    <span
+                                        class="font-normal text-gray-500 dark:text-gray-400"
+                                        >(opcional)</span
+                                    >
+                                </InputLabel>
+
+                                <div class="relative mt-1 w-1/2 pr-2">
+                                    <span
+                                        class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-gray-500 dark:text-gray-400"
+                                        >$</span
+                                    >
+                                    <TextInput
+                                        id="commission"
+                                        type="number"
+                                        inputmode="decimal"
+                                        min="0"
+                                        step="0.01"
+                                        class="block w-full pl-7"
+                                        v-model="form.commission"
+                                    />
+                                </div>
 
                                 <InputError
                                     class="mt-2"
                                     :message="form.errors.commission"
                                 />
                             </div>
+                        </template>
 
-                            <div class="flex-1 min-w-32">
-                                <InputLabel
-                                    for="interest_rate"
-                                    value="% Intereses"
-                                />
+                        <p
+                            v-if="form.kind === 'refund'"
+                            class="text-sm text-gray-500 dark:text-gray-400"
+                        >
+                            Se abona a la tarjeta: baja tu saldo y libera
+                            crédito.
+                        </p>
 
-                                <TextInput
-                                    id="interest_rate"
-                                    type="number"
-                                    min="0"
-                                    class="mt-1 block w-full"
-                                    v-model="form.interest_rate"
-                                />
-
-                                <InputError
-                                    class="mt-2"
-                                    :message="form.errors.interest_rate"
-                                />
-                            </div>
-                        </div>
-
-                        <div class="text-right">
-                            <PrimaryButton
-                                type="submit"
-                                :disabled="form.processing"
-                                >Guardar</PrimaryButton
-                            >
-                        </div>
+                        <PrimaryButton
+                            type="submit"
+                            class="w-full justify-center sm:w-auto"
+                            :disabled="form.processing"
+                            >Guardar</PrimaryButton
+                        >
                     </form>
                 </div>
             </div>

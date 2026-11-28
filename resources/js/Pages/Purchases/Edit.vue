@@ -11,24 +11,19 @@ import Checkbox from "@/Components/Checkbox.vue"
 const props = defineProps<{
     creditCard: CreditCard
     purchase: Purchase
+    baseInstallmentAmount: string | null
 }>()
-
-function getDate(
-    possibleDate: string | Date | null | undefined,
-    defaultValue: string = "",
-) {
-    return possibleDate ? new Date(possibleDate) : defaultValue
-}
 
 const form = useForm({
     concept: props.purchase.concept,
-    datetime: getDate(props.purchase.datetime),
-    amount: props.purchase.amount,
+    date: props.purchase.date,
+    // Returns are negative, the form edits how much was returned
+    amount: Math.abs(Number(props.purchase.amount)).toFixed(2),
     installment_count: props.purchase.installment_count,
-    installment_amount: props.purchase.installment_amount ?? "",
+    installment_amount: props.baseInstallmentAmount ?? "",
     commission: props.purchase.commission ?? "",
     interest_rate: props.purchase.interest_rate ?? "",
-    applied_at: getDate(props.purchase.applied_at),
+    applied_on: props.purchase.applied_on ?? "",
 })
 
 function submit() {
@@ -37,14 +32,15 @@ function submit() {
 </script>
 
 <template>
-    <Head title="Nueva compra" />
+    <Head :title="purchase.is_refund ? 'Editar devolución' : 'Editar compra'" />
 
     <AuthenticatedLayout>
         <template #header>
             <h2
                 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight"
             >
-                Agregar compra: {{ creditCard.name }}
+                {{ purchase.is_refund ? "Editar devolución" : "Editar compra" }}:
+                {{ creditCard.name }}
             </h2>
         </template>
 
@@ -73,19 +69,19 @@ function submit() {
                         </div>
 
                         <div>
-                            <InputLabel for="datetime" value="Fecha" />
+                            <InputLabel for="date" value="Fecha" />
 
                             <TextInput
-                                id="datetime"
+                                id="date"
                                 type="date"
                                 class="mt-1 block w-full"
-                                v-model="form.datetime"
+                                v-model="form.date"
                                 required
                             />
 
                             <InputError
                                 class="mt-2"
-                                :message="form.errors.datetime"
+                                :message="form.errors.date"
                             />
                         </div>
 
@@ -211,21 +207,21 @@ function submit() {
 
                             <div>
                                 <InputLabel
-                                    for="applied_at"
+                                    for="applied_on"
                                     value="Fecha de aplicación"
                                 />
 
                                 <TextInput
-                                    id="applied_at"
+                                    id="applied_on"
                                     type="date"
                                     class="mt-1 block w-full"
-                                    :placeholder="form.datetime"
-                                    v-model="form.applied_at"
+                                    :min="form.date"
+                                    v-model="form.applied_on"
                                 />
 
                                 <InputError
                                     class="mt-2"
-                                    :message="form.errors.applied_at"
+                                    :message="form.errors.applied_on"
                                 />
                             </div>
                         </fieldset>

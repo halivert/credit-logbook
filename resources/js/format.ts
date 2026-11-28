@@ -4,9 +4,9 @@ import type { DateString, Money } from "@/types"
 const DAY = 24 * 60 * 60 * 1000
 
 /**
- * Dates are calendar days (purchases, closing and due dates) stored at
- * midnight UTC, so they're formatted in UTC: otherwise in Mexico they'd show
- * up as the day before.
+ * Dates are calendar days ("Y-m-d": purchases, payments, closing and due
+ * dates). `new Date("2026-11-20")` is midnight UTC, so they're formatted in
+ * UTC: otherwise in Mexico they'd show up as the day before.
  */
 export function useFormat() {
     const locale = usePage().props.locale
@@ -40,7 +40,20 @@ export function useFormat() {
  */
 export function daysUntil(value: DateString): number {
     const now = new Date()
-    const today = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate())
+    const todayUtc = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate())
 
-    return Math.round((new Date(value).getTime() - today) / DAY)
+    return Math.round((new Date(value).getTime() - todayUtc) / DAY)
+}
+
+/**
+ * Today in the viewer's calendar, as "Y-m-d"
+ */
+export function today(): string {
+    const now = new Date()
+
+    return [
+        now.getFullYear(),
+        String(now.getMonth() + 1).padStart(2, "0"),
+        String(now.getDate()).padStart(2, "0"),
+    ].join("-")
 }

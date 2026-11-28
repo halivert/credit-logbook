@@ -5,7 +5,6 @@ namespace App\Purchases;
 use App\CreditCards\CreditCard;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -48,6 +47,10 @@ class PurchaseController extends Controller
         return Inertia::render('Purchases/Edit', [
             'purchase' => $purchase,
             'creditCard' => $purchase->creditCard,
+            // The attribute includes the commission of the first installment
+            'baseInstallmentAmount' => $purchase->installment_count
+                ? number_format((float) $purchase->getRawOriginal('installment_amount'), 2, '.', '')
+                : null,
         ]);
     }
 
@@ -71,8 +74,7 @@ class PurchaseController extends Controller
     public function destroy(Purchase $purchase): RedirectResponse
     {
         $creditCard = $purchase->creditCard;
-
-        DB::transaction(fn () => $purchase->delete());
+        $purchase->delete();
 
         return to_route('credit-cards.show', $creditCard);
     }

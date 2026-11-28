@@ -13,11 +13,13 @@ return new class extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('credit_card_id')->constrained();
-            $table->timestamp('datetime', 3);
+            $table->foreignUuid('credit_card_id')->constrained()->cascadeOnDelete();
+            $table->date('date');
             $table->decimal('amount', 19, 4);
 
             $table->timestamps(3);
+
+            $table->index(['credit_card_id', 'date']);
         });
     }
 

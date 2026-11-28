@@ -2,6 +2,7 @@
 
 namespace App\CreditCards;
 
+use App\Support\Money;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
@@ -38,7 +39,7 @@ class StoreCreditCardRequest extends FormRequest
             'due_date' => 'required|integer|min:1|max:28',
             'closing_date' => 'required|integer|min:1|max:28',
             'interest_rate' => 'nullable|decimal:0,2|min:0|max:200',
-            'limit' => 'required|decimal:0,2|min:0',
+            'limit' => ['required', ...Money::rules('0')],
             'timezone' => 'required|timezone:all'
         ];
     }

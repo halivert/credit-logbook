@@ -5,6 +5,7 @@ namespace App\CreditCards;
 use App\Models\User;
 use App\Payments\Payment;
 use App\Purchases\Purchase;
+use App\Support\Money;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -14,6 +15,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 
 class CreditCard extends Model
 {
@@ -47,7 +49,8 @@ class CreditCard extends Model
 
     public function purchases(): HasMany
     {
-        return $this->hasMany(Purchase::class);
+        // Installment progress depends on the card's closing dates
+        return $this->hasMany(Purchase::class)->chaperone();
     }
 
     public function payments(): HasMany
@@ -71,7 +74,9 @@ class CreditCard extends Model
 
     protected function availableCredit(): Attribute
     {
-        return new Attribute(fn () => $this->limit - $this->balance_used);
+        return new Attribute(
+            fn () => Money::fromCents(Money::toCents($this->limit) - $this->balanceCents())
+        );
     }
 
     /**
@@ -94,22 +99,61 @@ class CreditCard extends Model
         return $nextMonth->setDay(min($day, $nextMonth->daysInMonth));
     }
 
+    /**
+     * What the bank says you owe: every charge (purchases, including the
+     * installments not billed yet, and their commissions) minus every credit
+     * (payments and returns, which are negative purchases).
+     */
     protected function balanceUsed(): Attribute
     {
-        return new Attribute(function () {
-            $this->loadMissing([
-                'purchases' => fn($query) => $query
-                    ->whereNull('paid_at')
-            ]);
+        return new Attribute(fn () => Money::fromCents($this->balanceCents()));
+    }
 
-            $purchasesSum = $this->purchases->whereNull('installment_count')
-                ->sum('amount');
+    /**
+     * The sums are exact in the database (decimal columns), each one is turned
+     * into cents before subtracting.
+     */
+    private function balanceCents(): int
+    {
+        $charges = $this->purchases()
+            ->toBase()
+            ->sum(DB::raw('amount + coalesce(commission, 0)'));
 
-            $installmentsSum = $this->purchases->whereNotNull('installment_count')
-                ->sum('remaining_amount');
+        $payments = $this->payments()->toBase()->sum('amount');
 
-            return $purchasesSum + $installmentsSum;
-        });
+        return Money::toCents($charges) - Money::toCents($payments);
+    }
+
+    /**
+     * Closing dates on or after $from and up to $to (both calendar days).
+     */
+    public function closingsBetween(CarbonImmutable $from, CarbonImmutable $to): int
+    {
+        $closings = 0;
+        $month = $from->startOfMonth();
+
+        while ($month->lte($to)) {
+            $closing = $month->setDay(min($this->closing_date, $month->daysInMonth));
+
+            if ($closing->gte($from) && $closing->lte($to)) {
+                $closings++;
+            }
+
+            $month = $month->addMonth();
+        }
+
+        return $closings;
+    }
+
+    /**
+     * Today in the card's timezone, as a plain calendar day.
+     */
+    public function today(): CarbonImmutable
+    {
+        return CarbonImmutable::parse(
+            CarbonImmutable::today($this->timezone)->toDateString(),
+            'UTC',
+        );
     }
 
     /**

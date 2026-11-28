@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('credit_cards', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('user_id')->constrained();
+            // Deleting an account deletes its financial data
+            $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
             $table->string('name');
             $table->integer('due_date');
             $table->integer('closing_date');

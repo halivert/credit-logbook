@@ -2,6 +2,7 @@
 
 namespace App\Payments;
 
+use App\Support\Money;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
@@ -24,20 +25,15 @@ class UpdatePaymentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'datetime' => 'required|date|before_or_equal:now',
-            'amount' => 'required|decimal:0,2|min:1',
-            'purchases' => 'required|array',
-            'purchases.*' => 'required|exists:purchases,id',
-            'installment_purchases' => 'required|array',
-            'installment_purchases.*.id' => 'required|exists:purchases,id',
-            'installment_purchases.*.installment_number' => 'required|integer',
+            'date' => 'required|date_format:Y-m-d|before_or_equal:today',
+            'amount' => ['required', ...Money::rules()],
         ];
     }
 
     public function attributes(): array
     {
         return [
-            'datetime' => __('labels.datetime'),
+            'date' => __('labels.date'),
             'amount' => __('labels.amount'),
             'purchases' => __('labels.compras'),
             'installment_purchases' => __('labels.installment_purchases'),

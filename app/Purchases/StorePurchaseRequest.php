@@ -2,6 +2,7 @@
 
 namespace App\Purchases;
 
+use App\Support\Money;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Foundation\Http\FormRequest;
@@ -9,6 +10,9 @@ use Illuminate\Support\Facades\Gate;
 
 class StorePurchaseRequest extends FormRequest
 {
+    /** Banks in Mexico offer up to 48 months, some up to 60 */
+    public const MAX_INSTALLMENTS = 60;
+
     use HandlesAuthorization;
 
     /**
@@ -22,9 +26,9 @@ class StorePurchaseRequest extends FormRequest
     protected function prepareForValidation(): void
     {
         $this->merge([
-            'is_installment_purchase' => $this->boolean(
-                'is_installment_purchase'
-            ),
+            'is_installment_purchase' => $this->boolean('is_installment_purchase')
+                && ! $this->boolean('is_refund'),
+            'is_refund' => $this->boolean('is_refund'),
         ]);
     }
 
@@ -39,15 +43,18 @@ class StorePurchaseRequest extends FormRequest
 
         return [
             'is_installment_purchase' => 'required|boolean',
+            'is_refund' => 'required|boolean',
             'concept' => 'required|string|max:255',
-            'datetime' => 'required|date|before_or_equal:now',
-            'applied_at' => 'date|nullable|before_or_equal:now',
-            'amount' => 'required|decimal:0,2|min:1',
+            'date' => 'required|date_format:Y-m-d|before_or_equal:today',
+            'applied_on' => 'nullable|date_format:Y-m-d|after_or_equal:date|before_or_equal:today',
+            // Returns are positive here, they're stored as negative
+            'amount' => ['required', ...Money::rules()],
 
-            'installment_amount' => "$exclude|required|decimal:0,2|min:1|lte:amount",
-            'installment_count' => "$exclude|required|integer",
-            'commission' => "$exclude|decimal:0,2|nullable",
-            'interest_rate' => "$exclude|decimal:0,2|nullable",
+            // Empty means the even split, otherwise the bank's amount is kept
+            'installment_amount' => [$exclude, 'nullable', ...Money::rules(), 'lte:amount'],
+            'installment_count' => [$exclude, 'required', 'integer', 'min:1', 'max:'.self::MAX_INSTALLMENTS],
+            'commission' => [$exclude, 'nullable', ...Money::rules('0')],
+            'interest_rate' => [$exclude, 'nullable', 'decimal:0,2', 'min:0', 'max:200'],
         ];
     }
 
@@ -56,13 +63,43 @@ class StorePurchaseRequest extends FormRequest
         return [
             'is_installment_purchase' => __('labels.is_installment_purchase'),
             'concept' => __('labels.concept'),
-            'datetime' => __('labels.datetime'),
-            'applied_at' => __('fecha de aplicación'),
+            'date' => __('labels.date'),
+            'applied_on' => __('labels.applied_on'),
             'amount' => __('labels.amount'),
             'installment_amount' => __('labels.installment_amount'),
             'installment_count' => __('labels.installment_count'),
             'commission' => __('labels.commission'),
             'interest_rate' => __('labels.interest_rate'),
         ];
+    }
+
+    /**
+     * Returns are stored as negative amounts: a credit to the card.
+     */
+    public function validated($key = null, $default = null)
+    {
+        $validated = parent::validated();
+
+        if ($validated['is_refund']) {
+            $validated['amount'] = -abs($validated['amount']);
+        }
+
+        if ($validated['is_installment_purchase'] && blank($validated['installment_amount'] ?? null)) {
+            $validated['installment_amount'] = self::evenInstallment(
+                (float) $validated['amount'],
+                (int) $validated['installment_count'],
+            );
+        }
+
+        return data_get($validated, $key, $default);
+    }
+
+    /**
+     * The amount split evenly, rounded up to the cent like banks do (the
+     * last installment absorbs the difference).
+     */
+    public static function evenInstallment(float $amount, int $count): float
+    {
+        return ceil(round($amount * 100 / $count, 6)) / 100;
     }
 }
