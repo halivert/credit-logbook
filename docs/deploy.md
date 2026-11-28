@@ -55,12 +55,14 @@ QUEUE_CONNECTION=redis
 LOG_CHANNEL=daily
 LOG_LEVEL=warning
 
-MAIL_MAILER=smtp    # o el proveedor que elijas
-MAIL_HOST=
+# Resend por SMTP, ver "Correo" abajo
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.resend.com
 MAIL_PORT=587
-MAIL_USERNAME=
-MAIL_PASSWORD=
-MAIL_FROM_ADDRESS=tarjetero@halivert.dev
+MAIL_ENCRYPTION=tls
+MAIL_USERNAME=resend
+MAIL_PASSWORD=re_…    # API key de Resend
+MAIL_FROM_ADDRESS=no-reply@tarjetero.halivert.dev
 MAIL_FROM_NAME="${APP_NAME}"
 
 # A quién avisar si una hora tiene muchos más intentos sospechosos de lo normal
@@ -101,20 +103,55 @@ $FORGE_PHP artisan queue:restart
 
 Si usas *zero downtime deployments*, conserva las macros que pone Forge.
 
+### Correo
+
+La app manda pocos correos (restablecer contraseña, verificar correo y
+alertas de seguridad), así que alcanza el plan gratis de
+[Resend](https://resend.com): 3,000 al mes, máximo 100 al día.
+
+1. En Resend, *Domains → Add domain*: `tarjetero.halivert.dev`. Un subdominio
+   separa la reputación de estos correos de la de `halivert.dev`.
+2. Copia en el DNS los registros que te muestra: DKIM (`resend._domainkey`),
+   y el MX y el SPF del subdominio de rebotes (`send.`). El DNS de
+   `halivert.dev` está en WordPress.com, donde el nombre va sin el dominio:
+   `resend._domainkey.tarjetero` y `send.tarjetero`. Espera a que diga
+   *Verified*. Para ver si ya están publicados, sin esperar la propagación:
+   `dig +short TXT resend._domainkey.tarjetero.halivert.dev @ns1.wordpress.com`
+3. DMARC: no hace falta otro. El de `halivert.dev` ya cubre sus subdominios
+   (`sp=`), y uno con `p=none` en el subdominio lo debilitaría.
+4. *API Keys → Create*: permiso *Sending access*, solo para ese dominio. Va
+   en `MAIL_PASSWORD`; el usuario SMTP siempre es `resend`.
+5. Prueba desde el servidor:
+
+   ```sh
+   php artisan tinker
+   >>> Mail::raw('Prueba', fn ($m) => $m->to('tu@correo.com')->subject('Prueba'));
+   ```
+
+Se usa por SMTP a propósito, sin el paquete ni las funciones propias de
+Resend: para cambiar de proveedor (por ejemplo a Amazon SES) basta cambiar
+estas variables y los registros DNS. Un dominio solo puede tener un registro
+SPF; si un día usas dos proveedores, inclúyelos en el mismo.
+
 ## 5. Worker y scheduler
 
 - *Queues*: conexión `redis`, cola `default`, `--tries=3`.
 - *Scheduler*: `php artisan schedule:run` cada minuto.
 
-## 6. Primer usuario
+## 6. Usuarios
 
-Con `REGISTRATION=false`, créalo por SSH:
+Con `REGISTRATION=false` nadie puede registrarse solo. Las cuentas se crean
+por SSH con una invitación, que no necesita correo:
 
 ```sh
 cd /home/forge/tarjetero.halivert.dev
-php artisan tinker
->>> App\Models\User::create(['name' => '…', 'username' => '…', 'email' => '…', 'password' => '…']);
+php artisan user:invite ana@example.com "Ana" --founder
 ```
+
+Muestra un enlace para compartir por donde sea. Lleva a elegir la contraseña,
+vence en 7 días y sirve una vez. `--founder` marca a quienes entraron en la
+beta (gratis, como se les prometió); `--again` da un enlace nuevo a alguien
+ya invitado. Sirve también para tu propia cuenta.
 
 ## 7. Respaldos
 
