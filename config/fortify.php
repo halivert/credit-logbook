@@ -181,11 +181,11 @@ return [
         'logout' => '/salir',
         'register' => '/registro',
         'password' => [
-            'request' => '/recuperar-contrasena',
-            'email' => '/recuperar-contrasena',
-            'reset' => '/nueva-contrasena/{token}',
-            'update' => '/nueva-contrasena',
-            'confirm' => '/confirmar-contrasena',
+            'request' => '/recuperar-password',
+            'email' => '/recuperar-password',
+            'reset' => '/nuevo-password/{token}',
+            'update' => '/nuevo-password',
+            'confirm' => '/confirmar-password',
         ],
         'two-factor' => [
             'login' => '/verificacion',
