@@ -13,5 +13,6 @@
     "Unable to register passkey. Please try again.": "No se pudo registrar la passkey. Intenta de nuevo.",
     "Unable to register this passkey.": "No se pudo registrar esta passkey.",
     "Unable to sign in with this account.": "No se pudo iniciar sesión con esta cuenta.",
-    "Unable to verify passkey. Please try again.": "No se pudo verificar la passkey. Intenta de nuevo."
+    "Unable to verify passkey. Please try again.": "No se pudo verificar la passkey. Intenta de nuevo.",
+    "Too Many Attempts.": "Demasiados intentos. Espera un minuto y vuelve a intentarlo."
 }

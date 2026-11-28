@@ -45,8 +45,11 @@ class FortifyServiceProvider extends ServiceProvider
             return Limit::perMinute(5)->by($throttleKey);
         });
 
+        // Shared by every passkey route. Opening the login page already asks
+        // for options (the browser's autofill), so it can't be too tight;
+        // signed in, each person has their own budget.
         RateLimiter::for('passkeys', function (Request $request) {
-            return Limit::perMinute(10)->by($request->ip());
+            return Limit::perMinute(30)->by($request->user()?->getAuthIdentifier() ?? $request->ip());
         });
 
         RateLimiter::for('two-factor', function (Request $request) {

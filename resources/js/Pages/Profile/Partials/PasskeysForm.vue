@@ -7,6 +7,7 @@ import TrashIcon from "@/Components/Icons/TrashIcon.vue"
 import { useFormat } from "@/format"
 import { router } from "@inertiajs/vue3"
 import { usePasskeyRegister } from "@laravel/passkeys/vue"
+import { passkeyErrorMessage } from "@/passkeys"
 import { ref } from "vue"
 
 export type PasskeyItem = {
@@ -25,7 +26,7 @@ const { toDate } = useFormat()
 
 const name = ref("")
 
-const { register, isLoading, error, isSupported } = usePasskeyRegister({
+const { register, isLoading, errorInstance, isSupported } = usePasskeyRegister({
     onSuccess: () => {
         name.value = ""
         router.reload({ only: ["passkeys"] })
@@ -115,7 +116,7 @@ function remove(passkey: PasskeyItem) {
                     >Agregar</PrimaryButton
                 >
             </div>
-            <InputError :message="error ?? undefined" />
+            <InputError :message="passkeyErrorMessage(errorInstance)" />
         </form>
     </section>
 </template>

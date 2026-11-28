@@ -59,7 +59,7 @@ class PasskeyTest extends TestCase
     #[Test]
     public function passkey_logins_are_rate_limited(): void
     {
-        foreach (range(1, 10) as $attempt) {
+        foreach (range(1, 30) as $attempt) {
             $this->getJson(route('passkey.login-options'))->assertOk();
         }
 
@@ -146,5 +146,11 @@ class PasskeyTest extends TestCase
         $this->actingAs($user)->delete('/profile', ['password' => 'password']);
 
         $this->assertModelMissing($passkey);
+    }
+
+    #[Test]
+    public function the_user_handle_is_never_derived_from_an_empty_secret(): void
+    {
+        $this->assertNotEmpty(config('passkeys.user_handle_secret'));
     }
 }

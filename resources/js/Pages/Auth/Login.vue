@@ -7,6 +7,7 @@ import PrimaryButton from "@/Components/PrimaryButton.vue"
 import TextInput from "@/Components/TextInput.vue"
 import { Head, Link, useForm } from "@inertiajs/vue3"
 import { usePasskeyVerify } from "@laravel/passkeys/vue"
+import { passkeyErrorMessage } from "@/passkeys"
 
 defineProps<{
     canResetPassword?: boolean
@@ -117,7 +118,9 @@ function submit() {
                 >
                     Entrar con passkey
                 </button>
-                <InputError :message="passkey.error.value ?? undefined" />
+                <InputError
+                    :message="passkeyErrorMessage(passkey.errorInstance.value)"
+                />
             </template>
 
             <p
