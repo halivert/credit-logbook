@@ -40,7 +40,7 @@ function submit() {
         <Head title="Verificación en dos pasos" />
 
         <h1 class="text-3xl">Verificación en dos pasos</h1>
-        <p class="mt-1 mb-4 text-sm text-muted">
+        <p class="mt-1 mb-4 text-lg text-muted">
             <template v-if="usingRecoveryCode">
                 Escribe uno de tus códigos de recuperación. Cada código sirve
                 una sola vez.
@@ -92,7 +92,7 @@ function submit() {
 
             <button
                 type="button"
-                class="w-full text-sm text-primary hover:underline"
+                class="w-full text-lg text-primary hover:underline"
                 @click="toggle"
             >
                 {{

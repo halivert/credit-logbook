@@ -43,7 +43,7 @@ const updatePassword = () => {
                 Actualizar contraseña
             </h2>
 
-            <p class="mt-1 text-sm text-muted">
+            <p class="mt-1 text-lg text-muted">
                 Asegúrate de que tu cuenta esté utilizando una contraseña larga
                 y aleatoria para mantenerla segura.
             </p>
@@ -116,7 +116,7 @@ const updatePassword = () => {
                 >
                     <p
                         v-if="form.recentlySuccessful"
-                        class="text-sm text-muted"
+                        class="text-lg text-muted"
                     >
                         Guardado.
                     </p>

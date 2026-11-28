@@ -46,7 +46,7 @@ const closeModal = () => {
                 Borrar cuenta
             </h2>
 
-            <p class="mt-1 text-sm text-muted">
+            <p class="mt-1 text-lg text-muted">
                 Se borran para siempre tus tarjetas, compras, pagos,
                 conciliaciones y passkeys. No se puede deshacer.
             </p>
@@ -62,7 +62,7 @@ const closeModal = () => {
                     ¿Borrar tu cuenta?
                 </h2>
 
-                <p class="mt-1 text-sm text-muted">
+                <p class="mt-1 text-lg text-muted">
                     Se borran para siempre tus tarjetas, compras, pagos,
                     conciliaciones y passkeys. Escribe tu contraseña para
                     confirmar.

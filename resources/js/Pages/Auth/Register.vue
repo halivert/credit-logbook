@@ -98,7 +98,7 @@ function submit() {
                 >Crear cuenta</PrimaryButton
             >
 
-            <p class="text-center text-sm text-muted">
+            <p class="text-center text-lg text-muted">
                 ¿Ya tienes cuenta?
                 <Link
                     :href="route('login')"

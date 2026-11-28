@@ -78,7 +78,7 @@ function deletePurchase(purchase: Purchase) {
 
                 <section v-if="installmentPurchases.length">
                     <h3
-                        class="mb-3 text-base uppercase tracking-widest text-muted"
+                        class="mb-3 text-xl uppercase tracking-widest text-muted"
                     >
                         A meses
                     </h3>
@@ -96,7 +96,7 @@ function deletePurchase(purchase: Purchase) {
 
                 <section>
                     <h3
-                        class="mb-3 text-base uppercase tracking-widest text-muted"
+                        class="mb-3 text-xl uppercase tracking-widest text-muted"
                     >
                         Compras
                     </h3>
@@ -113,14 +113,14 @@ function deletePurchase(purchase: Purchase) {
                     </ul>
                     <p
                         v-else
-                        class="nes-container is-dashed text-center text-sm text-muted"
+                        class="nes-container is-dashed text-center text-lg text-muted"
                     >
                         Aún no hay compras en esta tarjeta.
                     </p>
 
                     <nav
                         v-if="purchases.prev_page_url || purchases.next_page_url"
-                        class="mt-3 flex justify-between text-sm"
+                        class="mt-3 flex justify-between text-lg"
                     >
                         <Link
                             v-if="purchases.prev_page_url"

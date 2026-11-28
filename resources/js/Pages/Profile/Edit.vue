@@ -47,7 +47,7 @@ defineProps<{
                 >
                     <span>
                         <span class="block text-2xl">Seguridad</span>
-                        <span class="block text-sm text-muted"
+                        <span class="block text-lg text-muted"
                             >Verificación en dos pasos y passkeys</span
                         >
                     </span>

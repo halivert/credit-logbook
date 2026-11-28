@@ -62,7 +62,7 @@
     }
 
     body {
-        @apply bg-page text-ink font-sans;
+        @apply bg-page text-ink font-sans text-xl;
         /* VT323 runs small; size it by x-height instead of bumping every size */
         font-size-adjust: 0.60;
     }
@@ -213,7 +213,7 @@
 
     /* Notice boxes in the color of their text */
     .px-alert {
-        @apply p-3 text-sm;
+        @apply p-3 text-lg;
         border: 4px solid currentColor;
     }
 

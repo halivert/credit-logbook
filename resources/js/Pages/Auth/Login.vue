@@ -45,7 +45,7 @@ function submit() {
 
         <p
             v-if="status"
-            class="mb-4 text-sm font-medium text-success"
+            class="mb-4 text-lg font-medium text-success"
         >
             {{ status }}
         </p>
@@ -81,7 +81,7 @@ function submit() {
             <div class="flex items-center justify-between">
                 <label class="flex items-center">
                     <Checkbox name="remember" v-model:checked="form.remember" />
-                    <span class="ms-2 text-sm text-muted"
+                    <span class="ms-2 text-lg text-muted"
                         >Recordarme</span
                     >
                 </label>
@@ -89,7 +89,7 @@ function submit() {
                 <Link
                     v-if="canResetPassword"
                     :href="route('password.request')"
-                    class="text-sm text-primary hover:underline"
+                    class="text-lg text-primary hover:underline"
                 >
                     ¿Olvidaste tu contraseña?
                 </Link>
@@ -103,7 +103,7 @@ function submit() {
 
             <template v-if="passkey.isSupported.value">
                 <div
-                    class="flex items-center gap-3 text-xs text-muted"
+                    class="flex items-center gap-3 text-base text-muted"
                 >
                     <span class="flex-1 border-t-4 border-dashed border-line/25" />
                     o
@@ -125,7 +125,7 @@ function submit() {
 
             <p
                 v-if="canRegister"
-                class="text-center text-sm text-muted"
+                class="text-center text-lg text-muted"
             >
                 ¿No tienes cuenta?
                 <Link

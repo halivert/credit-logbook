@@ -50,7 +50,7 @@ function submit() {
                 >
                     <form class="space-y-5" @submit.prevent="submit">
                         <div>
-                            <p class="text-xs text-muted">
+                            <p class="text-base text-muted">
                                 Saldo actual
                             </p>
                             <p class="text-3xl sm:text-4xl leading-none">
@@ -103,7 +103,7 @@ function submit() {
                             </div>
                         </div>
 
-                        <div class="flex flex-col items-start gap-2 text-sm">
+                        <div class="flex flex-col items-start gap-2 text-lg">
                             <button
                                 v-if="toAvoidInterest > 0"
                                 type="button"

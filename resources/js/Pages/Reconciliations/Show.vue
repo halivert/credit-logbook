@@ -91,11 +91,11 @@ const secondary = "nes-btn inline-flex justify-center items-center"
                     class="nes-container is-tight space-y-5"
                 >
                     <div>
-                        <p class="text-xs text-muted">
+                        <p class="text-base text-muted">
                             Corte del {{ toShortDate(statement.closing_date) }} ·
                             pago antes del {{ toShortDate(statement.due_date) }}
                         </p>
-                        <p class="mt-1 text-sm">
+                        <p class="mt-1 text-lg">
                             Para no generar intereses, la bitácora dice
                             <strong>{{
                                 toCurrency(statement.to_avoid_interest)
@@ -131,7 +131,7 @@ const secondary = "nes-btn inline-flex justify-center items-center"
                                 >
                             </div>
                             <p
-                                class="mt-1 text-xs text-muted"
+                                class="mt-1 text-base text-muted"
                             >
                                 El "pago para no generar intereses" de ese
                                 corte.
@@ -156,7 +156,7 @@ const secondary = "nes-btn inline-flex justify-center items-center"
                     >
                         <div>
                             <p
-                                class="text-xs text-warning"
+                                class="text-base text-warning"
                             >
                                 Diferencia
                             </p>
@@ -169,12 +169,12 @@ const secondary = "nes-btn inline-flex justify-center items-center"
 
                         <p
                             v-if="difference > 0"
-                            class="text-sm text-warning"
+                            class="text-lg text-warning"
                         >
                             El banco te cobra más de lo que tienes registrado.
                             ¿Te faltó anotar una compra o una comisión?
                         </p>
-                        <p v-else class="text-sm text-warning">
+                        <p v-else class="text-lg text-warning">
                             Tienes registrado más de lo que te cobra el banco.
                             ¿Te faltó un pago o una devolución, o hay algo
                             duplicado?
@@ -206,7 +206,7 @@ const secondary = "nes-btn inline-flex justify-center items-center"
                                 Ajustar
                             </button>
                         </div>
-                        <p class="text-xs text-warning">
+                        <p class="text-base text-warning">
                             Si no encuentras la causa, "Ajustar" registra la
                             diferencia en el corte para que cuadre. Puedes
                             borrar el ajuste después.
@@ -216,7 +216,7 @@ const secondary = "nes-btn inline-flex justify-center items-center"
 
                 <section>
                     <h3
-                        class="mb-3 text-base uppercase tracking-widest text-muted"
+                        class="mb-3 text-xl uppercase tracking-widest text-muted"
                     >
                         Movimientos del periodo
                     </h3>
@@ -231,7 +231,7 @@ const secondary = "nes-btn inline-flex justify-center items-center"
                         >
                             <div class="min-w-0">
                                 <p class="truncate">{{ line.concept }}</p>
-                                <p class="text-sm text-muted">
+                                <p class="text-lg text-muted">
                                     {{ toShortDate(line.date) }}
                                 </p>
                             </div>
@@ -248,7 +248,7 @@ const secondary = "nes-btn inline-flex justify-center items-center"
                     </ul>
                     <p
                         v-else
-                        class="nes-container is-dashed text-center text-sm text-muted"
+                        class="nes-container is-dashed text-center text-lg text-muted"
                     >
                         No hay movimientos en este periodo.
                     </p>
@@ -256,7 +256,7 @@ const secondary = "nes-btn inline-flex justify-center items-center"
 
                 <section v-if="adjustments.length">
                     <h3
-                        class="mb-3 text-base uppercase tracking-widest text-muted"
+                        class="mb-3 text-xl uppercase tracking-widest text-muted"
                     >
                         Ajustes
                     </h3>
@@ -270,7 +270,7 @@ const secondary = "nes-btn inline-flex justify-center items-center"
                         >
                             <div class="min-w-0">
                                 <p class="truncate">{{ adjustment.concept }}</p>
-                                <p class="text-sm text-muted">
+                                <p class="text-lg text-muted">
                                     {{ toShortDate(adjustment.date) }}
                                 </p>
                             </div>

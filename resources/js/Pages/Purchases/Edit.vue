@@ -203,7 +203,7 @@ function submit() {
                             class="border-t-4 border-dashed border-primary/40 py-2 mt-4"
                         >
                             <legend
-                                class="bg-surface px-3 ml-auto text-base uppercase tracking-widest text-primary"
+                                class="bg-surface px-3 ml-auto text-xl uppercase tracking-widest text-primary"
                             >
                                 Opcional
                             </legend>

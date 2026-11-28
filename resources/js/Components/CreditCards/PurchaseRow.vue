@@ -22,7 +22,7 @@ const { toCurrency, toDate, toShortDate } = useFormat()
             <p class="truncate font-medium">{{ purchase.concept }}</p>
 
             <template v-if="purchase.is_installment_purchase">
-                <p class="text-sm text-muted">
+                <p class="text-lg text-muted">
                     {{ purchase.billed_installments ?? 0 }} de
                     {{ purchase.installment_count }} cargadas · faltan
                     {{ toCurrency(purchase.remaining_amount) }}
@@ -34,7 +34,7 @@ const { toCurrency, toDate, toShortDate } = useFormat()
                     aria-label="Mensualidades cargadas"
                 />
             </template>
-            <p v-else class="text-sm text-muted">
+            <p v-else class="text-lg text-muted">
                 {{ toDate(purchase.date) }}
                 <span
                     v-if="purchase.applied_on && purchase.applied_on !== purchase.date"
@@ -50,7 +50,7 @@ const { toCurrency, toDate, toShortDate } = useFormat()
                 <p class="font-semibold">
                     {{ toCurrency(purchase.installment_amount ?? 0) }}
                 </p>
-                <p class="text-xs text-muted">al mes</p>
+                <p class="text-base text-muted">al mes</p>
             </template>
             <p
                 v-else

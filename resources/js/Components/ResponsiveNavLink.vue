@@ -9,8 +9,8 @@ const props = defineProps<{
 
 const classes = computed(() =>
     props.active
-        ? 'block w-full pl-3 pr-4 py-3 border-l-4 border-primary text-left text-lg text-primary bg-primary/10 focus:outline-none'
-        : 'block w-full pl-3 pr-4 py-3 border-l-4 border-transparent text-left text-lg text-muted hover:text-ink hover:bg-line/5 hover:border-line/30 focus:outline-none focus:text-ink focus:bg-line/5'
+        ? 'block w-full pl-3 pr-4 py-3 border-l-4 border-primary text-left text-xl text-primary bg-primary/10 focus:outline-none'
+        : 'block w-full pl-3 pr-4 py-3 border-l-4 border-transparent text-left text-xl text-muted hover:text-ink hover:bg-line/5 hover:border-line/30 focus:outline-none focus:text-ink focus:bg-line/5'
 );
 </script>
 

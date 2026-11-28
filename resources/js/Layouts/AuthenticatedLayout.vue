@@ -52,7 +52,7 @@ const showingNavigationDropdown = ref(false)
                                         <span class="inline-flex rounded-md">
                                             <button
                                                 type="button"
-                                                class="inline-flex items-center px-3 py-2 text-lg leading-4 text-muted hover:text-ink focus:outline-none"
+                                                class="inline-flex items-center px-3 py-2 text-xl leading-4 text-muted hover:text-ink focus:outline-none"
                                             >
                                                 {{ $page.props.auth.user.name }}
 
@@ -160,7 +160,7 @@ const showingNavigationDropdown = ref(false)
                             >
                                 {{ $page.props.auth.user.name }}
                             </div>
-                            <div class="mt-1 font-medium text-sm text-muted">
+                            <div class="mt-1 font-medium text-lg text-muted">
                                 {{ $page.props.auth.user.email }}
                             </div>
                         </div>

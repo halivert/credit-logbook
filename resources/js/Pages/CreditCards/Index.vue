@@ -42,8 +42,8 @@ defineProps<{
                     v-else
                     class="nes-container is-dashed text-center"
                 >
-                    <p class="text-xl">Aún no tienes tarjetas</p>
-                    <p class="mt-1 text-sm text-muted">
+                    <p class="text-2xl">Aún no tienes tarjetas</p>
+                    <p class="mt-1 text-lg text-muted">
                         Agrega una para llevar sus compras, pagos y fechas.
                     </p>
                 </div>

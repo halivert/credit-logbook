@@ -54,7 +54,7 @@ function remove(passkey: PasskeyItem) {
     <section class="space-y-4">
         <header>
             <h2 class="text-2xl">Passkeys</h2>
-            <p class="mt-1 text-sm text-muted">
+            <p class="mt-1 text-lg text-muted">
                 Entra con la huella, la cara o el PIN de tu dispositivo, sin
                 escribir tu contraseña. No se pueden robar con phishing.
             </p>
@@ -71,7 +71,7 @@ function remove(passkey: PasskeyItem) {
             >
                 <div class="min-w-0">
                     <p class="truncate font-medium">{{ passkey.name }}</p>
-                    <p class="text-sm text-muted">
+                    <p class="text-lg text-muted">
                         <template v-if="passkey.authenticator"
                             >{{ passkey.authenticator }} ·
                         </template>
@@ -96,7 +96,7 @@ function remove(passkey: PasskeyItem) {
 
         <p
             v-if="!isSupported"
-            class="text-sm text-warning"
+            class="text-lg text-warning"
         >
             Este navegador no permite passkeys.
         </p>

@@ -238,7 +238,7 @@ function submit() {
 
                                 <p
                                     v-if="suggestedInstallment"
-                                    class="col-span-2 -mt-2 text-sm text-muted"
+                                    class="col-span-2 -mt-2 text-lg text-muted"
                                 >
                                     Si la dejas vacía:
                                     {{ toCurrency(suggestedInstallment) }} al
@@ -279,7 +279,7 @@ function submit() {
 
                         <p
                             v-if="form.kind === 'refund'"
-                            class="text-sm text-muted"
+                            class="text-lg text-muted"
                         >
                             Se abona a la tarjeta: baja tu saldo y libera
                             crédito.

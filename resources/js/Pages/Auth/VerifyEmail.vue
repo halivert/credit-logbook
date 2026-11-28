@@ -18,14 +18,14 @@ const sent = computed(() => props.status === "verification-link-sent")
         <Head title="Verifica tu correo" />
 
         <h1 class="text-3xl">Verifica tu correo</h1>
-        <p class="mt-1 mb-4 text-sm text-muted">
+        <p class="mt-1 mb-4 text-lg text-muted">
             Te enviamos un enlace para confirmar tu correo. Si no te llegó,
             te mandamos otro.
         </p>
 
         <p
             v-if="sent"
-            class="mb-4 text-sm font-medium text-success"
+            class="mb-4 text-lg font-medium text-success"
         >
             Te enviamos un nuevo enlace.
         </p>
@@ -37,7 +37,7 @@ const sent = computed(() => props.status === "verification-link-sent")
                 >Reenviar enlace</PrimaryButton
             >
 
-            <p class="text-center text-sm">
+            <p class="text-center text-lg">
                 <Link
                     :href="route('logout')"
                     method="post"

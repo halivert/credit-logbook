@@ -114,7 +114,7 @@ function submit() {
                             </div>
 
                             <p
-                                class="col-span-2 -mt-2 text-sm text-muted"
+                                class="col-span-2 -mt-2 text-lg text-muted"
                             >
                                 Del 1 al 28 de cada mes.
                             </p>

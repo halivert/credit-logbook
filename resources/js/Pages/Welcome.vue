@@ -42,7 +42,7 @@ defineProps<{
 
         <p
             v-if="canLogin && !$page.props.auth.user"
-            class="text-lg uppercase tracking-widest text-muted motion-safe:animate-[blink_1s_steps(1)_infinite]"
+            class="text-xl uppercase tracking-widest text-muted motion-safe:animate-[blink_1s_steps(1)_infinite]"
             aria-hidden="true"
         >
             Presiona start

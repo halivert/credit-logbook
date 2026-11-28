@@ -52,9 +52,9 @@ const paymentState = computed<PaymentState>(() => {
 
 <template>
     <div>
-        <p v-if="showName" class="mb-3 text-xl">{{ creditCard.name }}</p>
+        <p v-if="showName" class="mb-3 text-2xl">{{ creditCard.name }}</p>
 
-        <p class="text-xs text-muted">
+        <p class="text-base text-muted">
             {{ overLimit ? "Excedido" : "Disponible" }}
         </p>
         <p
@@ -71,12 +71,12 @@ const paymentState = computed<PaymentState>(() => {
             max="100"
             aria-label="Crédito usado"
         />
-        <p class="mt-1 text-sm text-muted">
+        <p class="mt-1 text-lg text-muted">
             {{ toCurrency(creditCard.balance_used ?? 0) }} usados de
             {{ toCurrency(creditCard.limit) }}
         </p>
 
-        <dl v-if="statement" class="mt-4 grid grid-cols-2 gap-3 text-sm">
+        <dl v-if="statement" class="mt-4 grid grid-cols-2 gap-3 text-lg">
             <div>
                 <dt class="text-muted">
                     <template v-if="paymentState === 'overdue'">
@@ -108,7 +108,7 @@ const paymentState = computed<PaymentState>(() => {
                 </dd>
                 <dd
                     v-if="statement.paid_since_closing > 0 && statement.remaining > 0"
-                    class="text-xs text-muted"
+                    class="text-base text-muted"
                 >
                     de {{ toCurrency(statement.to_avoid_interest) }}
                 </dd>
@@ -129,7 +129,7 @@ const paymentState = computed<PaymentState>(() => {
 
         <p
             v-if="statement?.bank_difference"
-            class="mt-3 text-sm text-warning"
+            class="mt-3 text-lg text-warning"
         >
             No cuadra con tu estado de cuenta por
             {{ toCurrency(Math.abs(statement.bank_difference)) }}
