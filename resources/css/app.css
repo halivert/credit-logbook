@@ -226,19 +226,19 @@
         @apply text-primary underline decoration-2 underline-offset-4 hover:decoration-4;
     }
 
-    /* Two-option segmented control (radiogroup of buttons) */
-    .px-segment {
-        @apply py-1 px-1 text-2xl;
-        color: rgb(var(--muted));
-    }
-
-    .px-segment:hover {
+    /* nes.css draws the radio arrow in currentColor */
+    .nes-radio:checked + span::before {
         color: rgb(var(--ink));
     }
 
-    .px-segment[aria-checked="true"] {
-        color: #fff;
-        background-color: #209cee;
-        box-shadow: inset -4px -4px #006bb3;
+    /* The arrow is 16px tall; center it on the larger VT323 line */
+    .nes-radio:checked + span::before,
+    .nes-radio:checked:focus + span::before {
+        top: calc(50% - 9px);
+    }
+
+    .nes-radio:focus-visible + span {
+        outline: 4px solid rgb(var(--primary) / 0.4);
+        outline-offset: 4px;
     }
 }

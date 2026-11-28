@@ -81,21 +81,30 @@ function submit() {
                 >
                     <form class="space-y-5" @submit.prevent="submit">
                         <div
-                            class="grid grid-cols-3 gap-1 border-4 border-line p-1"
+                            class="nes-container with-title is-tight"
                             role="radiogroup"
-                            aria-label="Tipo"
+                            aria-labelledby="kind-title"
                         >
-                            <button
-                                v-for="kind in kinds"
-                                :key="kind.value"
-                                type="button"
-                                role="radio"
-                                :aria-checked="form.kind === kind.value"
-                                class="px-segment"
-                                @click="form.kind = kind.value"
+                            <p id="kind-title" class="title">Tipo</p>
+
+                            <div
+                                class="flex flex-col sm:flex-row gap-x-8 gap-y-3"
                             >
-                                {{ kind.label }}
-                            </button>
+                                <label
+                                    v-for="kind in kinds"
+                                    :key="kind.value"
+                                    class="text-2xl"
+                                >
+                                    <input
+                                        type="radio"
+                                        class="nes-radio"
+                                        name="kind"
+                                        :value="kind.value"
+                                        v-model="form.kind"
+                                    />
+                                    <span>{{ kind.label }}</span>
+                                </label>
+                            </div>
                         </div>
 
                         <div>
