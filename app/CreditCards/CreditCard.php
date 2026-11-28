@@ -5,6 +5,9 @@ namespace App\CreditCards;
 use App\Models\User;
 use App\Payments\Payment;
 use App\Purchases\Purchase;
+use App\Reconciliations\Adjustment;
+use App\Reconciliations\BankStatement;
+use App\Reconciliations\Reconciliation;
 use App\Support\Money;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -57,6 +60,16 @@ class CreditCard extends Model
         return $this->hasMany(Payment::class);
     }
 
+    public function adjustments(): HasMany
+    {
+        return $this->hasMany(Adjustment::class);
+    }
+
+    public function bankStatements(): HasMany
+    {
+        return $this->hasMany(BankStatement::class);
+    }
+
     protected function nextClosingDate(): Attribute
     {
         return new Attribute(
@@ -82,7 +95,14 @@ class CreditCard extends Model
                 'day' => $purchase->day(),
                 'cents' => Money::toCents($purchase->getRawOriginal('amount')),
                 'plan' => $purchase->installmentPlan(),
-            ]);
+            ])
+            ->concat($this->adjustments()->toBase()->get(['date', 'amount'])->map(
+                fn (object $adjustment) => [
+                    'day' => BillingCycle::day($adjustment->date),
+                    'cents' => Money::toCents($adjustment->amount),
+                    'plan' => null,
+                ]
+            ));
 
         $payments = $this->payments()
             ->toBase()
@@ -97,9 +117,26 @@ class CreditCard extends Model
         return Statement::calculate($cycle, $cycle->today(), $charges, $payments);
     }
 
+    /**
+     * The latest statement, and how far it is from what the bank said when
+     * that's known (null otherwise).
+     */
     protected function currentStatement(): Attribute
     {
-        return new Attribute(fn () => $this->statement()->toArray());
+        return new Attribute(function () {
+            $statement = $this->statement();
+
+            $bankAmount = $this->bankStatements()
+                ->where('closing_date', $statement->closing->toDateString())
+                ->value('to_avoid_interest');
+
+            return [
+                ...$statement->toArray(),
+                'bank_difference' => $bankAmount === null ? null : Money::fromCents(
+                    Reconciliation::of($statement, Money::toCents($bankAmount))->differenceCents()
+                ),
+            ];
+        });
     }
 
     public function billingCycle(): BillingCycle
@@ -117,7 +154,8 @@ class CreditCard extends Model
     /**
      * What the bank says you owe: every charge (purchases, including the
      * installments not billed yet, and their commissions) minus every credit
-     * (payments and returns, which are negative purchases).
+     * (payments and returns, which are negative purchases). Adjustments from
+     * reconciling with the bank go either way.
      */
     protected function balanceUsed(): Attribute
     {
@@ -136,7 +174,9 @@ class CreditCard extends Model
 
         $payments = $this->payments()->toBase()->sum('amount');
 
-        return Money::toCents($charges) - Money::toCents($payments);
+        $adjustments = $this->adjustments()->toBase()->sum('amount');
+
+        return Money::toCents($charges) + Money::toCents($adjustments) - Money::toCents($payments);
     }
 
     /**

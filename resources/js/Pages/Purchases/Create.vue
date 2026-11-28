@@ -11,6 +11,10 @@ import { today, useFormat } from "@/format"
 
 const props = defineProps<{
     creditCard: CreditCard
+    /** Coming from reconciling a statement: go back there after saving */
+    returnTo?: "reconciliation" | null
+    defaultDate?: string | null
+    defaultKind?: "refund" | null
 }>()
 
 type Kind = "purchase" | "installments" | "refund"
@@ -25,9 +29,9 @@ const { toCurrency } = useFormat()
 
 
 const form = useForm({
-    kind: "purchase" as Kind,
+    kind: (props.defaultKind ?? "purchase") as Kind,
     concept: "",
-    date: today(),
+    date: props.defaultDate ?? today(),
     amount: "",
     installment_count: "",
     installment_amount: "",
@@ -53,6 +57,7 @@ function submit() {
         ...data,
         is_installment_purchase: kind === "installments",
         is_refund: kind === "refund",
+        return_to: props.returnTo ?? undefined,
     })).post(route("credit-cards.purchases.store", props.creditCard))
 }
 </script>
