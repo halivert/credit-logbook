@@ -88,7 +88,7 @@ function remove(passkey: PasskeyItem) {
                     class="nes-btn is-error is-icon !m-0"
                     @click="remove(passkey)"
                 >
-                    <TrashIcon class="size-5" />
+                    <TrashIcon class="size-4" />
                     <span class="sr-only">Borrar {{ passkey.name }}</span>
                 </button>
             </li>

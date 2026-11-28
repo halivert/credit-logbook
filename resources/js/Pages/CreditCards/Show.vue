@@ -37,7 +37,7 @@ function deletePurchase(purchase: Purchase) {
                     :href="route('credit-cards.edit', creditCard)"
                     class="nes-btn is-icon !m-0 shrink-0"
                 >
-                    <PencilIcon class="size-5" />
+                    <PencilIcon class="size-4" />
                     <span class="sr-only">Editar tarjeta</span>
                 </Link>
             </div>
