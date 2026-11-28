@@ -102,6 +102,7 @@ class FortifyServiceProvider extends ServiceProvider
         Fortify::resetPasswordView(fn (Request $request) => Inertia::render('Auth/ResetPassword', [
             'email' => $request->string('email')->toString(),
             'token' => $request->route('token'),
+            'invited' => $request->boolean('invitacion'),
         ]));
 
         Fortify::verifyEmailView(fn () => Inertia::render('Auth/VerifyEmail', [

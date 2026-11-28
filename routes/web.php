@@ -5,6 +5,7 @@ use App\Purchases\PurchaseController;
 use App\Reconciliations\ReconciliationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SecurityController;
+use App\Invitations\InvitationController;
 use App\Payments\PaymentController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -26,6 +27,11 @@ Route::get('/', function () {
         'canRegister' => Route::has('register'),
     ]);
 });
+
+// Link from `php artisan user:invite` to choose a password
+Route::get('/invitacion/{user}', InvitationController::class)
+    ->middleware(['guest', 'signed', 'throttle:6,1'])
+    ->name('invitation.accept');
 
 // URLs in Spanish (without accents, they break when copied); route names
 // stay in English like the rest of the code.

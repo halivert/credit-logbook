@@ -9,6 +9,8 @@ import { Head, useForm } from "@inertiajs/vue3"
 const props = defineProps<{
     email: string
     token: string
+    /** Coming from an invitation: choosing a password for the first time */
+    invited?: boolean
 }>()
 
 const form = useForm({
@@ -27,9 +29,11 @@ function submit() {
 
 <template>
     <GuestLayout>
-        <Head title="Nueva contraseña" />
+        <Head :title="invited ? 'Bienvenido' : 'Nueva contraseña'" />
 
-        <h1 class="mb-4 text-title">Elige una nueva contraseña</h1>
+        <h1 class="mb-4 text-title">
+            {{ invited ? "Bienvenido, elige tu contraseña" : "Elige una nueva contraseña" }}
+        </h1>
 
         <form class="space-y-4" @submit.prevent="submit">
             <div>
