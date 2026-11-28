@@ -46,7 +46,8 @@ return [
     |
      */
 
-    'username' => 'username',
+    // People sign in with their email
+    'username' => 'email',
 
     'email' => 'email',
 
@@ -118,7 +119,8 @@ return [
     |
      */
 
-    'views' => false,
+    // The views are Inertia pages, set in FortifyServiceProvider
+    'views' => true,
 
     /*
     |--------------------------------------------------------------------------
@@ -135,7 +137,7 @@ return [
         ...(env('REGISTRATION', false) ? [Features::registration()] : []),
         Features::resetPasswords(),
         Features::emailVerification(),
-        Features::updateProfileInformation(),
+        Features::updatePasswords(),
         Features::twoFactorAuthentication([
             'confirm' => true,
             'confirmPassword' => true,

@@ -1,41 +1,43 @@
 <script setup lang="ts">
-import GuestLayout from '@/Layouts/GuestLayout.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
-import { Head, useForm } from '@inertiajs/vue3';
+import GuestLayout from "@/Layouts/GuestLayout.vue"
+import InputError from "@/Components/InputError.vue"
+import InputLabel from "@/Components/InputLabel.vue"
+import PrimaryButton from "@/Components/PrimaryButton.vue"
+import TextInput from "@/Components/TextInput.vue"
+import { Head, Link, useForm } from "@inertiajs/vue3"
 
 defineProps<{
-    status?: string;
-}>();
+    status?: string
+}>()
 
 const form = useForm({
-    email: '',
-});
+    email: "",
+})
 
-const submit = () => {
-    form.post(route('password.email'));
-};
+function submit() {
+    form.post(route("password.email"))
+}
 </script>
 
 <template>
     <GuestLayout>
-        <Head title="Forgot Password" />
+        <Head title="Restablecer contraseña" />
 
-        <div class="mb-4 text-sm text-gray-600 dark:text-gray-400">
-            Forgot your password? No problem. Just let us know your email address and we will email you a password reset
-            link that will allow you to choose a new one.
-        </div>
+        <h1 class="text-lg font-semibold">Restablecer contraseña</h1>
+        <p class="mt-1 mb-4 text-sm text-gray-600 dark:text-gray-400">
+            Te enviaremos un enlace a tu correo para elegir una nueva.
+        </p>
 
-        <div v-if="status" class="mb-4 font-medium text-sm text-green-600 dark:text-green-400">
+        <p
+            v-if="status"
+            class="mb-4 text-sm font-medium text-emerald-600 dark:text-emerald-400"
+        >
             {{ status }}
-        </div>
+        </p>
 
-        <form @submit.prevent="submit">
+        <form class="space-y-4" @submit.prevent="submit">
             <div>
-                <InputLabel for="email" value="Email" />
-
+                <InputLabel for="email" value="Correo" />
                 <TextInput
                     id="email"
                     type="email"
@@ -45,15 +47,22 @@ const submit = () => {
                     autofocus
                     autocomplete="username"
                 />
-
                 <InputError class="mt-2" :message="form.errors.email" />
             </div>
 
-            <div class="flex items-center justify-end mt-4">
-                <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Email Password Reset Link
-                </PrimaryButton>
-            </div>
+            <PrimaryButton
+                class="w-full justify-center"
+                :disabled="form.processing"
+                >Enviar enlace</PrimaryButton
+            >
+
+            <p class="text-center text-sm">
+                <Link
+                    :href="route('login')"
+                    class="text-indigo-600 dark:text-indigo-400 hover:underline"
+                    >Volver a iniciar sesión</Link
+                >
+            </p>
         </form>
     </GuestLayout>
 </template>

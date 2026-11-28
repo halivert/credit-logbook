@@ -63,4 +63,3 @@ Route::middleware('auth')->group(function () {
         ->shallow();
 });
 
-require __DIR__ . '/auth.php';

@@ -47,12 +47,20 @@ class SecurityTest extends TestCase
     public function api_tokens_are_not_issued_to_users_with_two_factor(): void
     {
         $user = $this->userWithTwoFactor();
+        $withoutTwoFactor = User::factory()->create();
+
+        // The same credentials work without two factor
+        $this->postJson('/api/v1/login', [
+            'email' => $withoutTwoFactor->email,
+            'password' => 'password',
+        ])->assertOk();
 
         $this->postJson('/api/v1/login', [
-            'username' => $user->username,
+            'email' => $user->email,
             'password' => 'password',
-        ])->assertUnprocessable();
+        ])->assertUnprocessable()->assertJsonValidationErrors('email');
 
+        $this->assertSame(1, $withoutTwoFactor->tokens()->count());
         $this->assertSame(0, $user->tokens()->count());
     }
 
@@ -63,13 +71,13 @@ class SecurityTest extends TestCase
 
         foreach (range(1, 5) as $attempt) {
             $this->postJson('/api/v1/login', [
-                'username' => $user->username,
+                'email' => $user->email,
                 'password' => 'wrong',
             ])->assertUnprocessable();
         }
 
         $this->postJson('/api/v1/login', [
-            'username' => $user->username,
+            'email' => $user->email,
             'password' => 'password',
         ])->assertTooManyRequests();
     }
