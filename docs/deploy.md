@@ -29,6 +29,8 @@ En *Environment*:
 APP_NAME=Tarjetero
 APP_ENV=production
 APP_KEY=            # php artisan key:generate --show
+# Identificador de las passkeys, aparte de APP_KEY para que no cambie al rotarla
+PASSKEYS_USER_HANDLE_SECRET=   # openssl rand -hex 32
 APP_DEBUG=false
 APP_URL=https://tarjetero.halivert.dev
 
@@ -86,10 +88,7 @@ npm run build
 
 $FORGE_PHP artisan migrate --force
 
-# No `artisan optimize` ni `route:cache` todavía: Breeze y Fortify
-# registran rutas con el mismo nombre y no se pueden cachear.
-$FORGE_PHP artisan config:cache
-$FORGE_PHP artisan view:cache
+$FORGE_PHP artisan optimize
 
 ( flock -w 10 9 || exit 1
     echo 'Restarting FPM...'; sudo -S service $FORGE_PHP_FPM reload ) 9>/tmp/fpmlock
@@ -97,9 +96,7 @@ $FORGE_PHP artisan view:cache
 $FORGE_PHP artisan queue:restart
 ```
 
-Si usas *zero downtime deployments*, conserva las macros que pone Forge y
-solo cambia `artisan optimize` por las dos líneas de `config:cache` y
-`view:cache`.
+Si usas *zero downtime deployments*, conserva las macros que pone Forge.
 
 ## 5. Worker y scheduler
 

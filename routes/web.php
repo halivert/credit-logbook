@@ -4,6 +4,7 @@ use App\CreditCards\CreditCardController;
 use App\Purchases\PurchaseController;
 use App\Reconciliations\ReconciliationController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SecurityController;
 use App\Payments\PaymentController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -38,6 +39,10 @@ Route::middleware('auth')->group(function () {
 
     Route::delete('/profile', [ProfileController::class, 'destroy'])
         ->name('profile.destroy');
+
+    Route::get('/profile/security', [SecurityController::class, 'edit'])
+        ->middleware('password.confirm')
+        ->name('profile.security');
 
     /**
      * Credit Cards
@@ -79,4 +84,3 @@ Route::middleware('auth')->group(function () {
         ->shallow();
 });
 
-require __DIR__ . '/auth.php';
