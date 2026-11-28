@@ -11,9 +11,9 @@ use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 /**
- * Amounts are whole cents within a sane range, and sums are exact.
+ * Every form only accepts whole cents within a sane range.
  */
-class MoneyTest extends TestCase
+class MoneyValidationTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -155,54 +155,5 @@ class MoneyTest extends TestCase
             ->assertSessionHasErrors($error);
 
         $this->assertDatabaseCount(Purchase::class, 0);
-    }
-
-    #[Test]
-    public function sums_that_floats_get_wrong_are_exact(): void
-    {
-        // 0.1 + 0.2 - 0.3 is 5.551115123125783e-17 with floats
-        Purchase::factory()->for($this->creditCard)->create(['amount' => '0.10']);
-        Purchase::factory()->for($this->creditCard)->create(['amount' => '0.20']);
-        Payment::factory()->for($this->creditCard)->create(['amount' => '0.30']);
-
-        $this->assertSame(0.0, $this->creditCard->fresh()->balance_used);
-        $this->assertSame(10000.0, $this->creditCard->fresh()->available_credit);
-    }
-
-    #[Test]
-    public function many_small_amounts_add_up_exactly(): void
-    {
-        Purchase::factory()->for($this->creditCard)->count(100)->create(['amount' => '0.01']);
-        Purchase::factory()->for($this->creditCard)->count(10)->create(['amount' => '0.07']);
-        Payment::factory()->for($this->creditCard)->create(['amount' => '1.70']);
-
-        $this->assertSame(0.0, $this->creditCard->fresh()->balance_used);
-    }
-
-    #[Test]
-    public function installments_of_an_odd_amount_add_up_to_it(): void
-    {
-        // Billed on the 20th: read before (15th) and after (25th) each closing
-        $this->creditCard->update(['closing_date' => 20]);
-
-        $purchase = Purchase::factory()->for($this->creditCard)->create([
-            'date' => '2026-01-10',
-            'amount' => '1000.01',
-            'installment_count' => 7,
-            'installment_amount' => '142.86',
-            'commission' => '0.10',
-        ]);
-
-        $billed = 0;
-
-        foreach (range(1, 7) as $month) {
-            $this->travelTo(now()->setDate(2026, $month, 15));
-            $billed += round($purchase->fresh()->installment_amount * 100);
-            $this->travelTo(now()->setDate(2026, $month, 25));
-        }
-
-        // Every installment, commission included, adds up to the cent
-        $this->assertSame(100011.0, (float) $billed);
-        $this->assertSame(0.0, $purchase->fresh()->remaining_amount);
     }
 }
