@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import type { CreditCard, Money, Purchase } from "@/types"
+import type { CreditCard, Purchase } from "@/types"
+import { useFormat } from "@/format"
 import { ref, watch, onMounted } from "vue"
-import { Head, Link, useForm, usePage } from "@inertiajs/vue3"
+import { Head, Link, useForm } from "@inertiajs/vue3"
 import InstallmentPurchaseNumberInput from "@/Components/Payments/InstallmentPurchaseNumberInput.vue"
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue"
 import PrimaryButton from "@/Components/PrimaryButton.vue"
@@ -9,8 +10,6 @@ import InputError from "@/Components/InputError.vue"
 import InputLabel from "@/Components/InputLabel.vue"
 import TextInput from "@/Components/TextInput.vue"
 import Checkbox from "@/Components/Checkbox.vue"
-
-const page = usePage()
 
 const props = defineProps<{
     creditCard: CreditCard
@@ -28,11 +27,7 @@ const installmentPurchasesById = Object.fromEntries(
 
 const datetime = new Date().toISOString().split("T")[0]
 
-const toCurrency = (num: Money) =>
-    new Intl.NumberFormat(page.props.locale, {
-        style: "currency",
-        currency: "MXN",
-    }).format(num)
+const { toCurrency } = useFormat()
 
 const form = useForm({
     datetime,

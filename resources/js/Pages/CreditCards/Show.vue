@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import type { CreditCard, Money, Purchase, SimplePaginator } from "@/types"
-import { Head, Link, usePage, useForm } from "@inertiajs/vue3"
+import type { CreditCard, Purchase, SimplePaginator } from "@/types"
+import { Head, Link, useForm } from "@inertiajs/vue3"
+import { useFormat } from "@/format"
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue"
 import PrimaryButton from "@/Components/PrimaryButton.vue"
 import PurchaseRow from "@/Components/CreditCards/PurchaseRow.vue"
@@ -12,21 +13,9 @@ const props = defineProps<{
     installmentPurchases: Purchase[]
 }>()
 
-const page = usePage()
 const deleteTransactionForm = useForm({})
 
-const toDate = (date: Date | string) =>
-    new Intl.DateTimeFormat(page.props.locale, {
-        dateStyle: "short",
-    }).format(new Date(date))
-
-const toCurrency = (num: Money) =>
-    new Intl.NumberFormat(page.props.locale, {
-        style: "currency",
-        currency: "MXN",
-    }).format(num)
-
-const limit = toCurrency(props.creditCard.limit)
+const { toCurrency, toDate } = useFormat()
 
 function deletePurchase(purchase: Purchase) {
     const answer = confirm("¿De verdad quieres borrar esta compra?")
@@ -56,7 +45,16 @@ function deletePurchase(purchase: Purchase) {
                 >
                     <section class="flex justify-between">
                         <div>
-                            <p class="text-xl">{{ limit }}</p>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">
+                                Disponible
+                            </p>
+                            <p class="text-2xl font-semibold">
+                                {{ toCurrency(creditCard.available_credit ?? 0) }}
+                            </p>
+                            <p class="mb-2">
+                                Usado {{ toCurrency(creditCard.balance_used ?? 0) }}
+                                de {{ toCurrency(creditCard.limit) }}
+                            </p>
                             <p>
                                 Fecha de corte:
                                 {{ toDate(creditCard.next_closing_date) }}

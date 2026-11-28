@@ -4,10 +4,13 @@ import { Head, Link } from "@inertiajs/vue3"
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue"
 import PrimaryButton from "@/Components/PrimaryButton.vue"
 import Pagination from "@/Components/Pagination.vue"
+import { useFormat } from "@/format"
 
 defineProps<{
     creditCards: LengthAwarePaginator<CreditCard>
 }>()
+
+const { toCurrency, toDate } = useFormat()
 </script>
 
 <template>
@@ -38,10 +41,12 @@ defineProps<{
                                 {{ creditCard.name }}
                             </p>
                             <p>
-                                {{ creditCard.due_date }}
+                                Disponible
+                                {{ toCurrency(creditCard.available_credit ?? 0) }}
                             </p>
-                            <p>
-                                {{ creditCard.closing_date }}
+                            <p class="text-sm text-gray-500 dark:text-gray-400">
+                                Corte {{ toDate(creditCard.next_closing_date) }}
+                                · Pago {{ toDate(creditCard.next_due_date) }}
                             </p>
                         </Link>
                     </div>
