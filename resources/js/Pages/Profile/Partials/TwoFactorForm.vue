@@ -54,17 +54,15 @@ function disable() {
     }
 }
 
-const button =
-    "inline-flex justify-center items-center px-4 py-2 rounded-md font-semibold text-xs uppercase tracking-widest focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition disabled:opacity-50"
-const secondary = `${button} bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 ring-1 ring-gray-300 dark:ring-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700`
-const danger = `${button} text-red-600 dark:text-red-400 ring-1 ring-red-300 dark:ring-red-800 hover:bg-red-50 dark:hover:bg-red-950`
+const secondary = "btn inline-flex justify-center items-center"
+const danger = "btn is-error inline-flex justify-center items-center"
 </script>
 
 <template>
     <section class="space-y-4">
         <header>
-            <h2 class="text-lg font-medium">Verificación en dos pasos</h2>
-            <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+            <h2 class="text-large">Verificación en dos pasos</h2>
+            <p class="mt-1 text-small text-muted">
                 Además de tu contraseña, te pedimos un código de una app de
                 autenticación (Google Authenticator, 1Password, Authy…).
             </p>
@@ -79,21 +77,21 @@ const danger = `${button} text-red-600 dark:text-red-400 ring-1 ring-red-300 dar
 
         <!-- Set up, waiting for the first code -->
         <template v-else-if="twoFactor.pending">
-            <ol class="list-decimal ps-5 space-y-1 text-sm">
+            <ol class="list-decimal ps-5 space-y-1 text-small">
                 <li>Escanea este código con tu app de autenticación.</li>
                 <li>Escribe el código de 6 dígitos que te muestra.</li>
             </ol>
 
             <div
                 v-if="twoFactor.qrCodeSvg"
-                class="inline-block rounded-lg bg-white p-3"
+                class="frame inline-block"
                 v-html="twoFactor.qrCodeSvg"
             />
 
-            <p class="text-sm text-gray-600 dark:text-gray-400">
+            <p class="text-small text-muted">
                 ¿No puedes escanearlo? Escribe esta clave en tu app:
                 <code
-                    class="block mt-1 break-all font-mono text-gray-900 dark:text-gray-100 select-all"
+                    class="block mt-1 break-all font-mono text-ink select-all"
                     >{{ twoFactor.setupKey }}</code
                 >
             </p>
@@ -103,7 +101,7 @@ const danger = `${button} text-red-600 dark:text-red-400 ring-1 ring-red-300 dar
                     <InputLabel for="code" value="Código" />
                     <TextInput
                         id="code"
-                        class="mt-1 block w-40 text-center text-xl tracking-[0.4em] font-mono"
+                        class="mt-1 block w-40 text-center text-title tracking-[0.4em] font-mono"
                         v-model="confirmation.code"
                         inputmode="numeric"
                         pattern="[0-9]*"
@@ -133,22 +131,22 @@ const danger = `${button} text-red-600 dark:text-red-400 ring-1 ring-red-300 dar
 
         <!-- On -->
         <template v-else>
-            <p class="font-medium text-emerald-600 dark:text-emerald-400">
+            <p class="font-medium text-success">
                 Activa
             </p>
 
             <div
                 v-if="twoFactor.recoveryCodes"
-                class="rounded-md bg-amber-50 dark:bg-amber-900/30 p-4 space-y-2"
+                class="notice is-warning space-y-2"
             >
-                <p class="text-sm font-medium text-amber-900 dark:text-amber-100">
+                <p class="text-small font-medium text-warning">
                     Guarda estos códigos de recuperación en un lugar seguro (por
                     ejemplo, tu gestor de contraseñas). Sirven para entrar si
                     pierdes tu teléfono, cada uno una sola vez. No los
                     volveremos a mostrar.
                 </p>
                 <ul
-                    class="grid grid-cols-2 gap-1 font-mono text-sm text-amber-900 dark:text-amber-100 select-all"
+                    class="grid grid-cols-2 gap-1 font-mono text-small text-warning select-all"
                 >
                     <li v-for="code in twoFactor.recoveryCodes" :key="code">
                         {{ code }}

@@ -1,16 +1,12 @@
+<!-- Pixel art on a 16x16 grid; use it at 16px multiples (size-4, size-8) so pixels stay square -->
 <template>
     <svg
         xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke-width="1.5"
-        stroke="currentColor"
+        viewBox="0 0 16 16"
+        fill="currentColor"
+        shape-rendering="crispEdges"
         aria-hidden="true"
     >
-        <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
-        />
+        <path d="M11 1h2v1h-2zM10 2h1v1h-1zM13 2h1v1h-1zM9 3h1v1h-1zM11 3h1v1h-1zM14 3h1v1h-1zM8 4h1v1h-1zM10 4h1v1h-1zM13 4h1v1h-1zM7 5h1v1h-1zM9 5h1v1h-1zM12 5h1v1h-1zM6 6h1v1h-1zM8 6h1v1h-1zM11 6h1v1h-1zM5 7h1v1h-1zM7 7h1v1h-1zM10 7h1v1h-1zM4 8h1v1h-1zM6 8h1v1h-1zM9 8h1v1h-1zM3 9h1v1h-1zM5 9h1v1h-1zM8 9h1v1h-1zM2 10h2v1h-2zM5 10h1v1h-1zM7 10h1v1h-1zM2 11h1v1h-1zM4 11h2v1h-2zM7 11h1v1h-1zM2 12h1v1h-1zM6 12h1v1h-1zM2 13h4v1h-4z" />
     </svg>
 </template>

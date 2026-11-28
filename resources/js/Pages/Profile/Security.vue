@@ -20,31 +20,31 @@ defineProps<{
     <AuthenticatedLayout>
         <template #header>
             <h2
-                class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight"
+                class="text-large sm:text-title text-ink"
             >
                 <Link :href="route('profile.edit')" class="hover:underline"
                     >Perfil</Link
                 >
-                <span class="text-gray-500 dark:text-gray-400"> · Seguridad</span>
+                <span class="text-muted"> · Seguridad</span>
             </h2>
         </template>
 
         <div class="py-6 sm:py-12">
             <div class="max-w-2xl mx-auto px-4 sm:px-6 space-y-6">
                 <div
-                    class="rounded-lg bg-white dark:bg-gray-800 p-4 sm:p-6 shadow-sm ring-1 ring-gray-200 dark:ring-gray-700"
+                    class="card is-compact"
                 >
                     <PasskeysForm :passkeys="passkeys" />
                 </div>
 
                 <div
-                    class="rounded-lg bg-white dark:bg-gray-800 p-4 sm:p-6 shadow-sm ring-1 ring-gray-200 dark:ring-gray-700"
+                    class="card is-compact"
                 >
                     <TwoFactorForm :two-factor="twoFactor" />
                 </div>
 
                 <div
-                    class="rounded-lg bg-white dark:bg-gray-800 p-4 sm:p-6 shadow-sm ring-1 ring-gray-200 dark:ring-gray-700"
+                    class="card is-compact"
                 >
                     <SecurityActivity :events="events" />
                 </div>

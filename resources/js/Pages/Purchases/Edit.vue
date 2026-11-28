@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import type { CreditCard, Purchase } from "@/types"
-import { Head, Link, useForm } from "@inertiajs/vue3"
+import { Head, useForm } from "@inertiajs/vue3"
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue"
 import PrimaryButton from "@/Components/PrimaryButton.vue"
 import InputError from "@/Components/InputError.vue"
 import InputLabel from "@/Components/InputLabel.vue"
 import TextInput from "@/Components/TextInput.vue"
-import Checkbox from "@/Components/Checkbox.vue"
 
 const props = defineProps<{
     creditCard: CreditCard
@@ -36,20 +35,25 @@ function submit() {
 
     <AuthenticatedLayout>
         <template #header>
-            <h2
-                class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight"
-            >
-                {{ purchase.is_refund ? "Editar devolución" : "Editar compra" }}:
+            <h2 class="text-large sm:text-title text-ink truncate">
                 {{ creditCard.name }}
             </h2>
         </template>
 
-        <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div
-                    class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-3"
-                >
-                    <form class="flex flex-col gap-2" @submit.prevent="submit">
+        <div class="py-6 sm:py-12">
+            <div class="max-w-lg mx-auto px-4 sm:px-6">
+                <div class="card is-compact">
+                    <form class="space-y-5" @submit.prevent="submit">
+                        <h3 class="section-label text-body">
+                            {{
+                                purchase.is_refund
+                                    ? "Editar devolución"
+                                    : purchase.is_installment_purchase
+                                      ? "Editar compra a meses"
+                                      : "Editar compra"
+                            }}
+                        </h3>
+
                         <div>
                             <InputLabel for="concept" value="Concepto" />
 
@@ -68,174 +72,195 @@ function submit() {
                             />
                         </div>
 
-                        <div>
-                            <InputLabel for="date" value="Fecha" />
-
-                            <TextInput
-                                id="date"
-                                type="date"
-                                class="mt-1 block w-full"
-                                v-model="form.date"
-                                required
-                            />
-
-                            <InputError
-                                class="mt-2"
-                                :message="form.errors.date"
-                            />
-                        </div>
-
-                        <div>
-                            <InputLabel for="amount" value="Importe" />
-
-                            <TextInput
-                                id="amount"
-                                type="text"
-                                    inputmode="decimal"
-                                class="mt-1 block w-full"
-                                v-model="form.amount"
-                                required
-                            />
-
-                            <InputError
-                                class="mt-2"
-                                :message="form.errors.amount"
-                            />
-                        </div>
-
-                        <div
-                            class="flex flex-wrap gap-2"
-                            v-if="purchase.is_installment_purchase"
-                        >
-                            <div class="flex-1 min-w-32">
-                                <InputLabel
-                                    for="installment_count"
-                                    value="Plazos"
-                                />
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <InputLabel for="date" value="Fecha" />
 
                                 <TextInput
-                                    id="installment_count"
-                                    type="number"
-                                    min="1"
+                                    id="date"
+                                    type="date"
                                     class="mt-1 block w-full"
-                                    v-model="form.installment_count"
+                                    v-model="form.date"
                                     required
                                 />
 
                                 <InputError
                                     class="mt-2"
-                                    :message="form.errors.installment_count"
+                                    :message="form.errors.date"
                                 />
                             </div>
-
-                            <div class="flex-1 min-w-32">
-                                <InputLabel
-                                    for="installment_amount"
-                                    value="Importe de plazo"
-                                />
-
-                                <TextInput
-                                    id="installment_amount"
-                                    type="text"
-                                    inputmode="decimal"
-                                    min="0"
-                                    :max="form.amount"
-                                    class="mt-1 block w-full"
-                                    v-model="form.installment_amount"
-                                    required
-                                />
-
-                                <InputError
-                                    class="mt-2"
-                                    :message="form.errors.installment_amount"
-                                />
-                            </div>
-                        </div>
-
-                        <div
-                            class="flex flex-wrap gap-2"
-                            v-if="purchase.is_installment_purchase"
-                        >
-                            <div class="flex-1 min-w-32">
-                                <InputLabel
-                                    for="commission"
-                                    value="% Comisión"
-                                />
-
-                                <TextInput
-                                    id="commission"
-                                    type="text"
-                                    inputmode="decimal"
-                                    min="1"
-                                    class="mt-1 block w-full"
-                                    v-model="form.commission"
-                                />
-
-                                <InputError
-                                    class="mt-2"
-                                    :message="form.errors.commission"
-                                />
-                            </div>
-
-                            <div class="flex-1 min-w-32">
-                                <InputLabel
-                                    for="interest_rate"
-                                    value="% Intereses"
-                                />
-
-                                <TextInput
-                                    id="interest_rate"
-                                    type="text"
-                                    inputmode="decimal"
-                                    min="0"
-                                    class="mt-1 block w-full"
-                                    v-model="form.interest_rate"
-                                />
-
-                                <InputError
-                                    class="mt-2"
-                                    :message="form.errors.interest_rate"
-                                />
-                            </div>
-                        </div>
-
-                        <fieldset
-                            class="border-t-2 border-indigo-200 dark:border-indigo-900 py-2 mt-4"
-                        >
-                            <legend
-                                class="bg-white dark:bg-gray-800 px-3 ml-auto text-indigo-600 dark:text-indigo-400"
-                            >
-                                Opcional
-                            </legend>
 
                             <div>
                                 <InputLabel
-                                    for="applied_on"
-                                    value="Fecha de aplicación"
+                                    for="amount"
+                                    :value="
+                                        purchase.is_refund
+                                            ? 'Te devuelven'
+                                            : 'Importe'
+                                    "
                                 />
 
-                                <TextInput
-                                    id="applied_on"
-                                    type="date"
-                                    class="mt-1 block w-full"
-                                    :min="form.date"
-                                    v-model="form.applied_on"
-                                />
+                                <div class="relative mt-1">
+                                    <span
+                                        class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted text-large"
+                                        >$</span
+                                    >
+                                    <TextInput
+                                        id="amount"
+                                        type="text"
+                                        inputmode="decimal"
+                                        class="block w-full pl-8"
+                                        v-model="form.amount"
+                                        required
+                                    />
+                                </div>
 
                                 <InputError
                                     class="mt-2"
-                                    :message="form.errors.applied_on"
+                                    :message="form.errors.amount"
                                 />
                             </div>
-                        </fieldset>
-
-                        <div class="text-right">
-                            <PrimaryButton
-                                type="submit"
-                                :disabled="form.processing"
-                                >Guardar</PrimaryButton
-                            >
                         </div>
+
+                        <template v-if="purchase.is_installment_purchase">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <InputLabel
+                                        for="installment_count"
+                                        value="Meses"
+                                    />
+
+                                    <TextInput
+                                        id="installment_count"
+                                        type="number"
+                                        inputmode="numeric"
+                                        min="1"
+                                        max="60"
+                                        class="mt-1 block w-full"
+                                        v-model="form.installment_count"
+                                        required
+                                    />
+
+                                    <InputError
+                                        class="mt-2"
+                                        :message="form.errors.installment_count"
+                                    />
+                                </div>
+
+                                <div>
+                                    <InputLabel
+                                        for="installment_amount"
+                                        value="Mensualidad"
+                                    />
+
+                                    <div class="relative mt-1">
+                                        <span
+                                            class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted text-large"
+                                            >$</span
+                                        >
+                                        <TextInput
+                                            id="installment_amount"
+                                            type="text"
+                                            inputmode="decimal"
+                                            class="block w-full pl-8"
+                                            v-model="form.installment_amount"
+                                            required
+                                        />
+                                    </div>
+
+                                    <InputError
+                                        class="mt-2"
+                                        :message="form.errors.installment_amount"
+                                    />
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-x-4">
+                                <div class="grid grid-rows-subgrid row-span-3">
+                                    <InputLabel for="commission" class="self-end">
+                                        Comisión
+                                        <span class="text-muted">(opcional)</span>
+                                    </InputLabel>
+
+                                    <div class="relative mt-1">
+                                        <span
+                                            class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted text-large"
+                                            >$</span
+                                        >
+                                        <TextInput
+                                            id="commission"
+                                            type="text"
+                                            inputmode="decimal"
+                                            class="block w-full pl-8"
+                                            v-model="form.commission"
+                                        />
+                                    </div>
+
+                                    <InputError
+                                        class="mt-2"
+                                        :message="form.errors.commission"
+                                    />
+                                </div>
+
+                                <div class="grid grid-rows-subgrid row-span-3">
+                                    <InputLabel for="interest_rate" class="self-end">
+                                        Tasa anual
+                                        <span class="text-muted">(opcional)</span>
+                                    </InputLabel>
+
+                                    <div class="relative mt-1">
+                                        <TextInput
+                                            id="interest_rate"
+                                            type="text"
+                                            inputmode="decimal"
+                                            class="block w-full pr-8"
+                                            v-model="form.interest_rate"
+                                        />
+                                        <span
+                                            class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-muted text-large"
+                                            >%</span
+                                        >
+                                    </div>
+
+                                    <InputError
+                                        class="mt-2"
+                                        :message="form.errors.interest_rate"
+                                    />
+                                </div>
+                            </div>
+                        </template>
+
+                        <div>
+                            <InputLabel for="applied_on">
+                                Fecha de aplicación
+                                <span class="text-muted">(opcional)</span>
+                            </InputLabel>
+
+                            <TextInput
+                                id="applied_on"
+                                type="date"
+                                class="mt-1 block w-1/2"
+                                :min="form.date"
+                                v-model="form.applied_on"
+                            />
+
+                            <p class="mt-1 text-small text-muted">
+                                Cuando el banco la carga después de la fecha
+                                de compra.
+                            </p>
+
+                            <InputError
+                                class="mt-2"
+                                :message="form.errors.applied_on"
+                            />
+                        </div>
+
+                        <PrimaryButton
+                            type="submit"
+                            class="w-full justify-center sm:w-auto"
+                            :disabled="form.processing"
+                            >Guardar</PrimaryButton
+                        >
                     </form>
                 </div>
             </div>

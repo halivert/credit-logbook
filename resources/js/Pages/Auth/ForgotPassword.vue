@@ -23,14 +23,14 @@ function submit() {
     <GuestLayout>
         <Head title="Restablecer contraseña" />
 
-        <h1 class="text-lg font-semibold">Restablecer contraseña</h1>
-        <p class="mt-1 mb-4 text-sm text-gray-600 dark:text-gray-400">
+        <h1 class="text-title">Restablecer contraseña</h1>
+        <p class="mt-1 mb-4 text-small text-muted">
             Te enviaremos un enlace a tu correo para elegir una nueva.
         </p>
 
         <p
             v-if="status"
-            class="mb-4 text-sm font-medium text-emerald-600 dark:text-emerald-400"
+            class="mb-4 text-small font-medium text-success"
         >
             {{ status }}
         </p>
@@ -56,10 +56,10 @@ function submit() {
                 >Enviar enlace</PrimaryButton
             >
 
-            <p class="text-center text-sm">
+            <p class="text-center text-small">
                 <Link
                     :href="route('login')"
-                    class="text-indigo-600 dark:text-indigo-400 hover:underline"
+                    class="link"
                     >Volver a iniciar sesión</Link
                 >
             </p>

@@ -37,7 +37,7 @@ function submit() {
     <AuthenticatedLayout>
         <template #header>
             <h2
-                class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight truncate"
+                class="text-large sm:text-title text-ink truncate"
             >
                 {{ creditCard.name }}
             </h2>
@@ -46,14 +46,14 @@ function submit() {
         <div class="py-6 sm:py-12">
             <div class="max-w-lg mx-auto px-4 sm:px-6">
                 <div
-                    class="bg-white dark:bg-gray-800 shadow-sm rounded-lg p-4 sm:p-6"
+                    class="card is-compact"
                 >
                     <form class="space-y-5" @submit.prevent="submit">
                         <div>
-                            <p class="text-xs text-gray-500 dark:text-gray-400">
+                            <p class="text-note text-muted">
                                 Saldo actual
                             </p>
-                            <p class="text-2xl font-semibold tabular-nums">
+                            <p class="text-title sm:text-display leading-none">
                                 {{ toCurrency(balance) }}
                             </p>
                         </div>
@@ -64,7 +64,7 @@ function submit() {
 
                                 <div class="relative mt-1">
                                     <span
-                                        class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-gray-500 dark:text-gray-400"
+                                        class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted text-large"
                                         >$</span
                                     >
                                     <TextInput
@@ -72,7 +72,7 @@ function submit() {
                                         type="text"
                                         inputmode="decimal"
                                         min="0.01"
-                                        class="block w-full pl-7"
+                                        class="block w-full pl-8"
                                         v-model="form.amount"
                                         required
                                         autofocus
@@ -103,11 +103,11 @@ function submit() {
                             </div>
                         </div>
 
-                        <div class="flex flex-col items-start gap-2 text-sm">
+                        <div class="flex flex-col items-start gap-2 text-small">
                             <button
                                 v-if="toAvoidInterest > 0"
                                 type="button"
-                                class="text-indigo-600 dark:text-indigo-400 hover:underline"
+                                class="link"
                                 @click="form.amount = toAvoidInterest.toFixed(2)"
                             >
                                 Para no generar intereses
@@ -116,7 +116,7 @@ function submit() {
                             <button
                                 v-if="balance > 0"
                                 type="button"
-                                class="text-indigo-600 dark:text-indigo-400 hover:underline"
+                                class="link"
                                 @click="form.amount = balance.toFixed(2)"
                             >
                                 Todo el saldo ({{ toCurrency(balance) }})

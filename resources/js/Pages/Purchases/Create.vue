@@ -68,7 +68,7 @@ function submit() {
     <AuthenticatedLayout>
         <template #header>
             <h2
-                class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight truncate"
+                class="text-large sm:text-title text-ink truncate"
             >
                 {{ creditCard.name }}
             </h2>
@@ -77,30 +77,34 @@ function submit() {
         <div class="py-6 sm:py-12">
             <div class="max-w-lg mx-auto px-4 sm:px-6">
                 <div
-                    class="bg-white dark:bg-gray-800 shadow-sm rounded-lg p-4 sm:p-6"
+                    class="card is-compact"
                 >
                     <form class="space-y-5" @submit.prevent="submit">
                         <div
-                            class="grid grid-cols-3 gap-1 rounded-lg bg-gray-100 dark:bg-gray-900 p-1"
+                            class="card has-title is-compact"
                             role="radiogroup"
-                            aria-label="Tipo"
+                            aria-labelledby="kind-title"
                         >
-                            <button
-                                v-for="kind in kinds"
-                                :key="kind.value"
-                                type="button"
-                                role="radio"
-                                :aria-checked="form.kind === kind.value"
-                                class="rounded-md py-2 text-sm font-medium transition focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                                :class="
-                                    form.kind === kind.value
-                                        ? 'bg-white dark:bg-gray-700 shadow-sm'
-                                        : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
-                                "
-                                @click="form.kind = kind.value"
+                            <p id="kind-title" class="card-title">Tipo</p>
+
+                            <div
+                                class="flex flex-col gap-3"
                             >
-                                {{ kind.label }}
-                            </button>
+                                <label
+                                    v-for="kind in kinds"
+                                    :key="kind.value"
+                                    class="text-large"
+                                >
+                                    <input
+                                        type="radio"
+                                        class="choice"
+                                        name="kind"
+                                        :value="kind.value"
+                                        v-model="form.kind"
+                                    />
+                                    <span>{{ kind.label }}</span>
+                                </label>
+                            </div>
                         </div>
 
                         <div>
@@ -156,7 +160,7 @@ function submit() {
 
                                 <div class="relative mt-1">
                                     <span
-                                        class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-gray-500 dark:text-gray-400"
+                                        class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted text-large"
                                         >$</span
                                     >
                                     <TextInput
@@ -164,7 +168,7 @@ function submit() {
                                         type="text"
                                         inputmode="decimal"
                                         min="0.01"
-                                        class="block w-full pl-7"
+                                        class="block w-full pl-8"
                                         v-model="form.amount"
                                         required
                                     />
@@ -210,7 +214,7 @@ function submit() {
 
                                     <div class="relative mt-1">
                                         <span
-                                            class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-gray-500 dark:text-gray-400"
+                                            class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted text-large"
                                             >$</span
                                         >
                                         <TextInput
@@ -218,7 +222,7 @@ function submit() {
                                             type="text"
                                             inputmode="decimal"
                                             min="0.01"
-                                            class="block w-full pl-7"
+                                            class="block w-full pl-8"
                                             v-model="form.installment_amount"
                                             :placeholder="
                                                 suggestedInstallment?.toFixed(2)
@@ -234,7 +238,7 @@ function submit() {
 
                                 <p
                                     v-if="suggestedInstallment"
-                                    class="col-span-2 -mt-2 text-sm text-gray-500 dark:text-gray-400"
+                                    class="col-span-2 -mt-2 text-small text-muted"
                                 >
                                     Si la dejas vacía:
                                     {{ toCurrency(suggestedInstallment) }} al
@@ -246,14 +250,14 @@ function submit() {
                                 <InputLabel for="commission">
                                     Comisión por apertura
                                     <span
-                                        class="font-normal text-gray-500 dark:text-gray-400"
+                                        class="font-normal text-muted"
                                         >(opcional)</span
                                     >
                                 </InputLabel>
 
                                 <div class="relative mt-1 w-1/2 pr-2">
                                     <span
-                                        class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-gray-500 dark:text-gray-400"
+                                        class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted text-large"
                                         >$</span
                                     >
                                     <TextInput
@@ -261,7 +265,7 @@ function submit() {
                                         type="text"
                                         inputmode="decimal"
                                         min="0"
-                                        class="block w-full pl-7"
+                                        class="block w-full pl-8"
                                         v-model="form.commission"
                                     />
                                 </div>
@@ -275,7 +279,7 @@ function submit() {
 
                         <p
                             v-if="form.kind === 'refund'"
-                            class="text-sm text-gray-500 dark:text-gray-400"
+                            class="text-small text-muted"
                         >
                             Se abona a la tarjeta: baja tu saldo y libera
                             crédito.

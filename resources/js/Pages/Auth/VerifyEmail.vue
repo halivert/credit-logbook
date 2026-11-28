@@ -17,15 +17,15 @@ const sent = computed(() => props.status === "verification-link-sent")
     <GuestLayout>
         <Head title="Verifica tu correo" />
 
-        <h1 class="text-lg font-semibold">Verifica tu correo</h1>
-        <p class="mt-1 mb-4 text-sm text-gray-600 dark:text-gray-400">
+        <h1 class="text-title">Verifica tu correo</h1>
+        <p class="mt-1 mb-4 text-small text-muted">
             Te enviamos un enlace para confirmar tu correo. Si no te llegó,
             te mandamos otro.
         </p>
 
         <p
             v-if="sent"
-            class="mb-4 text-sm font-medium text-emerald-600 dark:text-emerald-400"
+            class="mb-4 text-small font-medium text-success"
         >
             Te enviamos un nuevo enlace.
         </p>
@@ -37,12 +37,12 @@ const sent = computed(() => props.status === "verification-link-sent")
                 >Reenviar enlace</PrimaryButton
             >
 
-            <p class="text-center text-sm">
+            <p class="text-center text-small">
                 <Link
                     :href="route('logout')"
                     method="post"
                     as="button"
-                    class="text-indigo-600 dark:text-indigo-400 hover:underline"
+                    class="link"
                     >Cerrar sesión</Link
                 >
             </p>

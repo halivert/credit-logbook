@@ -37,7 +37,7 @@ function submit() {
     <AuthenticatedLayout>
         <template #header>
             <h2
-                class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight"
+                class="text-large sm:text-title text-ink"
             >
                 {{ creditCard ? `Tarjeta ${creditCard.name}` : "Nueva tarjeta" }}
             </h2>
@@ -46,7 +46,7 @@ function submit() {
         <div class="py-6 sm:py-12">
             <div class="max-w-lg mx-auto px-4 sm:px-6">
                 <div
-                    class="bg-white dark:bg-gray-800 shadow-sm rounded-lg p-4 sm:p-6"
+                    class="card is-compact"
                 >
                     <form class="space-y-5" @submit.prevent="submit">
                         <div>
@@ -114,22 +114,23 @@ function submit() {
                             </div>
 
                             <p
-                                class="col-span-2 -mt-2 text-sm text-gray-500 dark:text-gray-400"
+                                class="col-span-2 -mt-2 text-small text-muted"
                             >
                                 Del 1 al 28 de cada mes.
                             </p>
                         </div>
 
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
+                        <div class="grid grid-cols-2 gap-x-4">
+                            <div class="grid grid-rows-subgrid row-span-3">
                                 <InputLabel
+                                    class="self-end"
                                     for="limit"
                                     value="Límite de crédito"
                                 />
 
                                 <div class="relative mt-1">
                                     <span
-                                        class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-gray-500 dark:text-gray-400"
+                                        class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted text-large"
                                         >$</span
                                     >
                                     <TextInput
@@ -137,7 +138,7 @@ function submit() {
                                         type="text"
                                         inputmode="decimal"
                                         min="0"
-                                        class="block w-full pl-7"
+                                        class="block w-full pl-8"
                                         v-model="form.limit"
                                         required
                                     />
@@ -149,11 +150,11 @@ function submit() {
                                 />
                             </div>
 
-                            <div>
-                                <InputLabel for="interest_rate">
+                            <div class="grid grid-rows-subgrid row-span-3">
+                                <InputLabel for="interest_rate" class="self-end">
                                     Tasa anual
                                     <span
-                                        class="font-normal text-gray-500 dark:text-gray-400"
+                                        class="font-normal text-muted"
                                         >(opcional)</span
                                     >
                                 </InputLabel>
@@ -165,11 +166,11 @@ function submit() {
                                         inputmode="decimal"
                                         min="0"
                                         max="200"
-                                        class="block w-full pr-7"
+                                        class="block w-full pr-8"
                                         v-model="form.interest_rate"
                                     />
                                     <span
-                                        class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-500 dark:text-gray-400"
+                                        class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-muted text-large"
                                         >%</span
                                     >
                                 </div>

@@ -1,3 +1,40 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss/base";
+
+/*
+ * The look of the app lives in a theme. To switch to another one, import a
+ * different folder here. A theme defines:
+ *
+ * Variables (on :root, switching with prefers-color-scheme)
+ *   Colors, as RGB channels: --page, --surface, --ink, --muted, --line,
+ *   --shade, --primary, --success, --warning, --error
+ *   Fonts: --font-body, --font-mono
+ *   Type scale: --text-{note,small,body,large,title,display,hero} and the
+ *   matching --leading-*
+ *
+ * Classes
+ *   .btn            button or link that looks like one
+ *                   .is-primary .is-error .is-icon
+ *   .card           box around content
+ *                   .is-compact .is-list (rows with dividers) .is-empty
+ *                   .is-link (whole card clickable) .is-flush (no padding)
+ *                   .has-title with a .card-title child
+ *   .input          text input
+ *   .checkbox       checkbox input
+ *   .choice         radio input, followed by a <span> with its label
+ *   .meter          <progress>: .is-primary .is-error .is-small
+ *   .notice         message box: .is-success .is-warning
+ *   .rows           list whose items are separated by dividers
+ *   .link           inline link
+ *   .section-label  small heading over a group of content
+ *   .divider        horizontal rule
+ *   .frame          plain bordered box (QR code)
+ *   .blink          blinking text
+ *   .app-bar        top navigation and page header bars
+ *   .nav-link       top navigation link, .is-active
+ *   .drawer-link    mobile navigation link, .is-active
+ *   .menu           dropdown panel, with .menu-item children
+ */
+@import "./themes/nes/index.css";
+
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";

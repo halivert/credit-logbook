@@ -21,11 +21,11 @@ const form = useForm({
 <template>
     <section>
         <header>
-            <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+            <h2 class="text-large">
                 Información de perfil
             </h2>
 
-            <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+            <p class="mt-1 text-small text-muted">
                 Actualiza la información de tu perfil y correo electrónico.
             </p>
         </header>
@@ -66,13 +66,13 @@ const form = useForm({
             </div>
 
             <div v-if="mustVerifyEmail && user.email_verified_at === null">
-                <p class="text-sm mt-2 text-gray-800 dark:text-gray-200">
+                <p class="text-small mt-2 text-ink">
                     Tu correo no está verificado.
                     <Link
                         :href="route('verification.send')"
                         method="post"
                         as="button"
-                        class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800"
+                        class="link text-small"
                     >
                         Clic aquí para reenviar el correo de verificación.
                     </Link>
@@ -80,7 +80,7 @@ const form = useForm({
 
                 <div
                     v-show="status === 'verification-link-sent'"
-                    class="mt-2 font-medium text-sm text-green-600 dark:text-green-400"
+                    class="mt-2 font-medium text-small text-success"
                 >
                     Un nuevo enlace de verificación ha sido enviado a tu correo
                     electrónico.
@@ -98,7 +98,7 @@ const form = useForm({
                 >
                     <p
                         v-if="form.recentlySuccessful"
-                        class="text-sm text-gray-600 dark:text-gray-400"
+                        class="text-small text-muted"
                     >
                         Guardado.
                     </p>
