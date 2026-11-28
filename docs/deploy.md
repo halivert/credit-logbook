@@ -112,10 +112,13 @@ alertas de seguridad), así que alcanza el plan gratis de
 1. En Resend, *Domains → Add domain*: `tarjetero.halivert.dev`. Un subdominio
    separa la reputación de estos correos de la de `halivert.dev`.
 2. Copia en el DNS los registros que te muestra: DKIM (`resend._domainkey`),
-   y el MX y el SPF del subdominio de rebotes (`send.`). Espera a que diga
-   *Verified*.
-3. Agrega DMARC si el dominio no lo tiene, para que no caigan en spam:
-   `_dmarc.tarjetero.halivert.dev` TXT `v=DMARC1; p=none;`
+   y el MX y el SPF del subdominio de rebotes (`send.`). El DNS de
+   `halivert.dev` está en WordPress.com, donde el nombre va sin el dominio:
+   `resend._domainkey.tarjetero` y `send.tarjetero`. Espera a que diga
+   *Verified*. Para ver si ya están publicados, sin esperar la propagación:
+   `dig +short TXT resend._domainkey.tarjetero.halivert.dev @ns1.wordpress.com`
+3. DMARC: no hace falta otro. El de `halivert.dev` ya cubre sus subdominios
+   (`sp=`), y uno con `p=none` en el subdominio lo debilitaría.
 4. *API Keys → Create*: permiso *Sending access*, solo para ese dominio. Va
    en `MAIL_PASSWORD`; el usuario SMTP siempre es `resend`.
 5. Prueba desde el servidor:
