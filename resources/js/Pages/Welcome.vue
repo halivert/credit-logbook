@@ -33,9 +33,9 @@ const features = [
         >
             <ApplicationLogo class="size-32 fill-current text-ink" />
 
-            <h1 class="text-display sm:text-hero !leading-[1.75]">Bitácora de crédito</h1>
+            <h1 class="reading text-display sm:text-hero">Tarjetero</h1>
 
-            <p class="max-w-xl text-large !leading-[1.75] text-muted">
+            <p class="reading max-w-xl text-large text-muted">
                 Lleva tus tarjetas de crédito al día: cuánto debes, cuánto te
                 queda y cuándo pagar.
             </p>
@@ -78,7 +78,7 @@ const features = [
                     :key="feature.title"
                     class="card is-compact"
                 >
-                    <h2 class="text-large !leading-[1.75]">{{ feature.title }}</h2>
+                    <h2 class="reading text-large">{{ feature.title }}</h2>
                     <p class="mt-1 text-small text-muted">{{ feature.text }}</p>
                 </li>
             </ul>
@@ -91,5 +91,11 @@ const features = [
                 <LogbookTour />
             </section>
         </main>
+
+        <footer class="pb-10 text-center text-note">
+            <Link :href="route('privacy')" class="link">
+                Aviso de privacidad
+            </Link>
+        </footer>
     </div>
 </template>

@@ -6,6 +6,7 @@ import PrimaryButton from "@/Components/PrimaryButton.vue"
 import InputError from "@/Components/InputError.vue"
 import InputLabel from "@/Components/InputLabel.vue"
 import TextInput from "@/Components/TextInput.vue"
+import DeleteCreditCard from "@/Components/CreditCards/DeleteCreditCard.vue"
 
 const props = defineProps<{
     creditCard?: CreditCard
@@ -44,7 +45,7 @@ function submit() {
         </template>
 
         <div class="py-6 sm:py-12">
-            <div class="max-w-lg mx-auto px-4 sm:px-6">
+            <div class="max-w-lg mx-auto px-4 sm:px-6 space-y-6">
                 <div
                     class="card is-compact"
                 >
@@ -205,6 +206,8 @@ function submit() {
                         >
                     </form>
                 </div>
+
+                <DeleteCreditCard v-if="creditCard" :credit-card="creditCard" />
             </div>
         </div>
     </AuthenticatedLayout>

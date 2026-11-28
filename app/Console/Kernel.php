@@ -17,6 +17,13 @@ class Kernel extends ConsoleKernel
 
         // Unusually many wrong passwords, codes or lockouts in the last hour
         $schedule->command('security:alert')->hourlyAt(5);
+
+        // Database backups, kept config('backup.keep_days'); an email if it fails
+        $backup = $schedule->command('db:backup')->dailyAt('04:00');
+
+        if ($email = config('security.alerts.email')) {
+            $backup->emailOutputOnFailure($email);
+        }
     }
 
     /**

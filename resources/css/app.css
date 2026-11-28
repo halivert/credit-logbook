@@ -16,6 +16,7 @@
  *                   .is-primary .is-error .is-icon
  *   .actions        row of buttons with room between them
  *                   .is-compact (icon buttons)
+ *   .reading        text that wraps over several lines (on it or a parent)
  *   .card           box around content
  *                   .is-compact .is-list (rows with dividers) .is-empty
  *                   .is-link (whole card clickable) .is-flush (no padding)

@@ -33,6 +33,12 @@ Route::get('/invitacion/{user}', InvitationController::class)
     ->middleware(['guest', 'signed', 'throttle:6,1'])
     ->name('invitation.accept');
 
+// Aviso de privacidad (LFPDPPP)
+Route::get('/privacidad', fn () => Inertia::render('Privacy', [
+    'owner' => config('privacy.owner'),
+    'email' => config('privacy.email'),
+]))->name('privacy');
+
 // URLs in Spanish (without accents, they break when copied); route names
 // stay in English like the rest of the code.
 Route::resourceVerbs([

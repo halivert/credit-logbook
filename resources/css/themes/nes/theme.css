@@ -133,6 +133,17 @@
         gap: 0.75rem;
     }
 
+    /*
+     * Text that wraps over several lines. VT323 is drawn bigger than its
+     * font size (font-size-adjust), so the type scale's line heights only
+     * fit single lines. The class is doubled so it wins over the text-*
+     * utilities, which come later and set their own line height.
+     */
+    .reading.reading :where(h1, h2, h3, p, li),
+    :where(h1, h2, h3, p, li).reading.reading {
+        line-height: 1.75;
+    }
+
     .btn:focus-visible {
         outline: none;
         box-shadow: 0 0 0 6px rgb(var(--primary) / 0.4);

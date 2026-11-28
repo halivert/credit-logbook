@@ -100,6 +100,16 @@ return [
     ],
 
     /*
+     * Reset password emails, on top of the throttle above. The daily email
+     * quota is shared (Resend's free plan: 100 a day), so nobody can spend it
+     * by asking again and again; the rest stays for security alerts.
+     */
+    'reset_emails' => [
+        'per_account_per_hour' => 3,
+        'per_day' => 50,
+    ],
+
+    /*
     |--------------------------------------------------------------------------
     | Password Confirmation Timeout
     |--------------------------------------------------------------------------
