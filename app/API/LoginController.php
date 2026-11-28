@@ -4,9 +4,12 @@ namespace App\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Security\EnsureIpIsNotBlocked;
+use Illuminate\Auth\Events\Failed;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Laravel\Fortify\Fortify;
 use Laravel\Fortify\Http\Requests\LoginRequest;
@@ -17,12 +20,17 @@ class LoginController extends Controller
     {
         $attrs = $request->validated();
 
-        $user = User::query()->where(
-            Fortify::username(),
-            $attrs[Fortify::username()]
-        )->first();
+        // The same limit per IP as the web sign in
+        app(EnsureIpIsNotBlocked::class)->handle($request, fn () => null);
+
+        $email = Str::lower($attrs[Fortify::username()]);
+
+        $user = User::query()->where(Fortify::username(), $email)->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
+            // Counted like a web attempt: activity, metrics and the IP limit
+            event(new Failed('sanctum', $user, [Fortify::username() => $email]));
+
             throw ValidationException::withMessages([
                 Fortify::username() => [__('auth.failed')],
             ]);

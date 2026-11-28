@@ -20,8 +20,8 @@ use Laravel\Passkeys\Events\PasskeyRegistered;
 
 /**
  * Writes down sign ins and changes to how an account signs in. Failed
- * attempts for emails without an account aren't recorded per account
- * (there's nobody to show them to), only in the anonymous metrics.
+ * attempts on emails without an account are kept without a user (and
+ * without the email) for monitoring; nobody sees them in their activity.
  */
 class RecordSecurityEvents
 {
@@ -49,27 +49,25 @@ class RecordSecurityEvents
 
     public function failed(Failed $event): void
     {
-        SecurityMetric::record($event->user ? SecurityMetric::LOGIN_FAILED : SecurityMetric::LOGIN_FAILED_UNKNOWN);
+        LoginIpThrottle::hit((string) request()->ip());
 
-        $this->record($event->user, SecurityEvent::LOGIN_FAILED);
+        // Also without an account: that's how leaked lists show up
+        $this->record($event->user, SecurityEvent::LOGIN_FAILED, anonymous: true);
     }
 
     public function twoFactorFailed(TwoFactorAuthenticationFailed $event): void
     {
-        SecurityMetric::record(SecurityMetric::TWO_FACTOR_FAILED);
-
         $this->record($event->user, SecurityEvent::TWO_FACTOR_FAILED);
     }
 
     public function lockout(Lockout $event): void
     {
-        SecurityMetric::record(SecurityMetric::LOCKOUT);
-
         $email = $event->request->input(Fortify::username());
 
         $this->record(
-            is_string($email) ? User::query()->where('email', $email)->first() : null,
+            is_string($email) ? User::query()->where('email', Str::lower($email))->first() : null,
             SecurityEvent::LOCKOUT,
+            anonymous: true,
         );
     }
 
@@ -86,15 +84,20 @@ class RecordSecurityEvents
         };
     }
 
-    private function record(mixed $user, string $type, ?string $method = null, ?string $detail = null): void
+    /**
+     * Anonymous events (no account) never keep the email, only where the
+     * attempt came from, for monitoring.
+     */
+    private function record(mixed $user, string $type, ?string $method = null, ?string $detail = null, bool $anonymous = false): void
     {
-        if (! $user instanceof User) {
+        if (! $user instanceof User && ! $anonymous) {
             return;
         }
 
         $request = request();
 
-        $user->securityEvents()->create([
+        SecurityEvent::query()->forceCreate([
+            'user_id' => $user instanceof User ? $user->getKey() : null,
             'type' => $type,
             'method' => $method,
             'detail' => $detail === null ? null : Str::limit($detail, 250, ''),

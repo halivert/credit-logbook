@@ -2,60 +2,59 @@
 
 namespace App\Console\Commands;
 
-use App\Security\SecurityMetric;
+use App\Security\SecurityEvent;
+use App\Security\SuspiciousActivity;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
 
 /**
- * Suspicious events per day, anonymous, compared with the previous period.
+ * Suspicious events per day and the IPs behind them, for the admin.
  */
 class SecurityReportCommand extends Command
 {
-    protected $signature = 'security:report {--days=7 : How many days, today included}';
+    protected $signature = 'security:report {--days=7 : How many days, today included (up to 90)}';
 
-    protected $description = 'Anonymous counts of suspicious sign in events';
-
-    private const LABELS = [
-        SecurityMetric::LOGIN_FAILED => 'Contraseña incorrecta',
-        SecurityMetric::LOGIN_FAILED_UNKNOWN => 'Correo sin cuenta',
-        SecurityMetric::TWO_FACTOR_FAILED => 'Código incorrecto',
-        SecurityMetric::LOCKOUT => 'Bloqueos',
-    ];
+    protected $description = 'Suspicious sign in events per day and the IPs behind them';
 
     public function handle(): int
     {
-        $days = max(1, (int) $this->option('days'));
+        $days = min(SecurityEvent::KEEP_DAYS, max(1, (int) $this->option('days')));
         $timezone = config('security.timezone');
 
         $to = Carbon::now($timezone)->startOfDay()->addDay();
         $from = $to->copy()->subDays($days);
 
-        $rows = SecurityMetric::query()
-            ->where('hour', '>=', $from->copy()->utc())
-            ->where('hour', '<', $to->copy()->utc())
-            ->get()
-            ->groupBy(fn (SecurityMetric $metric) => $metric->hour->setTimezone($timezone)->toDateString());
+        $events = SuspiciousActivity::between($from->copy()->utc(), $to->copy()->utc());
+        $byDay = $events->groupBy(fn (SecurityEvent $event) => $event->created_at->setTimezone($timezone)->toDateString());
 
-        $table = [];
+        $rows = [];
         for ($day = $from->copy(); $day->lt($to); $day->addDay()) {
-            $metrics = $rows->get($day->toDateString(), collect());
-            $counts = array_map(
-                fn (string $type) => (int) $metrics->where('type', $type)->sum('total'),
-                SecurityMetric::TYPES,
-            );
-
-            $table[] = [$day->toDateString(), ...$counts, array_sum($counts)];
+            $totals = SuspiciousActivity::totals($byDay->get($day->toDateString(), collect()));
+            $rows[] = [$day->toDateString(), ...array_values($totals), array_sum($totals)];
         }
 
-        $this->table(['Día', ...array_values(self::LABELS), 'Total'], $table);
+        $this->table(['Día', ...array_values(SuspiciousActivity::LABELS), 'Total'], $rows);
 
-        $current = SecurityMetric::totals($from->copy()->utc(), $to->copy()->utc());
-        $previous = SecurityMetric::totals($from->copy()->subDays($days)->utc(), $from->copy()->utc());
+        $previous = SuspiciousActivity::between($from->copy()->subDays($days)->utc(), $from->copy()->utc());
 
         $this->components->twoColumnDetail(
             "Total en {$days} días",
-            $this->comparison(array_sum($current), array_sum($previous)),
+            $this->comparison($events->count(), $previous->count()),
         );
+
+        $ips = SuspiciousActivity::topIps($events, $from->copy()->utc(), $to->copy()->utc());
+
+        if ($ips->isNotEmpty()) {
+            $this->newLine();
+            $this->table(
+                ['IP', 'Intentos', 'Cuentas', 'Correos sin cuenta', 'Bloqueos', 'Entradas'],
+                $ips->map(fn (array $ip) => array_values($ip))->all(),
+            );
+
+            if ($ips->contains(fn (array $ip) => $ip['sign_ins'] > 0)) {
+                $this->components->warn('Hay IPs con intentos fallidos que también entraron: revisa si fue su dueño o si alguien adivinó una contraseña.');
+            }
+        }
 
         return self::SUCCESS;
     }

@@ -8,7 +8,7 @@ use Illuminate\Notifications\Notification;
 use Illuminate\Support\Carbon;
 
 /**
- * Anonymous counts only: no users, emails or IPs.
+ * For the admin: counts and the IPs behind them, never which accounts.
  */
 class SuspiciousActivityDetected extends Notification
 {
@@ -16,11 +16,13 @@ class SuspiciousActivityDetected extends Notification
 
     /**
      * @param  array<string, int>  $totals
+     * @param  list<array{ip: string, attempts: int, accounts: int, unknown: int, lockouts: int, sign_ins: int}>  $ips
      */
     public function __construct(
         public Carbon $hour,
         public array $totals,
         public float $baseline,
+        public array $ips,
     ) {}
 
     public function via(object $notifiable): array
@@ -32,7 +34,7 @@ class SuspiciousActivityDetected extends Notification
     {
         $hour = $this->hour->copy()->setTimezone(config('security.timezone'));
 
-        return (new MailMessage)
+        $mail = (new MailMessage)
             ->subject(config('app.name').': actividad sospechosa')
             ->line(sprintf(
                 'Entre las %s y las %s del %s hubo %d intentos sospechosos, contra un promedio de %s por hora la semana anterior.',
@@ -41,11 +43,22 @@ class SuspiciousActivityDetected extends Notification
                 $hour->toDateString(),
                 array_sum($this->totals),
                 number_format($this->baseline, 1),
-            ))
-            ->line("Contraseña incorrecta: {$this->totals[SecurityMetric::LOGIN_FAILED]}")
-            ->line("Correo sin cuenta: {$this->totals[SecurityMetric::LOGIN_FAILED_UNKNOWN]}")
-            ->line("Código incorrecto: {$this->totals[SecurityMetric::TWO_FACTOR_FAILED]}")
-            ->line("Bloqueos: {$this->totals[SecurityMetric::LOCKOUT]}")
-            ->line('Muchos "correo sin cuenta" suelen ser alguien probando listas de contraseñas filtradas. Para ver la tendencia: php artisan security:report');
+            ));
+
+        foreach (SuspiciousActivity::LABELS as $category => $label) {
+            $mail->line("{$label}: {$this->totals[$category]}");
+        }
+
+        foreach ($this->ips as $ip) {
+            $mail->line(sprintf(
+                'IP %s: %d intentos, %d correos sin cuenta%s',
+                $ip['ip'],
+                $ip['attempts'],
+                $ip['unknown'],
+                $ip['sign_ins'] ? ", {$ip['sign_ins']} entradas" : '',
+            ));
+        }
+
+        return $mail->line('Muchos "correo sin cuenta" desde pocas IPs suelen ser alguien probando listas de contraseñas filtradas. Detalle: php artisan security:report');
     }
 }
