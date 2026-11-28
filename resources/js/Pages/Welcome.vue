@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head, Link } from "@inertiajs/vue3"
 import ApplicationLogo from "@/Components/ApplicationLogo.vue"
-import LogbookDemo from "@/Components/Welcome/LogbookDemo.vue"
+import LogbookTour from "@/Components/Welcome/LogbookTour.vue"
 
 defineProps<{
     canLogin?: boolean
@@ -88,7 +88,7 @@ const features = [
                     Así funciona
                 </h2>
 
-                <LogbookDemo />
+                <LogbookTour />
             </section>
         </main>
     </div>
