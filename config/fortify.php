@@ -106,6 +106,7 @@ return [
     'limiters' => [
         'login' => 'login',
         'two-factor' => 'two-factor',
+        'passkeys' => 'passkeys',
     ],
 
     /*
@@ -138,10 +139,28 @@ return [
         Features::resetPasswords(),
         Features::emailVerification(),
         Features::updatePasswords(),
+        // Management routes also ask for the password, already confirmed by
+        // the security page
+        Features::passkeys(['confirmPassword' => true]),
         Features::twoFactorAuthentication([
             'confirm' => true,
             'confirmPassword' => true,
         ]),
+    ],
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Passkeys
+    |--------------------------------------------------------------------------
+    |
+    | The user handle shown to authenticators is derived from this secret. A
+    | dedicated one keeps it stable when APP_KEY is rotated.
+    |
+    */
+
+    'passkeys' => [
+        'user_handle_secret' => env('PASSKEYS_USER_HANDLE_SECRET', env('APP_KEY')),
     ],
 
 ];

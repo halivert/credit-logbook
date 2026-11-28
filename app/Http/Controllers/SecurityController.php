@@ -8,7 +8,7 @@ use Inertia\Response;
 use Laravel\Fortify\Fortify;
 
 /**
- * How a person signs in: two factor authentication and passkeys. The page
+ * How a person signs in: passkeys and two factor authentication. The page
  * asks for the password first, so everything done from it is confirmed.
  */
 class SecurityController extends Controller
@@ -33,6 +33,17 @@ class SecurityController extends Controller
                 'setupKey' => $pending ? decrypt($user->two_factor_secret) : null,
                 'recoveryCodes' => $showRecoveryCodes ? $user->recoveryCodes() : null,
             ],
+            // Never the credential itself
+            'passkeys' => $user->passkeys()
+                ->latest()
+                ->get()
+                ->map(fn ($passkey) => [
+                    'id' => $passkey->id,
+                    'name' => $passkey->name,
+                    'authenticator' => $passkey->authenticator,
+                    'createdAt' => $passkey->created_at->toDateString(),
+                    'lastUsedAt' => $passkey->last_used_at?->toDateString(),
+                ]),
         ]);
     }
 }

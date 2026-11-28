@@ -6,6 +6,7 @@ import InputLabel from "@/Components/InputLabel.vue"
 import PrimaryButton from "@/Components/PrimaryButton.vue"
 import TextInput from "@/Components/TextInput.vue"
 import { Head, Link, useForm } from "@inertiajs/vue3"
+import { usePasskeyVerify } from "@laravel/passkeys/vue"
 
 defineProps<{
     canResetPassword?: boolean
@@ -17,6 +18,15 @@ const form = useForm({
     email: "",
     password: "",
     remember: false,
+})
+
+// A full page load after signing in, so the session and CSRF token are new
+const passkey = usePasskeyVerify({
+    autofill: true,
+    remember: () => form.remember,
+    onSuccess: (response) => {
+        window.location.href = response.redirect ?? route("credit-cards.index")
+    },
 })
 
 function submit() {
@@ -89,6 +99,26 @@ function submit() {
                 :disabled="form.processing"
                 >Entrar</PrimaryButton
             >
+
+            <template v-if="passkey.isSupported.value">
+                <div
+                    class="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400"
+                >
+                    <span class="h-px flex-1 bg-gray-200 dark:bg-gray-700" />
+                    o
+                    <span class="h-px flex-1 bg-gray-200 dark:bg-gray-700" />
+                </div>
+
+                <button
+                    type="button"
+                    class="flex w-full justify-center items-center px-4 py-2 rounded-md font-semibold text-xs uppercase tracking-widest bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 ring-1 ring-gray-300 dark:ring-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-50"
+                    :disabled="passkey.isLoading.value"
+                    @click="passkey.verify"
+                >
+                    Entrar con passkey
+                </button>
+                <InputError :message="passkey.error.value ?? undefined" />
+            </template>
 
             <p
                 v-if="canRegister"

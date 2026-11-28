@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue"
+import PasskeysForm, { type PasskeyItem } from "./Partials/PasskeysForm.vue"
 import TwoFactorForm, { type TwoFactorState } from "./Partials/TwoFactorForm.vue"
 import { Head, Link } from "@inertiajs/vue3"
 
 defineProps<{
     twoFactor: TwoFactorState
+    passkeys: PasskeyItem[]
 }>()
 </script>
 
@@ -25,6 +27,12 @@ defineProps<{
 
         <div class="py-6 sm:py-12">
             <div class="max-w-2xl mx-auto px-4 sm:px-6 space-y-6">
+                <div
+                    class="rounded-lg bg-white dark:bg-gray-800 p-4 sm:p-6 shadow-sm ring-1 ring-gray-200 dark:ring-gray-700"
+                >
+                    <PasskeysForm :passkeys="passkeys" />
+                </div>
+
                 <div
                     class="rounded-lg bg-white dark:bg-gray-800 p-4 sm:p-6 shadow-sm ring-1 ring-gray-200 dark:ring-gray-700"
                 >
