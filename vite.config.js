@@ -6,7 +6,20 @@ export default defineConfig({
     server: {
         // Inside Sail, changes made on macOS don't reach the container's
         // file watcher, so Vite would keep serving stale modules.
-        watch: { usePolling: Boolean(process.env.LARAVEL_SAIL) },
+        // Polling every file is expensive: skip the big folders that never
+        // hold frontend code.
+        watch: {
+            usePolling: Boolean(process.env.LARAVEL_SAIL),
+            interval: 300,
+            ignored: [
+                "**/vendor/**",
+                "**/storage/**",
+                "**/bootstrap/cache/**",
+                "**/public/build/**",
+                "**/.git/**",
+                "**/local/**",
+            ],
+        },
     },
     plugins: [
         laravel({
