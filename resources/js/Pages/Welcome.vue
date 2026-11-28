@@ -2,6 +2,7 @@
 import { Head, Link } from "@inertiajs/vue3"
 import ApplicationLogo from "@/Components/ApplicationLogo.vue"
 import LogbookTour from "@/Components/Welcome/LogbookTour.vue"
+import LegalLinks from "@/Components/LegalLinks.vue"
 
 defineProps<{
     canLogin?: boolean
@@ -27,7 +28,7 @@ const features = [
 <template>
     <Head title="Bienvenido" />
 
-    <div class="min-h-screen bg-page">
+    <div class="min-h-screen flex flex-col bg-page">
         <header
             class="flex flex-col items-center gap-6 px-4 pt-16 pb-12 text-center"
         >
@@ -71,7 +72,7 @@ const features = [
             </p>
         </header>
 
-        <main class="max-w-5xl mx-auto px-4 sm:px-6 pb-16 space-y-12">
+        <main class="w-full max-w-5xl mx-auto px-4 sm:px-6 pb-16 space-y-12">
             <ul class="grid gap-4 sm:grid-cols-3">
                 <li
                     v-for="feature in features"
@@ -89,13 +90,16 @@ const features = [
                 </h2>
 
                 <LogbookTour />
+
+                <p class="reading mt-6 text-center text-small text-muted">
+                    Tarjetero no se conecta a tu banco ni hace pagos: tú anotas
+                    y tú pagas. Lo que vale siempre es tu estado de cuenta.
+                </p>
             </section>
         </main>
 
-        <footer class="pb-10 text-center text-note">
-            <Link :href="route('privacy')" class="link">
-                Aviso de privacidad
-            </Link>
+        <footer class="mt-auto pb-10">
+            <LegalLinks />
         </footer>
     </div>
 </template>

@@ -20,4 +20,12 @@ class PrivacyTest extends TestCase
                 ->where('owner', 'Ana Pérez')
                 ->where('email', 'privacidad@example.com'));
     }
+
+    #[Test]
+    public function the_terms_of_use_are_public(): void
+    {
+        $this->get(route('terms'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page->component('Terms'));
+    }
 }

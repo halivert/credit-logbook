@@ -142,7 +142,7 @@ const steps: Step[] = [
     {
         label: "El pago",
         title: "Pagas y quedas cubierto",
-        text: `Registras tu pago de ${toCurrency(TO_AVOID_INTEREST)} y ya no generas intereses. Tu disponible se recupera.`,
+        text: `Pagas ${toCurrency(TO_AVOID_INTEREST)} en tu banco y lo anotas aquí: ya no generas intereses y tu disponible se recupera.`,
         used: 1240.5 + 800 + 12000 + 650 - TO_AVOID_INTEREST,
         statement: {
             ...afterClosing,

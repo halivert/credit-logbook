@@ -9,13 +9,16 @@ import DropdownLink from "@/Components/DropdownLink.vue"
 import NavLink from "@/Components/NavLink.vue"
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink.vue"
 import { Link } from "@inertiajs/vue3"
+import LegalLinks from "@/Components/LegalLinks.vue"
 
 const showingNavigationDropdown = ref(false)
 </script>
 
 <template>
     <div>
-        <div class="min-h-screen bg-page">
+        <!-- Column as tall as the screen: the footer's mt-auto takes the spare
+             space, so it sits at the bottom even on short pages -->
+        <div class="min-h-screen flex flex-col bg-page">
             <nav
                 class="app-bar"
             >
@@ -164,6 +167,14 @@ const showingNavigationDropdown = ref(false)
             <main>
                 <slot />
             </main>
+
+            <footer class="reading mt-auto mx-auto max-w-3xl px-4 sm:px-6 pt-6 pb-10 space-y-2 text-center">
+                <p class="text-note text-muted">
+                    Tarjetero es tu registro personal: no se conecta a tu banco
+                    ni hace pagos. Lo que vale es tu estado de cuenta.
+                </p>
+                <LegalLinks />
+            </footer>
         </div>
     </div>
 </template>

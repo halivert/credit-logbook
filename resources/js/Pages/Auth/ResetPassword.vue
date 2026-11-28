@@ -4,7 +4,7 @@ import InputError from "@/Components/InputError.vue"
 import InputLabel from "@/Components/InputLabel.vue"
 import PrimaryButton from "@/Components/PrimaryButton.vue"
 import TextInput from "@/Components/TextInput.vue"
-import { Head, useForm } from "@inertiajs/vue3"
+import { Head, Link, useForm } from "@inertiajs/vue3"
 
 const props = defineProps<{
     email: string
@@ -83,6 +83,15 @@ function submit() {
                 :disabled="form.processing"
                 >Guardar contraseña</PrimaryButton
             >
+
+            <p v-if="invited" class="reading text-note text-muted text-center">
+                Al guardar tu contraseña aceptas los
+                <Link :href="route('terms')" class="link">términos de uso</Link>
+                y el
+                <Link :href="route('privacy')" class="link"
+                    >aviso de privacidad</Link
+                >.
+            </p>
         </form>
     </GuestLayout>
 </template>

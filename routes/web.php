@@ -33,6 +33,12 @@ Route::get('/invitacion/{user}', InvitationController::class)
     ->middleware(['guest', 'signed', 'throttle:6,1'])
     ->name('invitation.accept');
 
+// Términos de uso: Tarjetero no se conecta al banco ni hace pagos
+Route::get('/terminos', fn () => Inertia::render('Terms', [
+    'owner' => config('privacy.owner'),
+    'email' => config('privacy.email'),
+]))->name('terms');
+
 // Aviso de privacidad (LFPDPPP)
 Route::get('/privacidad', fn () => Inertia::render('Privacy', [
     'owner' => config('privacy.owner'),
