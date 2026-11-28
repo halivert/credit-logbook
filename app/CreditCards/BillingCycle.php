@@ -44,6 +44,30 @@ final readonly class BillingCycle
     }
 
     /**
+     * The latest closing, $on itself included.
+     */
+    public function lastClosing(?CarbonImmutable $on = null): CarbonImmutable
+    {
+        $on ??= $this->today();
+
+        $closing = $this->dayOfMonth($on, $this->closingDay);
+
+        if ($closing->lte($on)) {
+            return $closing;
+        }
+
+        return $this->dayOfMonth($on->startOfMonth()->subMonth(), $this->closingDay);
+    }
+
+    /**
+     * When the statement of a closing is due: the first due day after it.
+     */
+    public function dueAfter(CarbonImmutable $closing): CarbonImmutable
+    {
+        return $this->nextDue($closing->addDay());
+    }
+
+    /**
      * Closings on or after $from and up to $to, both included.
      */
     public function closingsBetween(CarbonImmutable $from, CarbonImmutable $to): int

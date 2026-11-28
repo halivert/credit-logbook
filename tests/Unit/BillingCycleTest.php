@@ -88,4 +88,34 @@ class BillingCycleTest extends TestCase
         $this->assertSame('2026-11-20', $this->cycle()->today()->toDateString());
         $this->assertSame('2026-11-20', $this->cycle()->nextClosing()->toDateString());
     }
+
+    public static function lastClosings(): array
+    {
+        return [
+            'earlier this month' => ['2026-11-25', 20, '2026-11-20'],
+            'on the closing day' => ['2026-11-20', 20, '2026-11-20'],
+            'last month' => ['2026-11-19', 20, '2026-10-20'],
+            'across the year' => ['2027-01-03', 20, '2026-12-20'],
+            'short month' => ['2027-03-10', 30, '2027-02-28'],
+        ];
+    }
+
+    #[Test]
+    #[DataProvider('lastClosings')]
+    public function the_last_closing_is_today_or_before(string $on, int $closingDay, string $expected): void
+    {
+        $this->assertSame(
+            $expected,
+            $this->cycle(closingDay: $closingDay)->lastClosing(BillingCycle::day($on))->toDateString(),
+        );
+    }
+
+    #[Test]
+    public function a_statement_is_due_on_the_first_due_day_after_its_closing(): void
+    {
+        $this->assertSame('2026-12-09', $this->cycle(20, 9)->dueAfter(BillingCycle::day('2026-11-20'))->toDateString());
+        $this->assertSame('2026-11-25', $this->cycle(5, 25)->dueAfter(BillingCycle::day('2026-11-05'))->toDateString());
+        // A due day equal to the closing day is the next month's
+        $this->assertSame('2026-12-20', $this->cycle(20, 20)->dueAfter(BillingCycle::day('2026-11-20'))->toDateString());
+    }
 }

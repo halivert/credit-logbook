@@ -23,7 +23,7 @@ class CreditCardController extends Controller
             ->where('user_id', auth()->user()->id)
             ->paginate(10);
 
-        $creditCards->getCollection()->each->append(['balance_used', 'available_credit']);
+        $creditCards->getCollection()->each->append(['balance_used', 'available_credit', 'current_statement']);
 
         return Inertia::render('CreditCards/Index', [
             'creditCards' => $creditCards
@@ -70,7 +70,7 @@ class CreditCardController extends Controller
             ->values();
 
         return Inertia::render('CreditCards/Show', [
-            'creditCard' => $creditCard->append(['balance_used', 'available_credit']),
+            'creditCard' => $creditCard->append(['balance_used', 'available_credit', 'current_statement']),
             'purchases' => $purchases,
             'installmentPurchases' => $installmentPurchases,
         ]);
