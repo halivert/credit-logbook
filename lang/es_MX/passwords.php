@@ -13,10 +13,12 @@ return [
     |
     */
 
-    'reset' => 'Tu contraseña ha sido restablecida.',
-    'sent' => 'Hemos enviado por correo electrónico el enlace para restablecer tu contraseña.',
+    'reset' => 'Listo, ya puedes entrar con tu nueva contraseña.',
+    'sent' => 'Si hay una cuenta con ese correo, te enviamos el enlace para restablecer tu contraseña.',
     'throttled' => 'Por favor, espera antes de intentarlo de nuevo.',
-    'token' => 'Este token de restablecimiento de contraseña no es válido.',
-    'user' => "No podemos encontrar un usuario con esa dirección de correo electrónico.",
+    'token' => 'Este enlace ya no es válido. Pide uno nuevo.',
+    // The same as "sent": saying the email has no account would reveal
+    // which emails do
+    'user' => 'Si hay una cuenta con ese correo, te enviamos el enlace para restablecer tu contraseña.',
 
 ];
