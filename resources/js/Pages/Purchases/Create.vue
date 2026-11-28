@@ -161,9 +161,8 @@ function submit() {
                                     >
                                     <TextInput
                                         id="amount"
-                                        type="number"
+                                        type="text"
                                         inputmode="decimal"
-                                        step="0.01"
                                         min="0.01"
                                         class="block w-full pl-7"
                                         v-model="form.amount"
@@ -216,10 +215,9 @@ function submit() {
                                         >
                                         <TextInput
                                             id="installment_amount"
-                                            type="number"
+                                            type="text"
                                             inputmode="decimal"
                                             min="0.01"
-                                            step="0.01"
                                             class="block w-full pl-7"
                                             v-model="form.installment_amount"
                                             :placeholder="
@@ -260,10 +258,9 @@ function submit() {
                                     >
                                     <TextInput
                                         id="commission"
-                                        type="number"
+                                        type="text"
                                         inputmode="decimal"
                                         min="0"
-                                        step="0.01"
                                         class="block w-full pl-7"
                                         v-model="form.commission"
                                     />

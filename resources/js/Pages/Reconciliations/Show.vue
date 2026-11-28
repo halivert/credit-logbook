@@ -119,9 +119,8 @@ const secondary = `${button} bg-white dark:bg-gray-800 text-gray-700 dark:text-g
                                     >
                                     <TextInput
                                         id="to_avoid_interest"
-                                        type="number"
+                                        type="text"
                                         inputmode="decimal"
-                                        step="0.01"
                                         min="0"
                                         class="block w-full pl-7"
                                         v-model="form.to_avoid_interest"

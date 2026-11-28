@@ -4,7 +4,7 @@ import { onMounted, ref, computed, type InputTypeHTMLAttribute } from "vue"
 const props = withDefaults(
     defineProps<{
         type?: InputTypeHTMLAttribute
-        modelValue: string | number | Date | null
+        modelValue: string | number | null
     }>(),
     { type: "text" },
 )
@@ -21,28 +21,15 @@ onMounted(() => {
 
 defineExpose({ focus: () => input.value?.focus() })
 
-const modelValue = computed(() => {
-    if (props.type === "date") {
-        if (props.modelValue instanceof Date) {
-            return props.modelValue.toISOString().split("T")[0] ?? ""
-        }
-    }
+const modelValue = computed(() => props.modelValue ?? "")
 
-    return props.modelValue ?? ""
-})
-
+/**
+ * Always the text as typed: dates stay "Y-m-d" and amounts aren't turned
+ * into numbers (an invalid one would become NaN and be erased), so the
+ * server can say what's wrong and the person can fix it.
+ */
 function handleInput(event: Event) {
-    const target = event.target as HTMLInputElement
-
-    if (props.type === "number") {
-        return emit("update:modelValue", target.valueAsNumber)
-    }
-
-    if (props.type === "date") {
-        return emit("update:modelValue", target.valueAsDate)
-    }
-
-    emit("update:modelValue", target.value)
+    emit("update:modelValue", (event.target as HTMLInputElement).value)
 }
 </script>
 

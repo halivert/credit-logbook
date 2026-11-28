@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'amount' => 'cantidad',
+    'amount' => 'importe',
     'closing_date' => 'fecha de corte',
     'commission' => 'comisión',
     'concept' => 'concepto',
