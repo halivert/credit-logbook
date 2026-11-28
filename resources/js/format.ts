@@ -27,8 +27,18 @@ export function useFormat() {
         timeZone: "UTC",
     })
 
+    // Real moments (not calendar days), shown in the viewer's timezone
+    const dateTime = new Intl.DateTimeFormat(locale, {
+        day: "numeric",
+        month: "short",
+        hour: "numeric",
+        minute: "2-digit",
+    })
+
     return {
         toCurrency: (amount: Money) => currency.format(Number(amount)),
+        /** "27 nov, 14:05" in the viewer's timezone, for timestamps */
+        toDateTime: (value: string) => dateTime.format(new Date(value)),
         toDate: (value: DateString) => date.format(new Date(value)),
         /** "9 dic" */
         toShortDate: (value: DateString) => shortDate.format(new Date(value)),

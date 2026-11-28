@@ -35,4 +35,18 @@ class AuthenticationTest extends TestCase
 
         $this->assertGuest();
     }
+
+    public function test_the_email_is_not_case_sensitive(): void
+    {
+        $user = User::factory()->create(['email' => 'Hali@Example.com']);
+
+        $this->assertSame('hali@example.com', $user->email);
+
+        $this->post(route('login.store'), [
+            'email' => 'Hali@Example.COM',
+            'password' => 'password',
+        ]);
+
+        $this->assertAuthenticatedAs($user);
+    }
 }
