@@ -5,6 +5,7 @@ namespace App\Purchases;
 use App\CreditCards\CreditCard;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -70,7 +71,8 @@ class PurchaseController extends Controller
     public function destroy(Purchase $purchase): RedirectResponse
     {
         $creditCard = $purchase->creditCard;
-        $purchase->delete();
+
+        DB::transaction(fn () => $purchase->delete());
 
         return to_route('credit-cards.show', $creditCard);
     }
