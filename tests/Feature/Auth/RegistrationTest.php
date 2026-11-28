@@ -18,9 +18,9 @@ class RegistrationTest extends TestCase
     #[Test]
     public function registration_is_closed_by_default(): void
     {
-        $this->get('/register')->assertNotFound();
+        $this->get('/registro')->assertNotFound();
 
-        $this->post('/register', [
+        $this->post('/registro', [
             'name' => 'Test User',
             'username' => 'test',
             'email' => 'test@example.com',

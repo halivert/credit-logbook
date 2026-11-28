@@ -41,7 +41,7 @@ class RegistrationEnabledTest extends TestCase
     #[Test]
     public function new_users_can_register(): void
     {
-        $response = $this->post('/register', [
+        $response = $this->post('/registro', [
             'name' => 'Test User',
             'username' => 'test',
             'email' => 'test@example.com',

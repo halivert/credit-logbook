@@ -143,7 +143,7 @@ class PasskeyTest extends TestCase
         $user = User::factory()->create();
         $passkey = $this->passkeyFor($user);
 
-        $this->actingAs($user)->delete('/profile', ['password' => 'password']);
+        $this->actingAs($user)->delete(route('profile.destroy'), ['password' => 'password']);
 
         $this->assertModelMissing($passkey);
     }
