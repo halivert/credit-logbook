@@ -29,7 +29,7 @@ class PaymentController extends Controller
     public function create(CreditCard $creditCard): Response
     {
         return Inertia::render('Payments/Create', [
-            'creditCard' => $creditCard->append(['balance_used']),
+            'creditCard' => $creditCard->append(['balance_used', 'current_statement']),
         ]);
     }
 

@@ -71,6 +71,37 @@ class CreditCard extends Model
         );
     }
 
+    /**
+     * The statement of the latest closing, from the logbook.
+     */
+    public function statement(): Statement
+    {
+        $charges = $this->purchases()
+            ->get(['id', 'credit_card_id', 'date', 'applied_on', 'amount', 'installment_count', 'installment_amount', 'commission'])
+            ->map(fn (Purchase $purchase) => [
+                'day' => $purchase->day(),
+                'cents' => Money::toCents($purchase->getRawOriginal('amount')),
+                'plan' => $purchase->installmentPlan(),
+            ]);
+
+        $payments = $this->payments()
+            ->toBase()
+            ->get(['date', 'amount'])
+            ->map(fn (object $payment) => [
+                'day' => BillingCycle::day($payment->date),
+                'cents' => Money::toCents($payment->amount),
+            ]);
+
+        $cycle = $this->billingCycle();
+
+        return Statement::calculate($cycle, $cycle->today(), $charges, $payments);
+    }
+
+    protected function currentStatement(): Attribute
+    {
+        return new Attribute(fn () => $this->statement()->toArray());
+    }
+
     public function billingCycle(): BillingCycle
     {
         return BillingCycle::of($this);

@@ -35,6 +35,7 @@ class PaymentTest extends TestCase
             ->assertInertia(fn (Assert $page) => $page
                 ->component('Payments/Create')
                 ->where('creditCard.balance_used', 750)
+                ->has('creditCard.current_statement.remaining')
             );
     }
 

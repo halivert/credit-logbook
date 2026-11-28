@@ -13,6 +13,8 @@ const props = withDefaults(
 
 const { toCurrency, toShortDate } = useFormat()
 
+const statement = computed(() => props.creditCard.current_statement)
+
 const usage = computed(() => {
     const limit = Number(props.creditCard.limit)
 
@@ -25,13 +27,26 @@ const overLimit = computed(() => (props.creditCard.available_credit ?? 0) < 0)
 
 /** Only worth pointing out when it's close */
 const dueSoon = computed(() => {
-    const days = daysUntil(props.creditCard.next_due_date)
+    if (!statement.value?.remaining) return null
+
+    const days = daysUntil(statement.value.due_date)
 
     if (days === 0) return "hoy"
     if (days === 1) return "mañana"
     if (days > 1 && days <= 7) return `en ${days} días`
 
     return null
+})
+
+type PaymentState = "overdue" | "pending" | "covered" | "nothing"
+
+const paymentState = computed<PaymentState>(() => {
+    const current = statement.value
+
+    if (!current || current.to_avoid_interest <= 0) return "nothing"
+    if (current.remaining <= 0) return "covered"
+
+    return current.is_overdue ? "overdue" : "pending"
 })
 </script>
 
@@ -68,21 +83,53 @@ const dueSoon = computed(() => {
             {{ toCurrency(creditCard.limit) }}
         </p>
 
-        <dl class="mt-4 grid grid-cols-2 gap-2 text-sm">
+        <dl v-if="statement" class="mt-4 grid grid-cols-2 gap-3 text-sm">
             <div>
-                <dt class="text-gray-500 dark:text-gray-400">Corte</dt>
-                <dd>{{ toShortDate(creditCard.next_closing_date) }}</dd>
-            </div>
-            <div>
-                <dt class="text-gray-500 dark:text-gray-400">Pago</dt>
+                <dt class="text-gray-500 dark:text-gray-400">
+                    <template v-if="paymentState === 'overdue'">
+                        Venció el {{ toShortDate(statement.due_date) }}
+                    </template>
+                    <template v-else>
+                        Pago antes del {{ toShortDate(statement.due_date) }}
+                    </template>
+                </dt>
                 <dd
+                    v-if="paymentState === 'overdue' || paymentState === 'pending'"
+                    class="font-semibold tabular-nums"
                     :class="{
-                        'font-semibold text-amber-600 dark:text-amber-400':
-                            dueSoon,
+                        'text-red-600 dark:text-red-400': paymentState === 'overdue',
+                        'text-amber-600 dark:text-amber-400': dueSoon,
                     }"
                 >
-                    {{ toShortDate(creditCard.next_due_date) }}
-                    <span v-if="dueSoon"> · {{ dueSoon }}</span>
+                    {{ toCurrency(statement.remaining) }}
+                    <span v-if="dueSoon" class="font-normal"> · {{ dueSoon }}</span>
+                </dd>
+                <dd
+                    v-else-if="paymentState === 'covered'"
+                    class="font-semibold text-emerald-600 dark:text-emerald-400"
+                >
+                    Cubierto
+                </dd>
+                <dd v-else class="text-gray-500 dark:text-gray-400">
+                    Nada que pagar
+                </dd>
+                <dd
+                    v-if="statement.paid_since_closing > 0 && statement.remaining > 0"
+                    class="text-xs text-gray-500 dark:text-gray-400 tabular-nums"
+                >
+                    de {{ toCurrency(statement.to_avoid_interest) }}
+                </dd>
+            </div>
+
+            <div>
+                <dt class="text-gray-500 dark:text-gray-400">
+                    Corte {{ toShortDate(statement.next_closing_date) }}
+                </dt>
+                <dd class="tabular-nums">
+                    {{ toCurrency(statement.period_charges) }}
+                    <span class="text-gray-500 dark:text-gray-400">
+                        este periodo
+                    </span>
                 </dd>
             </div>
         </dl>
