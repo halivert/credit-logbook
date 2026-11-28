@@ -8,7 +8,9 @@ certificado TLS, el worker de colas y el scheduler.
 Al crear el servidor en Forge:
 
 - **PHP 8.4**
-- **Base de datos: MariaDB** (la app usa el driver `mariadb`)
+- **Base de datos: MySQL 8.4 LTS** (`DB_CONNECTION=mysql`). Forge no ofrece
+  MariaDB; la app funciona igual con las dos (migraciones, pruebas y
+  respaldos probados en MySQL 8.4). Sail usa MariaDB 10.11.
 - Node se instala con el servidor. La app exige **Node 24** (`.npmrc` tiene
   `engine-strict`): revisa con `node -v` y, si hace falta, cámbialo en
   *Server › PHP / Node*.
@@ -146,7 +148,7 @@ Para probarlo a mano y para restaurar (prueba restaurar al menos una vez):
 
 ```sh
 php artisan db:backup
-gunzip -c /home/forge/backups/tarjetero-AAAA-MM-DD-HHMMSS.sql.gz | mariadb -u tarjetero -p tarjetero
+gunzip -c /home/forge/backups/tarjetero-AAAA-MM-DD-HHMMSS.sql.gz | mysql -u tarjetero -p tarjetero
 ```
 
 Sin la `APP_KEY`, el respaldo no sirve para el límite cifrado.
