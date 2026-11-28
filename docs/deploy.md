@@ -33,6 +33,8 @@ APP_KEY=            # php artisan key:generate --show
 PASSKEYS_USER_HANDLE_SECRET=   # openssl rand -hex 32
 APP_DEBUG=false
 APP_URL=https://tarjetero.halivert.dev
+# Nombre en la pestaña del navegador; se lee al compilar (npm run build)
+VITE_APP_NAME="${APP_NAME}"
 
 REGISTRATION=false
 
@@ -159,8 +161,21 @@ ya invitado. Sirve también para tu propia cuenta.
 
 ## 7. Respaldos
 
-Configura *Database Backups* en Forge hacia un almacenamiento externo (S3,
-Backblaze…), o un cron diario en *Scheduler*:
+Nada en el código hace respaldos: el scheduler de Laravel solo poda datos
+viejos y manda alertas. Elige una opción y configúrala en Forge.
+
+**A. *Database Backups* de Forge** hacia un almacenamiento externo (S3,
+Backblaze…), con retención de 30 días o menos. Es la mejor: el respaldo no
+vive en el mismo servidor.
+
+**B. Un cron diario en *Scheduler***, usuario `forge`, que deja los respaldos
+en el mismo servidor. Antes, por SSH:
+
+```sh
+mkdir -p /home/forge/backups && chmod 700 /home/forge/backups
+```
+
+El comando del cron:
 
 ```sh
 mariadb-dump --defaults-extra-file=/home/forge/.backup.cnf --single-transaction tarjetero | gzip > /home/forge/backups/tarjetero-$(date +\%F).sql.gz && find /home/forge/backups -name 'tarjetero-*.sql.gz' -mtime +30 -delete
