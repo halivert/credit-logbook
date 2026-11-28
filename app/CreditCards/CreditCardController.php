@@ -99,10 +99,13 @@ class CreditCardController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Deleted for good: it's the person's data, nothing is kept. Purchases,
+     * payments and reconciliations go with it (the foreign keys cascade).
      */
-    public function destroy(CreditCard $creditCard): void
+    public function destroy(CreditCard $creditCard): RedirectResponse
     {
-        //
+        $creditCard->forceDelete();
+
+        return to_route('credit-cards.index');
     }
 }

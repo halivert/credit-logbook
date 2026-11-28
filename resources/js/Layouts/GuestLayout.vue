@@ -18,5 +18,9 @@ import { Link } from "@inertiajs/vue3"
         >
             <slot />
         </div>
+
+        <Link :href="route('privacy')" class="my-6 text-note link">
+            Aviso de privacidad
+        </Link>
     </div>
 </template>

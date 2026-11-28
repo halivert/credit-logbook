@@ -67,6 +67,10 @@ MAIL_FROM_NAME="${APP_NAME}"
 
 # A quién avisar si una hora tiene muchos más intentos sospechosos de lo normal
 SECURITY_ALERT_EMAIL=tu@correo.com
+
+# Aviso de privacidad (/privacidad): tu nombre y el correo para solicitudes
+PRIVACY_OWNER="Tu nombre"
+PRIVACY_EMAIL=privacidad@tu-dominio
 ```
 
 **Guarda la `APP_KEY` en un gestor de contraseñas.** El límite de las tarjetas
@@ -159,8 +163,12 @@ Configura *Database Backups* en Forge hacia un almacenamiento externo (S3,
 Backblaze…), o un cron diario en *Scheduler*:
 
 ```sh
-mariadb-dump --defaults-extra-file=/home/forge/.backup.cnf --single-transaction tarjetero | gzip > /home/forge/backups/tarjetero-$(date +\%F).sql.gz
+mariadb-dump --defaults-extra-file=/home/forge/.backup.cnf --single-transaction tarjetero | gzip > /home/forge/backups/tarjetero-$(date +\%F).sql.gz && find /home/forge/backups -name 'tarjetero-*.sql.gz' -mtime +30 -delete
 ```
+
+El aviso de privacidad promete que los respaldos se borran en máximo 30
+días (por quien borra su cuenta): el `find` del final se encarga, y si usas
+*Database Backups* de Forge, pon la retención en 30 días o menos.
 
 `/home/forge/.backup.cnf` guarda las credenciales fuera del comando (que se ve
 en `ps`), con permisos `600`:

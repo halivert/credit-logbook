@@ -210,11 +210,11 @@ function next() {
                 </div>
             </div>
 
-            <div aria-live="polite">
-                <h3 class="text-large !leading-[1.75]">
+            <div class="reading" aria-live="polite">
+                <h3 class="text-large">
                     {{ current + 1 }}. {{ step.title }}
                 </h3>
-                <p class="mt-1 text-body !leading-[1.75] text-muted">
+                <p class="mt-1 text-body text-muted">
                     {{ step.text }}
                 </p>
             </div>
