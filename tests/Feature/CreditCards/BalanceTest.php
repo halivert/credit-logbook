@@ -99,4 +99,26 @@ class BalanceTest extends TestCase
         $this->assertModelExists($payment);
         $this->assertEqualsWithDelta(-1000, $this->balance(), 0.001);
     }
+
+    #[Test]
+    public function sums_that_floats_get_wrong_are_exact(): void
+    {
+        // 0.1 + 0.2 - 0.3 is 5.551115123125783e-17 with floats
+        Purchase::factory()->for($this->creditCard)->create(['amount' => '0.10']);
+        Purchase::factory()->for($this->creditCard)->create(['amount' => '0.20']);
+        Payment::factory()->for($this->creditCard)->create(['amount' => '0.30']);
+
+        $this->assertSame(0.0, $this->balance());
+        $this->assertSame(10000.0, $this->creditCard->fresh()->available_credit);
+    }
+
+    #[Test]
+    public function many_small_amounts_add_up_exactly(): void
+    {
+        Purchase::factory()->for($this->creditCard)->count(100)->create(['amount' => '0.01']);
+        Purchase::factory()->for($this->creditCard)->count(10)->create(['amount' => '0.07']);
+        Payment::factory()->for($this->creditCard)->create(['amount' => '1.70']);
+
+        $this->assertSame(0.0, $this->balance());
+    }
 }

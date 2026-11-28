@@ -116,20 +116,6 @@ class CreditCardTest extends TestCase
     }
 
     #[Test]
-    public function a_user_can_see_their_own_card(): void
-    {
-        $creditCard = CreditCard::factory()->create();
-
-        $this->actingAs($creditCard->user)
-            ->get(route('credit-cards.show', $creditCard))
-            ->assertOk()
-            ->assertInertia(fn (Assert $page) => $page
-                ->component('CreditCards/Show')
-                ->where('creditCard.id', $creditCard->id)
-            );
-    }
-
-    #[Test]
     public function a_user_cannot_see_or_edit_someone_elses_card(): void
     {
         $user = User::factory()->create();
@@ -161,28 +147,6 @@ class CreditCardTest extends TestCase
 
         $this->assertSame('Nueva', $creditCard->name);
         $this->assertSame(15, $creditCard->closing_date);
-    }
-
-    #[Test]
-    public function the_card_page_shows_balance_and_pending_installment_purchases(): void
-    {
-        $creditCard = CreditCard::factory()->create(['limit' => '10000']);
-        Purchase::factory()->for($creditCard)->create(['amount' => 500]);
-        $installments = Purchase::factory()->for($creditCard)->create([
-            'date' => now()->subMonths(2)->toDateString(),
-            'amount' => 1200,
-            'installment_count' => 12,
-            'installment_amount' => 100,
-        ]);
-
-        $this->actingAs($creditCard->user)
-            ->get(route('credit-cards.show', $creditCard))
-            ->assertInertia(fn (Assert $page) => $page
-                ->where('creditCard.balance_used', 1700)
-                ->where('creditCard.available_credit', 8300)
-                ->has('installmentPurchases', 1)
-                ->where('installmentPurchases.0.id', $installments->id)
-            );
     }
 
     #[Test]

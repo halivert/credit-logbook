@@ -85,21 +85,15 @@ class StorePurchaseRequest extends FormRequest
         }
 
         if ($validated['is_installment_purchase'] && blank($validated['installment_amount'] ?? null)) {
-            $validated['installment_amount'] = self::evenInstallment(
-                (float) $validated['amount'],
-                (int) $validated['installment_count'],
+            $validated['installment_amount'] = Money::fromCents(
+                InstallmentPlan::evenInstallmentCents(
+                    Money::toCents($validated['amount']),
+                    (int) $validated['installment_count'],
+                )
             );
         }
 
         return data_get($validated, $key, $default);
     }
 
-    /**
-     * The amount split evenly, rounded up to the cent like banks do (the
-     * last installment absorbs the difference).
-     */
-    public static function evenInstallment(float $amount, int $count): float
-    {
-        return ceil(round($amount * 100 / $count, 6)) / 100;
-    }
 }

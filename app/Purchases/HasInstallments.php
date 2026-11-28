@@ -2,6 +2,7 @@
 
 namespace App\Purchases;
 
+use App\CreditCards\BillingCycle;
 use App\Support\Money;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -10,6 +11,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
  * Like the bank, installments are billed one per closing date starting with
  * the first closing on or after the purchase was applied, whether or not
  * they're paid. Paying is tracked by the card's balance, not per purchase.
+ * The math lives in InstallmentPlan and BillingCycle.
  */
 trait HasInstallments
 {
@@ -27,12 +29,12 @@ trait HasInstallments
                 return null;
             }
 
-            $closings = $this->creditCard->closingsBetween(
-                $this->day(),
-                $this->creditCard->today(),
-            );
+            $cycle = $this->creditCard->billingCycle();
 
-            return min($closings, $this->installment_count);
+            return min(
+                $cycle->closingsBetween($this->day(), $cycle->today()),
+                $this->installment_count,
+            );
         });
     }
 
@@ -50,7 +52,10 @@ trait HasInstallments
      */
     protected function billedAmount(): Attribute
     {
-        return new Attribute(fn () => Money::fromCents($this->billedCents()));
+        return new Attribute(fn () => Money::fromCents(
+            $this->installmentPlan()?->billedCents($this->billed_installments)
+                ?? Money::toCents($this->getRawOriginal('amount'))
+        ));
     }
 
     /**
@@ -58,52 +63,34 @@ trait HasInstallments
      */
     protected function remainingAmount(): Attribute
     {
-        return new Attribute(fn () => Money::fromCents($this->remainingCents()));
+        return new Attribute(fn () => Money::fromCents(
+            $this->installmentPlan()?->remainingCents($this->billed_installments) ?? 0
+        ));
     }
 
     /**
-     * The next installment to be billed. The bank's amount is used as is,
-     * even when it doesn't divide the purchase evenly: the last installment
-     * takes whatever is left, and the first one includes the commission.
+     * The next installment to be billed.
      */
     protected function installmentAmount(): Attribute
     {
-        return new Attribute(function ($amount) {
-            if (! $this->installment_count) {
-                return null;
-            }
-
-            $isLast = $this->billed_installments === $this->installment_count - 1;
-
-            $cents = $isLast
-                ? $this->remainingCents()
-                : min($this->remainingCents(), Money::toCents($amount));
-
-            if ($this->billed_installments < 1) {
-                $cents += Money::toCents($this->commission);
-            }
-
-            return Money::fromCents($cents);
-        });
+        return new Attribute(fn () => ($plan = $this->installmentPlan())
+            ? Money::fromCents($plan->nextInstallmentCents($this->billed_installments))
+            : null
+        );
     }
 
-    private function billedCents(): int
+    public function installmentPlan(): ?InstallmentPlan
     {
-        $amount = Money::toCents($this->getRawOriginal('amount'));
-
-        // Single payment purchases and fully billed installments
-        if (! $this->installment_count || $this->billed_installments >= $this->installment_count) {
-            return $amount;
+        if (! $this->installment_count) {
+            return null;
         }
 
-        $installment = Money::toCents($this->getRawOriginal('installment_amount'));
-
-        return min($this->billed_installments * $installment, $amount);
-    }
-
-    private function remainingCents(): int
-    {
-        return max(0, Money::toCents($this->getRawOriginal('amount')) - $this->billedCents());
+        return new InstallmentPlan(
+            amountCents: Money::toCents($this->getRawOriginal('amount')),
+            count: $this->installment_count,
+            installmentCents: Money::toCents($this->getRawOriginal('installment_amount')),
+            commissionCents: Money::toCents($this->getRawOriginal('commission')),
+        );
     }
 
     /**
@@ -112,9 +99,8 @@ trait HasInstallments
      */
     public function day(): CarbonImmutable
     {
-        return CarbonImmutable::parse(
-            $this->getRawOriginal('applied_on') ?? $this->getRawOriginal('date'),
-            'UTC',
-        )->startOfDay();
+        return BillingCycle::day(
+            $this->getRawOriginal('applied_on') ?? $this->getRawOriginal('date')
+        );
     }
 }

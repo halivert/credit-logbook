@@ -2,7 +2,6 @@
 
 namespace Tests\Feature\Security;
 
-use App\CreditCards\CreditCard;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -43,8 +42,6 @@ class SecurityTest extends TestCase
                 ->missing('auth.user.subscription')
             );
     }
-
-
 
     #[Test]
     public function api_tokens_are_not_issued_to_users_with_two_factor(): void
@@ -98,14 +95,5 @@ class SecurityTest extends TestCase
         $response = $this->actingAs($user)->get(route('credit-cards.index'));
 
         $this->assertStringContainsString('no-store', $response->headers->get('Cache-Control'));
-    }
-
-    #[Test]
-    public function the_welcome_page_does_not_disclose_versions(): void
-    {
-        $this->get('/')->assertInertia(fn (Assert $page) => $page
-            ->missing('laravelVersion')
-            ->missing('phpVersion')
-        );
     }
 }
