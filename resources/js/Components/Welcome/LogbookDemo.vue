@@ -4,6 +4,7 @@ import { computed, ref } from "vue"
 import { today, useFormat } from "@/format"
 import CreditCardSummary from "@/Components/CreditCards/CreditCardSummary.vue"
 import PurchaseRow from "@/Components/CreditCards/PurchaseRow.vue"
+import InputError from "@/Components/InputError.vue"
 import InputLabel from "@/Components/InputLabel.vue"
 import TextInput from "@/Components/TextInput.vue"
 import PrimaryButton from "@/Components/PrimaryButton.vue"
@@ -16,7 +17,7 @@ import SecondaryButton from "@/Components/SecondaryButton.vue"
 
 const { toCurrency, toDate } = useFormat()
 
-const LIMIT = 20000
+const LIMIT = 30000
 /** What the last statement asked to pay to avoid interest */
 const TO_AVOID_INTEREST = 4350
 
@@ -205,14 +206,41 @@ const placeholders: Record<Kind, string> = {
 const form = ref({ kind: "purchase" as Kind, concept: "", amount: "", months: "6" })
 const message = ref("")
 
+/** Same limits as the server (App\Support\Money and StorePurchaseRequest) */
+const MAX_AMOUNT = 999999999.99
+const MAX_INSTALLMENTS = 60
+
 const amount = computed(() => cents(Number(form.value.amount)))
-const months = computed(() => Math.trunc(Number(form.value.months)))
+const months = computed(() => Number(form.value.months))
+
+/** Only once something was typed, so an empty form isn't all red */
+const amountError = computed(() => {
+    const value = form.value.amount.trim()
+
+    if (value === "") return ""
+    if (!/^\d+(\.\d{1,2})?$/.test(value))
+        return "Solo números, con hasta dos decimales y sin comas."
+    if (amount.value < 0.01) return "Debe ser al menos $0.01."
+    if (amount.value > MAX_AMOUNT) return "Es demasiado."
+
+    return ""
+})
+
+const monthsError = computed(() => {
+    if (form.value.kind !== "installments" || form.value.months === "") return ""
+    if (!Number.isInteger(months.value) || months.value < 1 || months.value > MAX_INSTALLMENTS)
+        return `De 1 a ${MAX_INSTALLMENTS} meses.`
+
+    return ""
+})
+
 const valid = computed(
     () =>
-        amount.value > 0 &&
+        form.value.amount.trim() !== "" &&
+        !amountError.value &&
         (form.value.kind === "payment" || form.value.concept.trim() !== "") &&
         (form.value.kind !== "installments" ||
-            (months.value >= 2 && months.value <= 60)),
+            (form.value.months !== "" && !monthsError.value)),
 )
 
 function add() {
@@ -319,6 +347,7 @@ function reset() {
                     id="demo-concept"
                     class="mt-1 block w-full"
                     v-model="form.concept"
+                    maxlength="255"
                     :placeholder="placeholders[form.kind]"
                     required
                 />
@@ -350,6 +379,7 @@ function reset() {
                             required
                         />
                     </div>
+                    <InputError class="mt-2" :message="amountError" />
                 </div>
 
                 <div v-if="form.kind === 'installments'">
@@ -358,12 +388,13 @@ function reset() {
                         id="demo-months"
                         type="number"
                         inputmode="numeric"
-                        min="2"
-                        max="60"
+                        min="1"
+                        :max="MAX_INSTALLMENTS"
                         class="mt-1 block w-full"
                         v-model="form.months"
                         required
                     />
+                    <InputError class="mt-2" :message="monthsError" />
                 </div>
             </div>
 
