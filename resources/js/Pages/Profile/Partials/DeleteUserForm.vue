@@ -47,10 +47,8 @@ const closeModal = () => {
             </h2>
 
             <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                Una vez que tu cuenta sea eliminada, todos sus recursos y datos
-                serán eliminados permanentemente. Antes de eliminar tu cuenta,
-                por favor descarga cualquier dato o información que desees
-                conservar.
+                Se borran para siempre tus tarjetas, compras, pagos,
+                conciliaciones y passkeys. No se puede deshacer.
             </p>
         </header>
 
@@ -61,14 +59,13 @@ const closeModal = () => {
                 <h2
                     class="text-lg font-medium text-gray-900 dark:text-gray-100"
                 >
-                    Are you sure you want to delete your account?
+                    ¿Borrar tu cuenta?
                 </h2>
 
                 <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                    Una vez que tu cuenta sea eliminada, todos sus recursos y
-                    datos serán eliminados permanentemente. Por favor, ingresa
-                    tu contraseña para confirmar que deseas eliminar tu cuenta
-                    permanentemente.
+                    Se borran para siempre tus tarjetas, compras, pagos,
+                    conciliaciones y passkeys. Escribe tu contraseña para
+                    confirmar.
                 </p>
 
                 <div class="mt-6">
