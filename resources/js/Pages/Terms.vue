@@ -80,8 +80,41 @@ defineProps<{
                     de usar, la información que muestra.
                 </p>
                 <p>
-                    Tu cuenta es personal: cuida tu contraseña. Podemos
-                    suspender cuentas que se usen para abusar del servicio.
+                    Tu cuenta es personal: cuida tu contraseña. Lo que se haga
+                    desde ella es tu responsabilidad.
+                </p>
+            </section>
+
+            <section class="card is-compact space-y-3">
+                <h2 class="section-label text-body">Lo que anotas</h2>
+                <p>
+                    Tarjetero solo te da el espacio para llevar tus cuentas.
+                    Lo que escribes (nombres de tarjetas, conceptos, montos)
+                    es tuyo y eres responsable de ello. No lo revisamos ni lo
+                    aprobamos.
+                </p>
+                <p>No lo uses para:</p>
+                <ul class="list-disc pl-6 space-y-2">
+                    <li>Registrar o encubrir actividades ilegales.</li>
+                    <li>
+                        Guardar datos de otras personas sin su permiso.
+                    </li>
+                    <li>
+                        Guardar números completos de tarjeta, códigos de
+                        seguridad, NIP o contraseñas. Tarjetero no los
+                        necesita.
+                    </li>
+                    <li>
+                        Atacar, saturar o intentar entrar a cuentas que no son
+                        tuyas.
+                    </li>
+                </ul>
+                <p>
+                    Si sabemos de un uso así, podemos borrar el contenido y
+                    suspender o cerrar la cuenta. Si una autoridad competente
+                    nos pide información conforme a la ley, la entregaremos;
+                    lo que se haga con lo anotado es responsabilidad de quien
+                    lo anotó.
                 </p>
             </section>
 
