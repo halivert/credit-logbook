@@ -80,4 +80,54 @@ class PasswordResetTest extends TestCase
             fn (SendQueuedNotifications $job) => $job->notification instanceof ResetPassword,
         );
     }
+
+    private function requestResets(User $user, int $times): void
+    {
+        for ($i = 0; $i < $times; $i++) {
+            $this->post(route('password.email'), ['email' => $user->email]);
+            // Past the broker's own throttle (one token per minute)
+            $this->travel(61)->seconds();
+        }
+    }
+
+    public function test_an_account_gets_three_reset_emails_an_hour_at_most(): void
+    {
+        Notification::fake();
+
+        $user = User::factory()->create();
+
+        $this->requestResets($user, 5);
+        Notification::assertSentToTimes($user, ResetPassword::class, 3);
+
+        $this->travel(1)->hour();
+        $this->requestResets($user, 1);
+        Notification::assertSentToTimes($user, ResetPassword::class, 4);
+    }
+
+    public function test_reset_emails_have_a_daily_cap_for_everyone(): void
+    {
+        Notification::fake();
+        config(['auth.reset_emails.per_day' => 2]);
+
+        foreach (User::factory()->count(3)->create() as $user) {
+            $this->requestResets($user, 1);
+        }
+
+        Notification::assertCount(2);
+    }
+
+    public function test_over_the_limit_the_page_answers_the_same(): void
+    {
+        Notification::fake();
+        config(['auth.reset_emails.per_account_per_hour' => 1]);
+
+        $user = User::factory()->create();
+        $this->requestResets($user, 1);
+
+        $this->post(route('password.email'), ['email' => $user->email])
+            ->assertSessionHasNoErrors()
+            ->assertSessionHas('status');
+
+        Notification::assertSentToTimes($user, ResetPassword::class, 1);
+    }
 }
