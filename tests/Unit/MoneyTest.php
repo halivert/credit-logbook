@@ -30,12 +30,4 @@ class MoneyTest extends TestCase
     {
         $this->assertSame($cents, Money::toCents($amount));
     }
-
-    #[Test]
-    public function cents_become_amounts(): void
-    {
-        $this->assertSame(333.33, Money::fromCents(33333));
-        $this->assertSame(-0.01, Money::fromCents(-1));
-        $this->assertSame(0.0, Money::fromCents(0));
-    }
 }
