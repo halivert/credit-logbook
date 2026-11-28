@@ -53,8 +53,8 @@ function remove(passkey: PasskeyItem) {
 <template>
     <section class="space-y-4">
         <header>
-            <h2 class="text-lg font-medium">Passkeys</h2>
-            <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+            <h2 class="text-xs sm:text-sm leading-relaxed">Passkeys</h2>
+            <p class="mt-1 text-sm text-muted">
                 Entra con la huella, la cara o el PIN de tu dispositivo, sin
                 escribir tu contraseña. No se pueden robar con phishing.
             </p>
@@ -62,7 +62,7 @@ function remove(passkey: PasskeyItem) {
 
         <ul
             v-if="passkeys.length"
-            class="divide-y divide-gray-200 dark:divide-gray-700"
+            class="px-list"
         >
             <li
                 v-for="passkey in passkeys"
@@ -71,7 +71,7 @@ function remove(passkey: PasskeyItem) {
             >
                 <div class="min-w-0">
                     <p class="truncate font-medium">{{ passkey.name }}</p>
-                    <p class="text-sm text-gray-500 dark:text-gray-400">
+                    <p class="text-sm text-muted">
                         <template v-if="passkey.authenticator"
                             >{{ passkey.authenticator }} ·
                         </template>
@@ -85,7 +85,7 @@ function remove(passkey: PasskeyItem) {
                 </div>
                 <button
                     type="button"
-                    class="rounded p-1 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 focus:outline-none focus:ring-2 focus:ring-red-500"
+                    class="nes-btn is-error is-icon !m-0"
                     @click="remove(passkey)"
                 >
                     <TrashIcon class="size-5" />
@@ -96,7 +96,7 @@ function remove(passkey: PasskeyItem) {
 
         <p
             v-if="!isSupported"
-            class="text-sm text-amber-700 dark:text-amber-400"
+            class="text-sm text-warning"
         >
             Este navegador no permite passkeys.
         </p>

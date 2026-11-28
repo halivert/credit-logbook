@@ -37,7 +37,7 @@ function submit() {
     <AuthenticatedLayout>
         <template #header>
             <h2
-                class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight"
+                class="text-sm sm:text-base text-ink"
             >
                 {{ purchase.is_refund ? "Editar devolución" : "Editar compra" }}:
                 {{ creditCard.name }}
@@ -47,7 +47,7 @@ function submit() {
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div
-                    class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-3"
+                    class="nes-container is-tight"
                 >
                     <form class="flex flex-col gap-2" @submit.prevent="submit">
                         <div>
@@ -200,10 +200,10 @@ function submit() {
                         </div>
 
                         <fieldset
-                            class="border-t-2 border-indigo-200 dark:border-indigo-900 py-2 mt-4"
+                            class="border-t-4 border-dashed border-primary/40 py-2 mt-4"
                         >
                             <legend
-                                class="bg-white dark:bg-gray-800 px-3 ml-auto text-indigo-600 dark:text-indigo-400"
+                                class="bg-surface px-3 ml-auto font-pixel text-[0.625rem] text-primary"
                             >
                                 Opcional
                             </legend>

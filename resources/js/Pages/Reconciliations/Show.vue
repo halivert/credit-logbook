@@ -63,9 +63,7 @@ function removeAdjustment(adjustment: Adjustment) {
     }
 }
 
-const button =
-    "inline-flex justify-center items-center px-4 py-2 rounded-md font-semibold text-xs uppercase tracking-widest focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 transition"
-const secondary = `${button} bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 ring-1 ring-gray-300 dark:ring-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700`
+const secondary = "nes-btn inline-flex justify-center items-center"
 </script>
 
 <template>
@@ -74,14 +72,14 @@ const secondary = `${button} bg-white dark:bg-gray-800 text-gray-700 dark:text-g
     <AuthenticatedLayout>
         <template #header>
             <h2
-                class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight truncate"
+                class="text-sm sm:text-base text-ink truncate"
             >
                 <Link
                     :href="route('credit-cards.show', creditCard)"
                     class="hover:underline"
                     >{{ creditCard.name }}</Link
                 >
-                <span class="text-gray-500 dark:text-gray-400">
+                <span class="text-muted">
                     · Conciliar</span
                 >
             </h2>
@@ -90,16 +88,16 @@ const secondary = `${button} bg-white dark:bg-gray-800 text-gray-700 dark:text-g
         <div class="py-6 sm:py-12">
             <div class="max-w-lg mx-auto px-4 sm:px-6 space-y-6">
                 <section
-                    class="rounded-lg bg-white dark:bg-gray-800 p-4 sm:p-6 shadow-sm ring-1 ring-gray-200 dark:ring-gray-700 space-y-5"
+                    class="nes-container is-tight space-y-5"
                 >
                     <div>
-                        <p class="text-xs text-gray-500 dark:text-gray-400">
+                        <p class="text-xs text-muted">
                             Corte del {{ toShortDate(statement.closing_date) }} ·
                             pago antes del {{ toShortDate(statement.due_date) }}
                         </p>
                         <p class="mt-1 text-sm">
                             Para no generar intereses, la bitácora dice
-                            <strong class="tabular-nums">{{
+                            <strong>{{
                                 toCurrency(statement.to_avoid_interest)
                             }}</strong>
                         </p>
@@ -114,7 +112,7 @@ const secondary = `${button} bg-white dark:bg-gray-800 text-gray-700 dark:text-g
                             <div class="mt-1 flex gap-3">
                                 <div class="relative flex-1">
                                     <span
-                                        class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-gray-500 dark:text-gray-400"
+                                        class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted"
                                         >$</span
                                     >
                                     <TextInput
@@ -133,7 +131,7 @@ const secondary = `${button} bg-white dark:bg-gray-800 text-gray-700 dark:text-g
                                 >
                             </div>
                             <p
-                                class="mt-1 text-xs text-gray-500 dark:text-gray-400"
+                                class="mt-1 text-xs text-muted"
                             >
                                 El "pago para no generar intereses" de ese
                                 corte.
@@ -147,23 +145,23 @@ const secondary = `${button} bg-white dark:bg-gray-800 text-gray-700 dark:text-g
 
                     <div
                         v-if="reconciliation?.matched"
-                        class="rounded-md bg-emerald-50 dark:bg-emerald-900/30 p-4 text-emerald-700 dark:text-emerald-300"
+                        class="px-alert bg-success/10 text-success"
                     >
                         <p class="font-semibold">Cuadra con tu estado de cuenta</p>
                     </div>
 
                     <div
                         v-else-if="reconciliation"
-                        class="rounded-md bg-amber-50 dark:bg-amber-900/30 p-4 space-y-3"
+                        class="px-alert bg-warning/10 text-warning space-y-3"
                     >
                         <div>
                             <p
-                                class="text-xs text-amber-800 dark:text-amber-300"
+                                class="text-xs text-warning"
                             >
                                 Diferencia
                             </p>
                             <p
-                                class="text-2xl font-semibold tabular-nums text-amber-800 dark:text-amber-200"
+                                class="text-3xl leading-none text-warning"
                             >
                                 {{ toCurrency(Math.abs(difference)) }}
                             </p>
@@ -171,12 +169,12 @@ const secondary = `${button} bg-white dark:bg-gray-800 text-gray-700 dark:text-g
 
                         <p
                             v-if="difference > 0"
-                            class="text-sm text-amber-900 dark:text-amber-100"
+                            class="text-sm text-warning"
                         >
                             El banco te cobra más de lo que tienes registrado.
                             ¿Te faltó anotar una compra o una comisión?
                         </p>
-                        <p v-else class="text-sm text-amber-900 dark:text-amber-100">
+                        <p v-else class="text-sm text-warning">
                             Tienes registrado más de lo que te cobra el banco.
                             ¿Te faltó un pago o una devolución, o hay algo
                             duplicado?
@@ -208,7 +206,7 @@ const secondary = `${button} bg-white dark:bg-gray-800 text-gray-700 dark:text-g
                                 Ajustar
                             </button>
                         </div>
-                        <p class="text-xs text-amber-800 dark:text-amber-300">
+                        <p class="text-xs text-warning">
                             Si no encuentras la causa, "Ajustar" registra la
                             diferencia en el corte para que cuadre. Puedes
                             borrar el ajuste después.
@@ -218,13 +216,13 @@ const secondary = `${button} bg-white dark:bg-gray-800 text-gray-700 dark:text-g
 
                 <section>
                     <h3
-                        class="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400"
+                        class="mb-3 font-pixel text-[0.625rem] leading-relaxed text-muted"
                     >
                         Movimientos del periodo
                     </h3>
                     <ul
                         v-if="lines.length"
-                        class="rounded-lg bg-white dark:bg-gray-800 px-4 shadow-sm ring-1 ring-gray-200 dark:ring-gray-700 divide-y divide-gray-200 dark:divide-gray-700"
+                        class="nes-container !py-0 !px-4 px-list"
                     >
                         <li
                             v-for="(line, index) in lines"
@@ -233,14 +231,13 @@ const secondary = `${button} bg-white dark:bg-gray-800 text-gray-700 dark:text-g
                         >
                             <div class="min-w-0">
                                 <p class="truncate">{{ line.concept }}</p>
-                                <p class="text-sm text-gray-500 dark:text-gray-400">
+                                <p class="text-sm text-muted">
                                     {{ toShortDate(line.date) }}
                                 </p>
                             </div>
                             <p
-                                class="tabular-nums"
                                 :class="{
-                                    'text-emerald-600 dark:text-emerald-400':
+                                    'text-success':
                                         line.amount < 0,
                                 }"
                             >
@@ -251,7 +248,7 @@ const secondary = `${button} bg-white dark:bg-gray-800 text-gray-700 dark:text-g
                     </ul>
                     <p
                         v-else
-                        class="rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-700 p-6 text-center text-sm text-gray-500 dark:text-gray-400"
+                        class="nes-container is-dashed text-center text-sm text-muted"
                     >
                         No hay movimientos en este periodo.
                     </p>
@@ -259,12 +256,12 @@ const secondary = `${button} bg-white dark:bg-gray-800 text-gray-700 dark:text-g
 
                 <section v-if="adjustments.length">
                     <h3
-                        class="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400"
+                        class="mb-3 font-pixel text-[0.625rem] leading-relaxed text-muted"
                     >
                         Ajustes
                     </h3>
                     <ul
-                        class="rounded-lg bg-white dark:bg-gray-800 px-4 shadow-sm ring-1 ring-gray-200 dark:ring-gray-700 divide-y divide-gray-200 dark:divide-gray-700"
+                        class="nes-container !py-0 !px-4 px-list"
                     >
                         <li
                             v-for="adjustment in adjustments"
@@ -273,12 +270,12 @@ const secondary = `${button} bg-white dark:bg-gray-800 text-gray-700 dark:text-g
                         >
                             <div class="min-w-0">
                                 <p class="truncate">{{ adjustment.concept }}</p>
-                                <p class="text-sm text-gray-500 dark:text-gray-400">
+                                <p class="text-sm text-muted">
                                     {{ toShortDate(adjustment.date) }}
                                 </p>
                             </div>
                             <div class="flex items-center gap-2">
-                                <p class="tabular-nums">
+                                <p>
                                     {{ Number(adjustment.amount) < 0 ? "−" : "+"
                                     }}{{
                                         toCurrency(Math.abs(Number(adjustment.amount)))
@@ -286,10 +283,10 @@ const secondary = `${button} bg-white dark:bg-gray-800 text-gray-700 dark:text-g
                                 </p>
                                 <button
                                     type="button"
-                                    class="rounded p-1 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 focus:outline-none focus:ring-2 focus:ring-red-500"
+                                    class="nes-btn is-error is-icon !m-0"
                                     @click="removeAdjustment(adjustment)"
                                 >
-                                    <TrashIcon class="size-5" />
+                                    <TrashIcon class="size-4" />
                                     <span class="sr-only">Borrar ajuste</span>
                                 </button>
                             </div>

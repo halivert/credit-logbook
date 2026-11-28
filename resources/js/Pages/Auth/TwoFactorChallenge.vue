@@ -39,8 +39,8 @@ function submit() {
     <GuestLayout>
         <Head title="Verificación en dos pasos" />
 
-        <h1 class="text-lg font-semibold">Verificación en dos pasos</h1>
-        <p class="mt-1 mb-4 text-sm text-gray-600 dark:text-gray-400">
+        <h1 class="text-sm leading-relaxed">Verificación en dos pasos</h1>
+        <p class="mt-1 mb-4 text-sm text-muted">
             <template v-if="usingRecoveryCode">
                 Escribe uno de tus códigos de recuperación. Cada código sirve
                 una sola vez.
@@ -92,7 +92,7 @@ function submit() {
 
             <button
                 type="button"
-                class="w-full text-sm text-indigo-600 dark:text-indigo-400 hover:underline"
+                class="w-full text-sm text-primary hover:underline"
                 @click="toggle"
             >
                 {{

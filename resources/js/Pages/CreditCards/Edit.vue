@@ -37,7 +37,7 @@ function submit() {
     <AuthenticatedLayout>
         <template #header>
             <h2
-                class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight"
+                class="text-sm sm:text-base text-ink"
             >
                 {{ creditCard ? `Tarjeta ${creditCard.name}` : "Nueva tarjeta" }}
             </h2>
@@ -46,7 +46,7 @@ function submit() {
         <div class="py-6 sm:py-12">
             <div class="max-w-lg mx-auto px-4 sm:px-6">
                 <div
-                    class="bg-white dark:bg-gray-800 shadow-sm rounded-lg p-4 sm:p-6"
+                    class="nes-container is-tight"
                 >
                     <form class="space-y-5" @submit.prevent="submit">
                         <div>
@@ -114,7 +114,7 @@ function submit() {
                             </div>
 
                             <p
-                                class="col-span-2 -mt-2 text-sm text-gray-500 dark:text-gray-400"
+                                class="col-span-2 -mt-2 text-sm text-muted"
                             >
                                 Del 1 al 28 de cada mes.
                             </p>
@@ -129,7 +129,7 @@ function submit() {
 
                                 <div class="relative mt-1">
                                     <span
-                                        class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-gray-500 dark:text-gray-400"
+                                        class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted"
                                         >$</span
                                     >
                                     <TextInput
@@ -153,7 +153,7 @@ function submit() {
                                 <InputLabel for="interest_rate">
                                     Tasa anual
                                     <span
-                                        class="font-normal text-gray-500 dark:text-gray-400"
+                                        class="font-normal text-muted"
                                         >(opcional)</span
                                     >
                                 </InputLabel>
@@ -169,7 +169,7 @@ function submit() {
                                         v-model="form.interest_rate"
                                     />
                                     <span
-                                        class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-500 dark:text-gray-400"
+                                        class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-muted"
                                         >%</span
                                     >
                                 </div>

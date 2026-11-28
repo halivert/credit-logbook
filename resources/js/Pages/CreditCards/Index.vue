@@ -16,7 +16,7 @@ defineProps<{
     <AuthenticatedLayout>
         <template #header>
             <h2
-                class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight"
+                class="text-sm sm:text-base text-ink"
             >
                 Tarjetas
             </h2>
@@ -31,7 +31,7 @@ defineProps<{
                     <li v-for="creditCard in creditCards.data" :key="creditCard.id">
                         <Link
                             :href="route('credit-cards.show', creditCard)"
-                            class="block h-full rounded-lg bg-white dark:bg-gray-800 p-4 shadow-sm ring-1 ring-gray-200 dark:ring-gray-700 hover:ring-indigo-300 dark:hover:ring-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                            class="nes-container is-tight block h-full hover:bg-primary/5 focus:outline-none focus-visible:outline-primary/50"
                         >
                             <CreditCardSummary :credit-card="creditCard" />
                         </Link>
@@ -40,10 +40,10 @@ defineProps<{
 
                 <div
                     v-else
-                    class="rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-700 p-8 text-center"
+                    class="nes-container is-dashed text-center"
                 >
-                    <p class="font-semibold">Aún no tienes tarjetas</p>
-                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                    <p class="font-pixel text-xs leading-relaxed">Aún no tienes tarjetas</p>
+                    <p class="mt-1 text-sm text-muted">
                         Agrega una para llevar sus compras, pagos y fechas.
                     </p>
                 </div>
@@ -54,7 +54,7 @@ defineProps<{
                 />
 
                 <Link
-                    class="flex w-full sm:w-auto sm:inline-flex justify-center items-center px-4 py-2 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-white dark:text-gray-800 uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150"
+                    class="nes-btn is-primary flex sm:inline-flex justify-center"
                     :href="route('credit-cards.create')"
                 >
                     Agregar tarjeta

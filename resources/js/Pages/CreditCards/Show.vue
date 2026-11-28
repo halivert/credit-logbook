@@ -19,9 +19,6 @@ function deletePurchase(purchase: Purchase) {
         })
     }
 }
-
-const button =
-    "inline-flex justify-center items-center px-4 py-2 rounded-md font-semibold text-xs uppercase tracking-widest focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 transition"
 </script>
 
 <template>
@@ -31,14 +28,14 @@ const button =
         <template #header>
             <div class="flex items-center justify-between gap-3">
                 <h2
-                    class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight truncate"
+                    class="text-sm sm:text-base text-ink truncate"
                 >
                     {{ creditCard.name }}
                 </h2>
 
                 <Link
                     :href="route('credit-cards.edit', creditCard)"
-                    class="rounded p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    class="nes-btn is-icon !m-0 shrink-0"
                 >
                     <PencilIcon class="size-5" />
                     <span class="sr-only">Editar tarjeta</span>
@@ -49,7 +46,7 @@ const button =
         <div class="py-6 sm:py-12">
             <div class="max-w-3xl mx-auto px-4 sm:px-6 space-y-6">
                 <section
-                    class="rounded-lg bg-white dark:bg-gray-800 p-4 shadow-sm ring-1 ring-gray-200 dark:ring-gray-700"
+                    class="nes-container is-tight"
                 >
                     <CreditCardSummary
                         :credit-card="creditCard"
@@ -57,22 +54,16 @@ const button =
                     />
                 </section>
 
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-2 gap-4 px-1">
                     <Link
                         :href="route('credit-cards.purchases.create', creditCard)"
-                        :class="[
-                            button,
-                            'bg-gray-800 dark:bg-gray-200 text-white dark:text-gray-800 hover:bg-gray-700 dark:hover:bg-white',
-                        ]"
+                        class="nes-btn is-primary flex justify-center items-center !m-0"
                     >
                         Agregar compra
                     </Link>
                     <Link
                         :href="route('credit-cards.payments.create', creditCard)"
-                        :class="[
-                            button,
-                            'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 ring-1 ring-gray-300 dark:ring-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700',
-                        ]"
+                        class="nes-btn flex justify-center items-center !m-0"
                     >
                         Registrar pago
                     </Link>
@@ -80,19 +71,19 @@ const button =
 
                 <Link
                     :href="route('credit-cards.reconciliation.show', creditCard)"
-                    class="block text-center text-sm text-indigo-600 dark:text-indigo-400 hover:underline"
+                    class="block text-center px-link"
                 >
                     Conciliar con tu estado de cuenta
                 </Link>
 
                 <section v-if="installmentPurchases.length">
                     <h3
-                        class="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400"
+                        class="mb-3 font-pixel text-[0.625rem] leading-relaxed text-muted"
                     >
                         A meses
                     </h3>
                     <ul
-                        class="rounded-lg bg-white dark:bg-gray-800 px-4 shadow-sm ring-1 ring-gray-200 dark:ring-gray-700 divide-y divide-gray-200 dark:divide-gray-700"
+                        class="nes-container !py-0 !px-4 px-list"
                     >
                         <PurchaseRow
                             v-for="purchase in installmentPurchases"
@@ -105,13 +96,13 @@ const button =
 
                 <section>
                     <h3
-                        class="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400"
+                        class="mb-3 font-pixel text-[0.625rem] leading-relaxed text-muted"
                     >
                         Compras
                     </h3>
                     <ul
                         v-if="purchases.data.length"
-                        class="rounded-lg bg-white dark:bg-gray-800 px-4 shadow-sm ring-1 ring-gray-200 dark:ring-gray-700 divide-y divide-gray-200 dark:divide-gray-700"
+                        class="nes-container !py-0 !px-4 px-list"
                     >
                         <PurchaseRow
                             v-for="purchase in purchases.data"
@@ -122,7 +113,7 @@ const button =
                     </ul>
                     <p
                         v-else
-                        class="rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-700 p-6 text-center text-sm text-gray-500 dark:text-gray-400"
+                        class="nes-container is-dashed text-center text-sm text-muted"
                     >
                         Aún no hay compras en esta tarjeta.
                     </p>
@@ -135,7 +126,7 @@ const button =
                             v-if="purchases.prev_page_url"
                             :href="purchases.prev_page_url"
                             preserve-scroll
-                            class="text-indigo-600 dark:text-indigo-400 hover:underline"
+                            class="px-link"
                         >
                             ← Más recientes
                         </Link>
@@ -144,7 +135,7 @@ const button =
                             v-if="purchases.next_page_url"
                             :href="purchases.next_page_url"
                             preserve-scroll
-                            class="text-indigo-600 dark:text-indigo-400 hover:underline"
+                            class="px-link"
                         >
                             Más antiguas →
                         </Link>

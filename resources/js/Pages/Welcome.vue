@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Head, Link } from "@inertiajs/vue3"
+import ApplicationLogo from "@/Components/ApplicationLogo.vue"
 
 defineProps<{
     canLogin?: boolean
@@ -11,44 +12,40 @@ defineProps<{
     <Head title="Bienvenido" />
 
     <div
-        class="relative sm:flex sm:justify-center sm:items-center min-h-screen bg-dots-darker bg-center bg-gray-100 dark:bg-dots-lighter dark:bg-gray-900 selection:bg-red-500 selection:text-white"
+        class="min-h-screen flex flex-col items-center justify-center gap-8 px-4 py-12 bg-page text-center"
     >
-        <div
-            v-if="canLogin"
-            class="sm:fixed sm:top-0 sm:right-0 p-6 text-right"
-        >
+        <ApplicationLogo class="w-20 h-20 fill-current text-ink" />
+
+        <h1 class="text-base sm:text-xl leading-loose">Bitácora de crédito</h1>
+
+        <nav v-if="canLogin" class="flex flex-wrap justify-center gap-2">
             <Link
                 v-if="$page.props.auth.user"
                 :href="route('credit-cards.index')"
-                class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500"
+                class="nes-btn is-primary"
                 >Tarjetas</Link
             >
 
             <template v-else>
-                <Link
-                    :href="route('login')"
-                    class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500"
+                <Link :href="route('login')" class="nes-btn is-primary"
                     >Iniciar sesión</Link
                 >
 
                 <Link
                     v-if="canRegister"
                     :href="route('register')"
-                    class="ml-4 font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500"
+                    class="nes-btn"
                     >Registrarse</Link
                 >
             </template>
-        </div>
+        </nav>
+
+        <p
+            v-if="canLogin && !$page.props.auth.user"
+            class="font-pixel text-[0.625rem] text-muted motion-safe:animate-[blink_1s_steps(1)_infinite]"
+            aria-hidden="true"
+        >
+            Presiona start
+        </p>
     </div>
 </template>
-
-<style>
-.bg-dots-darker {
-    background-image: url("data:image/svg+xml,%3Csvg width='30' height='30' viewBox='0 0 30 30' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1.22676 0C1.91374 0 2.45351 0.539773 2.45351 1.22676C2.45351 1.91374 1.91374 2.45351 1.22676 2.45351C0.539773 2.45351 0 1.91374 0 1.22676C0 0.539773 0.539773 0 1.22676 0Z' fill='rgba(0,0,0,0.07)'/%3E%3C/svg%3E");
-}
-@media (prefers-color-scheme: dark) {
-    .dark\:bg-dots-lighter {
-        background-image: url("data:image/svg+xml,%3Csvg width='30' height='30' viewBox='0 0 30 30' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1.22676 0C1.91374 0 2.45351 0.539773 2.45351 1.22676C2.45351 1.91374 1.91374 2.45351 1.22676 2.45351C0.539773 2.45351 0 1.91374 0 1.22676C0 0.539773 0.539773 0 1.22676 0Z' fill='rgba(255,255,255,0.07)'/%3E%3C/svg%3E");
-    }
-}
-</style>
