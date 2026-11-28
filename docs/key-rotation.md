@@ -47,3 +47,6 @@ Con la `APP_KEY` se cifran las sesiones, las cookies y estos datos en la base:
 
 Si agregas otra columna con el cast `encrypted`, súmala a
 `ReencryptCommand::COLUMNS`.
+
+Las passkeys no dependen de la `APP_KEY` si `PASSKEYS_USER_HANDLE_SECRET`
+está definido (ver `docs/deploy.md`); no lo cambies al rotar la llave.

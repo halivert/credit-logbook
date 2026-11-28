@@ -160,7 +160,8 @@ return [
     */
 
     'passkeys' => [
-        'user_handle_secret' => env('PASSKEYS_USER_HANDLE_SECRET', env('APP_KEY')),
+        // An empty value (as copied from .env.example) falls back to APP_KEY
+        'user_handle_secret' => env('PASSKEYS_USER_HANDLE_SECRET') ?: env('APP_KEY'),
     ],
 
 ];
