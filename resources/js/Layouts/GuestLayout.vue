@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import ApplicationLogo from "@/Components/ApplicationLogo.vue"
 import { Link } from "@inertiajs/vue3"
+import LegalLinks from "@/Components/LegalLinks.vue"
 </script>
 
 <template>
@@ -19,8 +20,6 @@ import { Link } from "@inertiajs/vue3"
             <slot />
         </div>
 
-        <Link :href="route('privacy')" class="my-6 text-note link">
-            Aviso de privacidad
-        </Link>
+        <LegalLinks class="my-6" />
     </div>
 </template>

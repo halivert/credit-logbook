@@ -123,6 +123,11 @@ function submit() {
                             </button>
                         </div>
 
+                        <p class="reading notice is-warning text-small">
+                            Esto solo lo anota en Tarjetero, no paga tu
+                            tarjeta. El pago hazlo en tu banco.
+                        </p>
+
                         <PrimaryButton
                             type="submit"
                             class="w-full justify-center sm:w-auto"
