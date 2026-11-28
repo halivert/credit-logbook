@@ -11,7 +11,7 @@ const { toCurrency, toDate } = useFormat()
 
 <template>
     <li
-        class="inline-flex justify-between w-full px-3 py-1 focus:bg-zinc-50 hover:bg-zinc-50 rounded items-center focus-within:bg-zinc-50"
+        class="inline-flex justify-between w-full px-3 py-1 hover:bg-gray-50 focus-within:bg-gray-50 dark:hover:bg-gray-700/50 dark:focus-within:bg-gray-700/50 rounded items-center"
     >
         <span>
             {{ toDate(purchase.datetime) }}

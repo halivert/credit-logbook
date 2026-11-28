@@ -67,7 +67,7 @@ function deletePurchase(purchase: Purchase) {
 
                         <div class="text-right">
                             <Link
-                                class="text-indigo-500 hover:text-indigo-700 focus:text-indigo-700 border-transparent rounded outline-none focus:ring-2 focus:ring-indigo-700 active:text-white active:bg-indigo-500 inline-block"
+                                class="text-indigo-500 hover:text-indigo-700 focus:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300 dark:focus:text-indigo-300 border-transparent rounded outline-none focus:ring-2 focus:ring-indigo-700 active:text-white active:bg-indigo-500 inline-block"
                                 :href="route('credit-cards.edit', creditCard)"
                             >
                                 <svg
@@ -134,7 +134,7 @@ function deletePurchase(purchase: Purchase) {
                                         {{ toCurrency(purchase.amount) }}
                                     </p>
                                     <p v-if="purchase.remaining_months">
-                                        <span class="text-zinc-600">
+                                        <span class="text-gray-600 dark:text-gray-400">
                                             Restan:
                                         </span>
                                         {{ purchase.remaining_months }}/{{
@@ -151,7 +151,7 @@ function deletePurchase(purchase: Purchase) {
 
                                 <div class="flex gap-2">
                                     <Link
-                                        class="text-indigo-500 hover:text-indigo-700 focus:text-indigo-700 border-transparent rounded outline-none focus:ring-2 focus:ring-indigo-700 active:text-white active:bg-indigo-500"
+                                        class="text-indigo-500 hover:text-indigo-700 focus:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300 dark:focus:text-indigo-300 border-transparent rounded outline-none focus:ring-2 focus:ring-indigo-700 active:text-white active:bg-indigo-500"
                                         :href="
                                             route('purchases.edit', purchase)
                                         "
@@ -173,7 +173,7 @@ function deletePurchase(purchase: Purchase) {
                                     </Link>
 
                                     <button
-                                        class="text-red-500 hover:text-red-700 focus:text-red-700 border-transparent rounded outline-none focus:ring-2 focus:ring-red-700 active:text-white active:bg-red-500"
+                                        class="text-red-500 hover:text-red-700 focus:text-red-700 dark:text-red-400 dark:hover:text-red-300 dark:focus:text-red-300 border-transparent rounded outline-none focus:ring-2 focus:ring-red-700 active:text-white active:bg-red-500"
                                         @click="deletePurchase(purchase)"
                                     >
                                         <svg
@@ -226,7 +226,7 @@ function deletePurchase(purchase: Purchase) {
                                 <template #actions>
                                     <div class="flex gap-2">
                                         <Link
-                                            class="text-indigo-500 hover:text-indigo-700 focus:text-indigo-700 border-transparent rounded outline-none focus:ring-2 focus:ring-indigo-700 active:text-white active:bg-indigo-500"
+                                            class="text-indigo-500 hover:text-indigo-700 focus:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300 dark:focus:text-indigo-300 border-transparent rounded outline-none focus:ring-2 focus:ring-indigo-700 active:text-white active:bg-indigo-500"
                                             :href="
                                                 route(
                                                     'purchases.edit',
@@ -251,7 +251,7 @@ function deletePurchase(purchase: Purchase) {
                                         </Link>
 
                                         <button
-                                            class="text-red-500 hover:text-red-700 focus:text-red-700 border-transparent rounded outline-none focus:ring-2 focus:ring-red-700 active:text-white active:bg-red-500"
+                                            class="text-red-500 hover:text-red-700 focus:text-red-700 dark:text-red-400 dark:hover:text-red-300 dark:focus:text-red-300 border-transparent rounded outline-none focus:ring-2 focus:ring-red-700 active:text-white active:bg-red-500"
                                             @click="deletePurchase(purchase)"
                                         >
                                             <svg
