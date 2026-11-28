@@ -20,8 +20,8 @@ use Laravel\Passkeys\Events\PasskeyRegistered;
 
 /**
  * Writes down sign ins and changes to how an account signs in. Failed
- * attempts for emails without an account aren't recorded: there's nobody
- * to show them to.
+ * attempts for emails without an account aren't recorded per account
+ * (there's nobody to show them to), only in the anonymous metrics.
  */
 class RecordSecurityEvents
 {
@@ -31,7 +31,7 @@ class RecordSecurityEvents
             Login::class => 'login',
             Failed::class => 'failed',
             Lockout::class => 'lockout',
-            TwoFactorAuthenticationFailed::class => fn ($event) => $this->record($event->user, SecurityEvent::TWO_FACTOR_FAILED),
+            TwoFactorAuthenticationFailed::class => 'twoFactorFailed',
             PasswordUpdatedViaController::class => fn ($event) => $this->record($event->user, SecurityEvent::PASSWORD_CHANGED),
             PasswordReset::class => fn ($event) => $this->record($event->user, SecurityEvent::PASSWORD_RESET),
             TwoFactorAuthenticationConfirmed::class => fn ($event) => $this->record($event->user, SecurityEvent::TWO_FACTOR_ENABLED),
@@ -49,11 +49,22 @@ class RecordSecurityEvents
 
     public function failed(Failed $event): void
     {
+        SecurityMetric::record($event->user ? SecurityMetric::LOGIN_FAILED : SecurityMetric::LOGIN_FAILED_UNKNOWN);
+
         $this->record($event->user, SecurityEvent::LOGIN_FAILED);
+    }
+
+    public function twoFactorFailed(TwoFactorAuthenticationFailed $event): void
+    {
+        SecurityMetric::record(SecurityMetric::TWO_FACTOR_FAILED);
+
+        $this->record($event->user, SecurityEvent::TWO_FACTOR_FAILED);
     }
 
     public function lockout(Lockout $event): void
     {
+        SecurityMetric::record(SecurityMetric::LOCKOUT);
+
         $email = $event->request->input(Fortify::username());
 
         $this->record(
