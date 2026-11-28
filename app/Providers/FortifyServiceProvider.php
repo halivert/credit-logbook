@@ -11,7 +11,13 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use App\Http\Responses\PasswordResetLinkRequestResponse;
+use App\Security\EnsureIpIsNotBlocked;
 use Inertia\Inertia;
+use Laravel\Fortify\Actions\AttemptToAuthenticate;
+use Laravel\Fortify\Actions\CanonicalizeUsername;
+use Laravel\Fortify\Actions\EnsureLoginIsNotThrottled;
+use Laravel\Fortify\Actions\PrepareAuthenticatedSession;
+use Laravel\Fortify\Contracts\RedirectsIfTwoFactorAuthenticatable;
 use Laravel\Fortify\Contracts\FailedPasswordResetLinkRequestResponse;
 use Laravel\Fortify\Features;
 use Laravel\Fortify\Fortify;
@@ -39,6 +45,16 @@ class FortifyServiceProvider extends ServiceProvider
         Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
 
         $this->views();
+
+        // Fortify's sign in, with a limit per IP first
+        Fortify::authenticateThrough(fn () => [
+            EnsureIpIsNotBlocked::class,
+            EnsureLoginIsNotThrottled::class,
+            CanonicalizeUsername::class,
+            RedirectsIfTwoFactorAuthenticatable::class,
+            AttemptToAuthenticate::class,
+            PrepareAuthenticatedSession::class,
+        ]);
 
         RateLimiter::for('login', function (Request $request) {
             $throttleKey = Str::transliterate(

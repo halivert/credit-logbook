@@ -30,9 +30,11 @@ class SecurityEvent extends Model
     public const RECOVERY_CODES_GENERATED = 'recovery_codes_generated';
     public const PASSKEY_ADDED = 'passkey_added';
     public const PASSKEY_REMOVED = 'passkey_removed';
+    /** A sign in refused because its IP failed too many times */
+    public const IP_BLOCKED = 'ip_blocked';
 
     /** Events worth a second look */
-    public const SUSPICIOUS = [self::LOGIN_FAILED, self::TWO_FACTOR_FAILED, self::LOCKOUT];
+    public const SUSPICIOUS = [self::LOGIN_FAILED, self::TWO_FACTOR_FAILED, self::LOCKOUT, self::IP_BLOCKED];
 
     public const KEEP_DAYS = 90;
 
@@ -51,6 +53,11 @@ class SecurityEvent extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function scopeSuspicious(Builder $query): void
+    {
+        $query->whereIn('type', self::SUSPICIOUS);
     }
 
     public function prunable(): Builder

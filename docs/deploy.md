@@ -62,6 +62,9 @@ MAIL_USERNAME=
 MAIL_PASSWORD=
 MAIL_FROM_ADDRESS=tarjetero@halivert.dev
 MAIL_FROM_NAME="${APP_NAME}"
+
+# A quién avisar si una hora tiene muchos más intentos sospechosos de lo normal
+SECURITY_ALERT_EMAIL=tu@correo.com
 ```
 
 **Guarda la `APP_KEY` en un gestor de contraseñas.** El límite de las tarjetas
@@ -133,3 +136,29 @@ password=…
 
 Prueba restaurar un respaldo al menos una vez. Sin la `APP_KEY`, el respaldo
 no sirve para el límite cifrado.
+
+## 8. Monitoreo de seguridad
+
+Los intentos sospechosos (contraseña o código incorrectos, bloqueos, IPs
+bloqueadas e intentos con correos sin cuenta) quedan en `security_events`
+90 días. Los de correos sin cuenta se guardan sin usuario y sin el correo,
+solo con la IP.
+
+```sh
+php artisan security:report            # últimos 7 días
+php artisan security:report --days=30  # hasta 90
+```
+
+Muestra los intentos por día y las IPs con más intentos: cuántas cuentas
+reales intentaron, cuántos correos sin cuenta y si desde esa IP alguien sí
+entró.
+
+**Límite por IP:** tras 30 inicios de sesión fallidos en una hora desde la
+misma IP, con cualquier correo, se rechazan los siguientes (web y API)
+aunque la contraseña sea correcta. Se ajusta con
+`SECURITY_LOGIN_IP_MAX_FAILURES` y `SECURITY_LOGIN_IP_DECAY_MINUTES`.
+
+**Alerta:** el scheduler revisa cada hora la hora anterior y manda un correo
+a `SECURITY_ALERT_EMAIL` con los conteos y las IPs principales si tuvo al
+menos 20 eventos y 5 veces el promedio por hora de la semana anterior
+(`SECURITY_ALERT_MINIMUM` y `SECURITY_ALERT_MULTIPLIER`).

@@ -59,7 +59,7 @@ class SecurityActivityTest extends TestCase
     }
 
     #[Test]
-    public function wrong_passwords_are_recorded_for_the_account_but_unknown_emails_are_not(): void
+    public function wrong_passwords_are_recorded_for_the_account_and_unknown_emails_only_anonymously(): void
     {
         $user = User::factory()->create();
 
@@ -67,7 +67,11 @@ class SecurityActivityTest extends TestCase
         $this->post(route('login.store'), ['email' => 'nadie@example.test', 'password' => 'x']);
 
         $this->assertSame([[SecurityEvent::LOGIN_FAILED]], $this->events($user));
-        $this->assertDatabaseCount('security_events', 1);
+
+        // The unknown email is counted without anyone, nor the email itself
+        $anonymous = SecurityEvent::query()->whereNull('user_id')->sole();
+        $this->assertSame(SecurityEvent::LOGIN_FAILED, $anonymous->type);
+        $this->assertStringNotContainsString('nadie', json_encode($anonymous->getAttributes()));
     }
 
     #[Test]

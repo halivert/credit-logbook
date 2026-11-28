@@ -14,6 +14,9 @@ class Kernel extends ConsoleKernel
     {
         // Security events older than 90 days
         $schedule->command('model:prune')->daily();
+
+        // Unusually many wrong passwords, codes or lockouts in the last hour
+        $schedule->command('security:alert')->hourlyAt(5);
     }
 
     /**

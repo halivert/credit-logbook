@@ -20,8 +20,8 @@ use Laravel\Passkeys\Events\PasskeyRegistered;
 
 /**
  * Writes down sign ins and changes to how an account signs in. Failed
- * attempts for emails without an account aren't recorded: there's nobody
- * to show them to.
+ * attempts on emails without an account are kept without a user (and
+ * without the email) for monitoring; nobody sees them in their activity.
  */
 class RecordSecurityEvents
 {
@@ -31,7 +31,7 @@ class RecordSecurityEvents
             Login::class => 'login',
             Failed::class => 'failed',
             Lockout::class => 'lockout',
-            TwoFactorAuthenticationFailed::class => fn ($event) => $this->record($event->user, SecurityEvent::TWO_FACTOR_FAILED),
+            TwoFactorAuthenticationFailed::class => 'twoFactorFailed',
             PasswordUpdatedViaController::class => fn ($event) => $this->record($event->user, SecurityEvent::PASSWORD_CHANGED),
             PasswordReset::class => fn ($event) => $this->record($event->user, SecurityEvent::PASSWORD_RESET),
             TwoFactorAuthenticationConfirmed::class => fn ($event) => $this->record($event->user, SecurityEvent::TWO_FACTOR_ENABLED),
@@ -49,7 +49,15 @@ class RecordSecurityEvents
 
     public function failed(Failed $event): void
     {
-        $this->record($event->user, SecurityEvent::LOGIN_FAILED);
+        LoginIpThrottle::hit((string) request()->ip());
+
+        // Also without an account: that's how leaked lists show up
+        $this->record($event->user, SecurityEvent::LOGIN_FAILED, anonymous: true);
+    }
+
+    public function twoFactorFailed(TwoFactorAuthenticationFailed $event): void
+    {
+        $this->record($event->user, SecurityEvent::TWO_FACTOR_FAILED);
     }
 
     public function lockout(Lockout $event): void
@@ -57,8 +65,9 @@ class RecordSecurityEvents
         $email = $event->request->input(Fortify::username());
 
         $this->record(
-            is_string($email) ? User::query()->where('email', $email)->first() : null,
+            is_string($email) ? User::query()->where('email', Str::lower($email))->first() : null,
             SecurityEvent::LOCKOUT,
+            anonymous: true,
         );
     }
 
@@ -75,15 +84,20 @@ class RecordSecurityEvents
         };
     }
 
-    private function record(mixed $user, string $type, ?string $method = null, ?string $detail = null): void
+    /**
+     * Anonymous events (no account) never keep the email, only where the
+     * attempt came from, for monitoring.
+     */
+    private function record(mixed $user, string $type, ?string $method = null, ?string $detail = null, bool $anonymous = false): void
     {
-        if (! $user instanceof User) {
+        if (! $user instanceof User && ! $anonymous) {
             return;
         }
 
         $request = request();
 
-        $user->securityEvents()->create([
+        SecurityEvent::query()->forceCreate([
+            'user_id' => $user instanceof User ? $user->getKey() : null,
             'type' => $type,
             'method' => $method,
             'detail' => $detail === null ? null : Str::limit($detail, 250, ''),

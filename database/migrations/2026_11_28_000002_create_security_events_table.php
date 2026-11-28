@@ -8,10 +8,12 @@ return new class extends Migration
 {
     public function up(): void
     {
-        // Sign ins and changes to how an account signs in, kept 90 days
+        // Sign ins and changes to how an account signs in, kept 90 days.
+        // Failed attempts on emails without an account have no user (and
+        // never the email): they only count for monitoring.
         Schema::create('security_events', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignUuid('user_id')->nullable()->constrained()->cascadeOnDelete();
             $table->string('type');
             // How a sign in happened: password, two_factor, passkey...
             $table->string('method')->nullable();
@@ -22,6 +24,8 @@ return new class extends Migration
             $table->timestamp('created_at', 3);
 
             $table->index(['user_id', 'created_at']);
+            $table->index(['type', 'created_at']);
+            $table->index(['ip_address', 'created_at']);
         });
     }
 
