@@ -51,6 +51,9 @@ return [
 
     'email' => 'email',
 
+    // "Hali@Example.com" signs in as "hali@example.com"
+    'lowercase_usernames' => true,
+
     /*
     |--------------------------------------------------------------------------
     | Home Path
@@ -104,7 +107,10 @@ return [
      */
 
     'limiters' => [
-        'login' => 'login',
+        // Null: Fortify throttles the web login itself (5 failed attempts per
+        // email and IP), answering on the form and firing Lockout so it shows
+        // in the account's activity. The API uses the "login" limiter.
+        'login' => null,
         'two-factor' => 'two-factor',
         'passkeys' => 'passkeys',
     ],

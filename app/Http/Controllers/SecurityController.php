@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Security\Device;
+use App\Security\SecurityEvent;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -43,6 +45,20 @@ class SecurityController extends Controller
                     'authenticator' => $passkey->authenticator,
                     'createdAt' => $passkey->created_at->toDateString(),
                     'lastUsedAt' => $passkey->last_used_at?->toDateString(),
+                ]),
+            'events' => $user->securityEvents()
+                ->latest()
+                ->limit(30)
+                ->get()
+                ->map(fn (SecurityEvent $event) => [
+                    'id' => $event->id,
+                    'type' => $event->type,
+                    'method' => $event->method,
+                    'detail' => $event->detail,
+                    'device' => Device::describe($event->user_agent),
+                    'ip' => $event->ip_address,
+                    'at' => $event->created_at->toIso8601String(),
+                    'suspicious' => in_array($event->type, SecurityEvent::SUSPICIOUS),
                 ]),
         ]);
     }

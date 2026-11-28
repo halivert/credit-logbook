@@ -4,11 +4,14 @@ namespace App\Models;
 
 use App\CreditCards\CreditCard;
 use App\Enums\Subscription;
+use App\Security\SecurityEvent;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Str;
 use Laravel\Fortify\Contracts\PasskeyUser;
 use Laravel\Fortify\PasskeyAuthenticatable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
@@ -61,6 +64,19 @@ class User extends Authenticatable implements PasskeyUser
     protected $attributes = [
         'subscription' => Subscription::Free,
     ];
+
+    /**
+     * Stored in lowercase: sign in lowercases what's typed too.
+     */
+    protected function email(): Attribute
+    {
+        return Attribute::set(fn (?string $email) => $email === null ? null : Str::lower($email));
+    }
+
+    public function securityEvents(): HasMany
+    {
+        return $this->hasMany(SecurityEvent::class);
+    }
 
     public function creditCards(): HasMany
     {

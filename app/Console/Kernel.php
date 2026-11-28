@@ -12,7 +12,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
+        // Security events older than 90 days
+        $schedule->command('model:prune')->daily();
     }
 
     /**
