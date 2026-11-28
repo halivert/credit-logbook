@@ -17,6 +17,16 @@ class UpdateCreditCardRequest extends FormRequest
     }
 
     /**
+     * The interest rate is optional in the form, an empty one means 0.
+     */
+    protected function prepareForValidation(): void
+    {
+        if ($this->exists('interest_rate') && blank($this->input('interest_rate'))) {
+            $this->merge(['interest_rate' => 0]);
+        }
+    }
+
+    /**
      * Get the validation rules that apply to the request.
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array|string>
