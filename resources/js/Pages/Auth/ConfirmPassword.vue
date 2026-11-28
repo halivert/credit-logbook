@@ -62,7 +62,7 @@ function submit() {
             <template v-if="passkey.isSupported.value">
                 <button
                     type="button"
-                    class="btn flex w-full justify-center items-center !mx-0"
+                    class="btn flex w-full justify-center items-center"
                     :disabled="passkey.isLoading.value"
                     @click="passkey.verify"
                 >

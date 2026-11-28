@@ -85,7 +85,7 @@ function remove(passkey: PasskeyItem) {
                 </div>
                 <button
                     type="button"
-                    class="btn is-error is-icon !m-0"
+                    class="btn is-error is-icon"
                     @click="remove(passkey)"
                 >
                     <TrashIcon class="size-4" />
@@ -103,7 +103,7 @@ function remove(passkey: PasskeyItem) {
 
         <form v-else class="space-y-2" @submit.prevent="add">
             <InputLabel for="passkey-name" value="Agregar una passkey" />
-            <div class="flex gap-3">
+            <div class="flex gap-4">
                 <TextInput
                     id="passkey-name"
                     class="block flex-1 min-w-0"

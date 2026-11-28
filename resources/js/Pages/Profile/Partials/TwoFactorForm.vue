@@ -113,7 +113,7 @@ const danger = "btn is-error inline-flex justify-center items-center"
                     <InputError class="mt-2" :message="confirmation.errors.code" />
                 </div>
 
-                <div class="flex gap-3">
+                <div class="actions">
                     <PrimaryButton :disabled="confirmation.processing"
                         >Confirmar</PrimaryButton
                     >

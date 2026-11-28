@@ -7,6 +7,8 @@ import TrashIcon from "@/Components/Icons/TrashIcon.vue"
 
 defineProps<{
     purchase: Purchase
+    /** Without edit and delete actions (the demo on the welcome page) */
+    readonly?: boolean
 }>()
 
 defineEmits<{
@@ -62,17 +64,17 @@ const { toCurrency, toDate, toShortDate } = useFormat()
             </p>
         </div>
 
-        <div class="flex shrink-0 gap-1">
+        <div v-if="!readonly" class="actions is-compact flex-nowrap shrink-0">
             <Link
                 :href="route('purchases.edit', purchase)"
-                class="btn is-icon !m-0 shrink-0"
+                class="btn is-icon shrink-0"
             >
                 <PencilIcon class="size-4" />
                 <span class="sr-only">Editar {{ purchase.concept }}</span>
             </Link>
             <button
                 type="button"
-                class="btn is-error is-icon !m-0"
+                class="btn is-error is-icon"
                 @click="$emit('delete', purchase)"
             >
                 <TrashIcon class="size-4" />

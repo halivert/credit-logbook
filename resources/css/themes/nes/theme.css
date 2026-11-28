@@ -116,8 +116,21 @@
     /* Buttons keep NES.css colors in both schemes */
     .btn {
         @apply text-small leading-snug uppercase tracking-wider;
-        margin: 4px;
+        /* NES.css gives buttons a margin; spacing comes from .actions */
+        margin: 0;
         padding: 8px 12px;
+    }
+
+    /* A row of buttons: the pixel borders need room to read as separate */
+    .actions {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .actions.is-compact {
+        gap: 0.75rem;
     }
 
     .btn:focus-visible {

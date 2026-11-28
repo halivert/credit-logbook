@@ -127,7 +127,7 @@ const secondary = "btn inline-flex justify-center items-center"
                                     />
                                 </div>
                                 <PrimaryButton
-                                    class="!m-0 shrink-0"
+                                    class="shrink-0"
                                     :disabled="form.processing"
                                     >Comparar</PrimaryButton
                                 >
@@ -276,7 +276,7 @@ const secondary = "btn inline-flex justify-center items-center"
                                     {{ toShortDate(adjustment.date) }}
                                 </p>
                             </div>
-                            <div class="flex items-center gap-2">
+                            <div class="flex items-center gap-3">
                                 <p>
                                     {{ Number(adjustment.amount) < 0 ? "−" : "+"
                                     }}{{
@@ -285,7 +285,7 @@ const secondary = "btn inline-flex justify-center items-center"
                                 </p>
                                 <button
                                     type="button"
-                                    class="btn is-error is-icon !m-0"
+                                    class="btn is-error is-icon"
                                     @click="removeAdjustment(adjustment)"
                                 >
                                     <TrashIcon class="size-4" />
