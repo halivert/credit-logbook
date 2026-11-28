@@ -6,6 +6,7 @@ use App\CreditCards\CreditCard;
 use App\Models\User;
 use App\Purchases\Purchase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Inertia\Testing\AssertableInertia as Assert;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -28,6 +29,7 @@ class PurchaseTest extends TestCase
         $this->actingAs($this->creditCard->user)
             ->post(route('credit-cards.purchases.store', $this->creditCard), [
                 'is_installment_purchase' => false,
+                'is_refund' => false,
                 'concept' => 'Super',
                 'datetime' => today()->toDateString(),
                 'amount' => '1250.50',
@@ -92,6 +94,7 @@ class PurchaseTest extends TestCase
         $this->actingAs(User::factory()->create())
             ->post(route('credit-cards.purchases.store', $this->creditCard), [
                 'is_installment_purchase' => false,
+                'is_refund' => false,
                 'concept' => 'Super',
                 'datetime' => today()->toDateString(),
                 'amount' => '100',
@@ -125,28 +128,6 @@ class PurchaseTest extends TestCase
         $this->assertModelMissing($purchase);
     }
 
-    #[Test]
-    public function a_paid_purchase_can_no_longer_be_edited(): void
-    {
-        $purchase = Purchase::factory()->for($this->creditCard)->create([
-            'concept' => 'Original',
-            'paid_at' => now(),
-        ]);
-
-        $this->actingAs($this->creditCard->user)
-            ->get(route('purchases.edit', $purchase))
-            ->assertNotFound();
-
-        $this->actingAs($this->creditCard->user)
-            ->put(route('purchases.update', $purchase), [
-                'concept' => 'Cambiado',
-                'datetime' => today()->toDateString(),
-                'amount' => '1',
-            ])
-            ->assertNotFound();
-
-        $this->assertSame('Original', $purchase->fresh()->concept);
-    }
 
     #[Test]
     public function a_user_cannot_touch_someone_elses_purchase(): void
@@ -158,5 +139,54 @@ class PurchaseTest extends TestCase
         $this->actingAs($intruder)->delete(route('purchases.destroy', $purchase))->assertNotFound();
 
         $this->assertModelExists($purchase);
+    }
+
+    #[Test]
+    public function a_return_is_stored_as_a_credit(): void
+    {
+        $this->actingAs($this->creditCard->user)
+            ->post(route('credit-cards.purchases.store', $this->creditCard), [
+                'is_refund' => true,
+                // A return can't be in installments
+                'is_installment_purchase' => true,
+                'installment_count' => 3,
+                'concept' => 'Devolución Amazon',
+                'datetime' => today()->toDateString(),
+                'amount' => '300',
+            ])
+            ->assertSessionHasNoErrors();
+
+        $refund = $this->creditCard->purchases()->sole();
+
+        $this->assertSame('-300.00', $refund->amount);
+        $this->assertTrue($refund->is_refund);
+        $this->assertNull($refund->installment_count);
+
+        $this->actingAs($this->creditCard->user)
+            ->put(route('purchases.update', $refund), [
+                'concept' => 'Devolución Amazon',
+                'datetime' => today()->toDateString(),
+                'amount' => '350',
+            ])
+            ->assertSessionHasNoErrors();
+
+        $this->assertSame('-350.00', $refund->fresh()->amount);
+    }
+
+    #[Test]
+    public function editing_an_installment_purchase_shows_the_installment_without_commission(): void
+    {
+        $purchase = Purchase::factory()->for($this->creditCard)->create([
+            'amount' => 1200,
+            'installment_count' => 12,
+            'installment_amount' => 100,
+            'commission' => 35,
+        ]);
+
+        $this->actingAs($this->creditCard->user)
+            ->get(route('purchases.edit', $purchase))
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('baseInstallmentAmount', '100.00')
+            );
     }
 }

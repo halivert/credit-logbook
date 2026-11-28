@@ -56,4 +56,18 @@ class UpdatePurchaseRequest extends FormRequest
             'interest_rate' => __('labels.interest_rate'),
         ];
     }
+
+    /**
+     * A return keeps being a return: the form shows its amount as positive.
+     */
+    public function validated($key = null, $default = null)
+    {
+        $validated = parent::validated();
+
+        if ($this->purchase->is_refund) {
+            $validated['amount'] = -abs($validated['amount']);
+        }
+
+        return data_get($validated, $key, $default);
+    }
 }

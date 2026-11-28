@@ -3,13 +3,11 @@
 namespace App\Payments;
 
 use App\CreditCards\CreditCard;
-use App\Purchases\Purchase;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Payment extends Model
 {
@@ -41,13 +39,6 @@ class Payment extends Model
         return $this->creditCard->user();
     }
 
-    public function purchases(): BelongsToMany
-    {
-        return $this->belongsToMany(Purchase::class)
-            ->using(PaymentPurchase::class)
-            ->withPivot('installment_number')
-            ->orderByPivot('installment_number', 'desc');
-    }
 
     /**
      * Create a new factory instance for the model.

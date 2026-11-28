@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 
 class CreditCard extends Model
 {
@@ -47,7 +48,8 @@ class CreditCard extends Model
 
     public function purchases(): HasMany
     {
-        return $this->hasMany(Purchase::class);
+        // Installment progress depends on the card's closing dates
+        return $this->hasMany(Purchase::class)->chaperone();
     }
 
     public function payments(): HasMany
@@ -94,22 +96,54 @@ class CreditCard extends Model
         return $nextMonth->setDay(min($day, $nextMonth->daysInMonth));
     }
 
+    /**
+     * What the bank says you owe: every charge (purchases, including the
+     * installments not billed yet, and their commissions) minus every credit
+     * (payments and returns, which are negative purchases).
+     */
     protected function balanceUsed(): Attribute
     {
         return new Attribute(function () {
-            $this->loadMissing([
-                'purchases' => fn($query) => $query
-                    ->whereNull('paid_at')
-            ]);
+            $charges = (float) $this->purchases()
+                ->toBase()
+                ->sum(DB::raw('amount + coalesce(commission, 0)'));
 
-            $purchasesSum = $this->purchases->whereNull('installment_count')
-                ->sum('amount');
+            $payments = (float) $this->payments()->toBase()->sum('amount');
 
-            $installmentsSum = $this->purchases->whereNotNull('installment_count')
-                ->sum('remaining_amount');
-
-            return $purchasesSum + $installmentsSum;
+            return round($charges - $payments, 2);
         });
+    }
+
+    /**
+     * Closing dates on or after $from and up to $to (both calendar days).
+     */
+    public function closingsBetween(CarbonImmutable $from, CarbonImmutable $to): int
+    {
+        $closings = 0;
+        $month = $from->startOfMonth();
+
+        while ($month->lte($to)) {
+            $closing = $month->setDay(min($this->closing_date, $month->daysInMonth));
+
+            if ($closing->gte($from) && $closing->lte($to)) {
+                $closings++;
+            }
+
+            $month = $month->addMonth();
+        }
+
+        return $closings;
+    }
+
+    /**
+     * Today in the card's timezone, as a plain calendar day.
+     */
+    public function today(): CarbonImmutable
+    {
+        return CarbonImmutable::parse(
+            CarbonImmutable::today($this->timezone)->toDateString(),
+            'UTC',
+        );
     }
 
     /**

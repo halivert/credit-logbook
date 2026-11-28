@@ -47,6 +47,10 @@ class PurchaseController extends Controller
         return Inertia::render('Purchases/Edit', [
             'purchase' => $purchase,
             'creditCard' => $purchase->creditCard,
+            // The attribute includes the commission of the first installment
+            'baseInstallmentAmount' => $purchase->installment_count
+                ? number_format((float) $purchase->getRawOriginal('installment_amount'), 2, '.', '')
+                : null,
         ]);
     }
 

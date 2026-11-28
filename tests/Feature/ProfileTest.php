@@ -2,6 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\CreditCards\CreditCard;
+use App\Payments\Payment;
+use App\Purchases\Purchase;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -95,5 +98,26 @@ class ProfileTest extends TestCase
             ->assertRedirect('/profile');
 
         $this->assertNotNull($user->fresh());
+    }
+
+    public function test_deleting_the_account_deletes_its_financial_data(): void
+    {
+        $user = User::factory()->create();
+        $creditCard = CreditCard::factory()->for($user)->create();
+        $deletedCard = CreditCard::factory()->for($user)->create();
+        $deletedCard->delete();
+        Purchase::factory()->for($creditCard)->create();
+        Payment::factory()->for($creditCard)->create();
+
+        $this->actingAs($user)
+            ->delete('/profile', ['password' => 'password'])
+            ->assertSessionHasNoErrors()
+            ->assertRedirect('/');
+
+        $this->assertGuest();
+        $this->assertModelMissing($user);
+        $this->assertDatabaseCount('credit_cards', 0);
+        $this->assertDatabaseCount('purchases', 0);
+        $this->assertDatabaseCount('payments', 0);
     }
 }

@@ -46,8 +46,6 @@ class PurchasePolicy
      */
     public function update(User $user, Purchase $purchase): Response
     {
-        if ($purchase->paid_at) return $this->denyAsNotFound();
-
         return $purchase->user->is($user)
             ? $this->allow()
             : $this->denyAsNotFound();

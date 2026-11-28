@@ -22,9 +22,9 @@ class StorePurchaseRequest extends FormRequest
     protected function prepareForValidation(): void
     {
         $this->merge([
-            'is_installment_purchase' => $this->boolean(
-                'is_installment_purchase'
-            ),
+            'is_installment_purchase' => $this->boolean('is_installment_purchase')
+                && ! $this->boolean('is_refund'),
+            'is_refund' => $this->boolean('is_refund'),
         ]);
     }
 
@@ -39,6 +39,7 @@ class StorePurchaseRequest extends FormRequest
 
         return [
             'is_installment_purchase' => 'required|boolean',
+            'is_refund' => 'required|boolean',
             'concept' => 'required|string|max:255',
             'datetime' => 'required|date|before_or_equal:now',
             'applied_at' => 'date|nullable|before_or_equal:now',
@@ -64,5 +65,19 @@ class StorePurchaseRequest extends FormRequest
             'commission' => __('labels.commission'),
             'interest_rate' => __('labels.interest_rate'),
         ];
+    }
+
+    /**
+     * Returns are stored as negative amounts: a credit to the card.
+     */
+    public function validated($key = null, $default = null)
+    {
+        $validated = parent::validated();
+
+        if ($validated['is_refund']) {
+            $validated['amount'] = -abs($validated['amount']);
+        }
+
+        return data_get($validated, $key, $default);
     }
 }

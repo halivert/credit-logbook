@@ -58,14 +58,15 @@ class CreditCardController extends Controller
         $purchases = $creditCard->purchases()
             ->whereNull('installment_count')
             ->orderBy('datetime', 'desc')
-            ->limit(100)
             ->simplePaginate(20);
 
+        // Those with installments still to be billed
         $installmentPurchases = $creditCard->purchases()
             ->whereNotNull('installment_count')
             ->orderBy('datetime', 'desc')
-            ->whereNull('paid_at')
-            ->get();
+            ->get()
+            ->filter(fn ($purchase) => $purchase->remaining_installments > 0)
+            ->values();
 
         return Inertia::render('CreditCards/Show', [
             'creditCard' => $creditCard->append(['balance_used', 'available_credit']),

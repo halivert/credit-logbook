@@ -26,11 +26,6 @@ class UpdatePaymentRequest extends FormRequest
         return [
             'datetime' => 'required|date|before_or_equal:now',
             'amount' => 'required|decimal:0,2|min:1',
-            'purchases' => 'required|array',
-            'purchases.*' => 'required|exists:purchases,id',
-            'installment_purchases' => 'required|array',
-            'installment_purchases.*.id' => 'required|exists:purchases,id',
-            'installment_purchases.*.installment_number' => 'required|integer',
         ];
     }
 
