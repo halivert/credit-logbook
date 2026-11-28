@@ -20,7 +20,7 @@ defineProps<{
     <AuthenticatedLayout>
         <template #header>
             <h2
-                class="text-sm sm:text-base text-ink"
+                class="text-2xl sm:text-3xl text-ink"
             >
                 <Link :href="route('profile.edit')" class="hover:underline"
                     >Perfil</Link

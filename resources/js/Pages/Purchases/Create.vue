@@ -68,7 +68,7 @@ function submit() {
     <AuthenticatedLayout>
         <template #header>
             <h2
-                class="text-sm sm:text-base text-ink truncate"
+                class="text-2xl sm:text-3xl text-ink truncate"
             >
                 {{ creditCard.name }}
             </h2>

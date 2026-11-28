@@ -52,7 +52,7 @@ const paymentState = computed<PaymentState>(() => {
 
 <template>
     <div>
-        <p v-if="showName" class="mb-3 font-pixel text-xs leading-relaxed">{{ creditCard.name }}</p>
+        <p v-if="showName" class="mb-3 text-xl">{{ creditCard.name }}</p>
 
         <p class="text-xs text-muted">
             {{ overLimit ? "Excedido" : "Disponible" }}

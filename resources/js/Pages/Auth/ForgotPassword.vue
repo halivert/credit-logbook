@@ -23,7 +23,7 @@ function submit() {
     <GuestLayout>
         <Head title="Restablecer contraseña" />
 
-        <h1 class="text-sm leading-relaxed">Restablecer contraseña</h1>
+        <h1 class="text-3xl">Restablecer contraseña</h1>
         <p class="mt-1 mb-4 text-sm text-muted">
             Te enviaremos un enlace a tu correo para elegir una nueva.
         </p>

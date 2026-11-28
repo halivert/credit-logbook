@@ -25,7 +25,7 @@ function submit() {
     <GuestLayout>
         <Head title="Crear cuenta" />
 
-        <h1 class="mb-4 text-sm leading-relaxed">Crear cuenta</h1>
+        <h1 class="mb-4 text-3xl">Crear cuenta</h1>
 
         <form class="space-y-4" @submit.prevent="submit">
             <div>

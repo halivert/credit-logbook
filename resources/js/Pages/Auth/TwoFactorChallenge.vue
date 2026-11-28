@@ -39,7 +39,7 @@ function submit() {
     <GuestLayout>
         <Head title="Verificación en dos pasos" />
 
-        <h1 class="text-sm leading-relaxed">Verificación en dos pasos</h1>
+        <h1 class="text-3xl">Verificación en dos pasos</h1>
         <p class="mt-1 mb-4 text-sm text-muted">
             <template v-if="usingRecoveryCode">
                 Escribe uno de tus códigos de recuperación. Cada código sirve

@@ -37,7 +37,7 @@ function submit() {
     <AuthenticatedLayout>
         <template #header>
             <h2
-                class="text-sm sm:text-base text-ink"
+                class="text-2xl sm:text-3xl text-ink"
             >
                 {{ purchase.is_refund ? "Editar devolución" : "Editar compra" }}:
                 {{ creditCard.name }}
@@ -203,7 +203,7 @@ function submit() {
                             class="border-t-4 border-dashed border-primary/40 py-2 mt-4"
                         >
                             <legend
-                                class="bg-surface px-3 ml-auto font-pixel text-[0.625rem] text-primary"
+                                class="bg-surface px-3 ml-auto text-base uppercase tracking-widest text-primary"
                             >
                                 Opcional
                             </legend>

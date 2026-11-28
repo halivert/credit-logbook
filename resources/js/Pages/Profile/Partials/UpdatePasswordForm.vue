@@ -39,7 +39,7 @@ const updatePassword = () => {
 <template>
     <section>
         <header>
-            <h2 class="text-xs sm:text-sm leading-relaxed">
+            <h2 class="text-2xl">
                 Actualizar contraseña
             </h2>
 

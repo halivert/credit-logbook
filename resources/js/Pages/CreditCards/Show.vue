@@ -28,7 +28,7 @@ function deletePurchase(purchase: Purchase) {
         <template #header>
             <div class="flex items-center justify-between gap-3">
                 <h2
-                    class="text-sm sm:text-base text-ink truncate"
+                    class="text-2xl sm:text-3xl text-ink truncate"
                 >
                     {{ creditCard.name }}
                 </h2>
@@ -78,7 +78,7 @@ function deletePurchase(purchase: Purchase) {
 
                 <section v-if="installmentPurchases.length">
                     <h3
-                        class="mb-3 font-pixel text-[0.625rem] leading-relaxed text-muted"
+                        class="mb-3 text-base uppercase tracking-widest text-muted"
                     >
                         A meses
                     </h3>
@@ -96,7 +96,7 @@ function deletePurchase(purchase: Purchase) {
 
                 <section>
                     <h3
-                        class="mb-3 font-pixel text-[0.625rem] leading-relaxed text-muted"
+                        class="mb-3 text-base uppercase tracking-widest text-muted"
                     >
                         Compras
                     </h3>

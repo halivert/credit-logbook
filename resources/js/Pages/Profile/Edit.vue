@@ -17,7 +17,7 @@ defineProps<{
     <AuthenticatedLayout>
         <template #header>
             <h2
-                class="text-sm sm:text-base text-ink"
+                class="text-2xl sm:text-3xl text-ink"
             >
                 Perfil
             </h2>
@@ -46,12 +46,12 @@ defineProps<{
                     class="nes-container is-tight flex items-center justify-between hover:bg-primary/5"
                 >
                     <span>
-                        <span class="block font-pixel text-sm leading-relaxed">Seguridad</span>
+                        <span class="block text-2xl">Seguridad</span>
                         <span class="block text-sm text-muted"
                             >Verificación en dos pasos y passkeys</span
                         >
                     </span>
-                    <span aria-hidden="true" class="font-pixel text-muted">&gt;</span>
+                    <span aria-hidden="true" class="text-muted">&gt;</span>
                 </Link>
 
                 <div

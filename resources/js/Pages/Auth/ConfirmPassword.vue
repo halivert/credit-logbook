@@ -33,7 +33,7 @@ function submit() {
     <GuestLayout>
         <Head title="Confirma tu contraseña" />
 
-        <h1 class="text-sm leading-relaxed">Confirma tu contraseña</h1>
+        <h1 class="text-3xl">Confirma tu contraseña</h1>
         <p class="mt-1 mb-4 text-sm text-muted">
             Por seguridad, escríbela de nuevo antes de continuar.
         </p>

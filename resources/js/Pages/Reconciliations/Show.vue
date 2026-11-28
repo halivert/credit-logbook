@@ -72,7 +72,7 @@ const secondary = "nes-btn inline-flex justify-center items-center"
     <AuthenticatedLayout>
         <template #header>
             <h2
-                class="text-sm sm:text-base text-ink truncate"
+                class="text-2xl sm:text-3xl text-ink truncate"
             >
                 <Link
                     :href="route('credit-cards.show', creditCard)"
@@ -216,7 +216,7 @@ const secondary = "nes-btn inline-flex justify-center items-center"
 
                 <section>
                     <h3
-                        class="mb-3 font-pixel text-[0.625rem] leading-relaxed text-muted"
+                        class="mb-3 text-base uppercase tracking-widest text-muted"
                     >
                         Movimientos del periodo
                     </h3>
@@ -256,7 +256,7 @@ const secondary = "nes-btn inline-flex justify-center items-center"
 
                 <section v-if="adjustments.length">
                     <h3
-                        class="mb-3 font-pixel text-[0.625rem] leading-relaxed text-muted"
+                        class="mb-3 text-base uppercase tracking-widest text-muted"
                     >
                         Ajustes
                     </h3>

@@ -9,8 +9,8 @@ const props = defineProps<{
 
 const classes = computed(() =>
     props.active
-        ? 'inline-flex items-center px-1 pt-1 border-b-4 border-primary font-pixel text-xs leading-5 text-ink focus:outline-none'
-        : 'inline-flex items-center px-1 pt-1 border-b-4 border-transparent font-pixel text-xs leading-5 text-muted hover:text-ink hover:border-line/30 focus:outline-none focus:text-ink'
+        ? 'inline-flex items-center px-1 pt-1 border-b-4 border-primary text-lg leading-5 uppercase tracking-wider text-ink focus:outline-none'
+        : 'inline-flex items-center px-1 pt-1 border-b-4 border-transparent text-lg leading-5 uppercase tracking-wider text-muted hover:text-ink hover:border-line/30 focus:outline-none focus:text-ink'
 );
 </script>
 

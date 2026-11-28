@@ -17,7 +17,7 @@ const sent = computed(() => props.status === "verification-link-sent")
     <GuestLayout>
         <Head title="Verifica tu correo" />
 
-        <h1 class="text-sm leading-relaxed">Verifica tu correo</h1>
+        <h1 class="text-3xl">Verifica tu correo</h1>
         <p class="mt-1 mb-4 text-sm text-muted">
             Te enviamos un enlace para confirmar tu correo. Si no te llegó,
             te mandamos otro.

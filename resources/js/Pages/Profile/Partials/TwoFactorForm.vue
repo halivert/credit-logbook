@@ -61,7 +61,7 @@ const danger = "nes-btn is-error inline-flex justify-center items-center"
 <template>
     <section class="space-y-4">
         <header>
-            <h2 class="text-xs sm:text-sm leading-relaxed">Verificación en dos pasos</h2>
+            <h2 class="text-2xl">Verificación en dos pasos</h2>
             <p class="mt-1 text-sm text-muted">
                 Además de tu contraseña, te pedimos un código de una app de
                 autenticación (Google Authenticator, 1Password, Authy…).

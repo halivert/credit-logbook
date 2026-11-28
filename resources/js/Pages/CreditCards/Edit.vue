@@ -37,7 +37,7 @@ function submit() {
     <AuthenticatedLayout>
         <template #header>
             <h2
-                class="text-sm sm:text-base text-ink"
+                class="text-2xl sm:text-3xl text-ink"
             >
                 {{ creditCard ? `Tarjeta ${creditCard.name}` : "Nueva tarjeta" }}
             </h2>

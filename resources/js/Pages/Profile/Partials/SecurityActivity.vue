@@ -54,7 +54,7 @@ function describe(event: SecurityEventItem): string {
 <template>
     <section class="space-y-4">
         <header>
-            <h2 class="text-xs sm:text-sm leading-relaxed">Actividad reciente</h2>
+            <h2 class="text-2xl">Actividad reciente</h2>
             <p class="mt-1 text-sm text-muted">
                 Inicios de sesión y cambios de seguridad de los últimos 90
                 días. Si ves algo que no hiciste, cambia tu contraseña y revisa

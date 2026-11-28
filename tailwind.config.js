@@ -16,7 +16,6 @@ export default {
         extend: {
             fontFamily: {
                 sans: ['VT323', ...defaultTheme.fontFamily.mono],
-                pixel: ['"Press Start 2P"', ...defaultTheme.fontFamily.mono],
                 mono: ['VT323', ...defaultTheme.fontFamily.mono],
             },
             // Theme tokens from resources/css/app.css, they follow the color scheme

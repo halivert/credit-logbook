@@ -42,7 +42,7 @@ const closeModal = () => {
 <template>
     <section class="space-y-6">
         <header>
-            <h2 class="text-xs sm:text-sm leading-relaxed">
+            <h2 class="text-2xl">
                 Borrar cuenta
             </h2>
 
@@ -57,7 +57,7 @@ const closeModal = () => {
         <Modal :show="confirmingUserDeletion" @close="closeModal">
             <div class="p-6">
                 <h2
-                    class="text-xs sm:text-sm leading-relaxed"
+                    class="text-2xl"
                 >
                     ¿Borrar tu cuenta?
                 </h2>

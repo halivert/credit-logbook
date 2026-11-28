@@ -16,7 +16,7 @@ defineProps<{
     >
         <ApplicationLogo class="w-20 h-20 fill-current text-ink" />
 
-        <h1 class="text-base sm:text-xl leading-loose">Bitácora de crédito</h1>
+        <h1 class="text-4xl sm:text-5xl">Bitácora de crédito</h1>
 
         <nav v-if="canLogin" class="flex flex-wrap justify-center gap-2">
             <Link
@@ -42,7 +42,7 @@ defineProps<{
 
         <p
             v-if="canLogin && !$page.props.auth.user"
-            class="font-pixel text-[0.625rem] text-muted motion-safe:animate-[blink_1s_steps(1)_infinite]"
+            class="text-lg uppercase tracking-widest text-muted motion-safe:animate-[blink_1s_steps(1)_infinite]"
             aria-hidden="true"
         >
             Presiona start

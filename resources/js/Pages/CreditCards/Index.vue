@@ -16,7 +16,7 @@ defineProps<{
     <AuthenticatedLayout>
         <template #header>
             <h2
-                class="text-sm sm:text-base text-ink"
+                class="text-2xl sm:text-3xl text-ink"
             >
                 Tarjetas
             </h2>
@@ -42,7 +42,7 @@ defineProps<{
                     v-else
                     class="nes-container is-dashed text-center"
                 >
-                    <p class="font-pixel text-xs leading-relaxed">Aún no tienes tarjetas</p>
+                    <p class="text-xl">Aún no tienes tarjetas</p>
                     <p class="mt-1 text-sm text-muted">
                         Agrega una para llevar sus compras, pagos y fechas.
                     </p>

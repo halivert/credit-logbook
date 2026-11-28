@@ -53,7 +53,7 @@ function remove(passkey: PasskeyItem) {
 <template>
     <section class="space-y-4">
         <header>
-            <h2 class="text-xs sm:text-sm leading-relaxed">Passkeys</h2>
+            <h2 class="text-2xl">Passkeys</h2>
             <p class="mt-1 text-sm text-muted">
                 Entra con la huella, la cara o el PIN de tu dispositivo, sin
                 escribir tu contraseña. No se pueden robar con phishing.

@@ -70,8 +70,7 @@
     h1,
     h2,
     h3 {
-        @apply font-pixel leading-relaxed;
-        font-size-adjust: none;
+        @apply leading-tight;
     }
 
     :focus-visible {
@@ -81,11 +80,6 @@
 }
 
 @layer components {
-    .font-pixel,
-    .nes-btn {
-        font-size-adjust: none;
-    }
-
     /* Containers, inputs, tables and progress bars take the theme colors */
     .nes-container {
         color: rgb(var(--ink));
@@ -94,7 +88,7 @@
     }
 
     .nes-container.with-title > .title {
-        @apply font-pixel text-xs;
+        @apply text-lg;
         background-color: rgb(var(--surface));
     }
 
@@ -179,7 +173,7 @@
 
     /* Buttons keep NES.css colors in both schemes; these adapt them to the app */
     .nes-btn {
-        @apply font-pixel text-xs leading-relaxed;
+        @apply text-lg leading-snug uppercase tracking-wider;
         margin: 4px;
         padding: 8px 12px;
     }

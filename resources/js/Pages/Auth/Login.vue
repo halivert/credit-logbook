@@ -41,7 +41,7 @@ function submit() {
     <GuestLayout>
         <Head title="Iniciar sesión" />
 
-        <h1 class="mb-4 text-sm leading-relaxed">Iniciar sesión</h1>
+        <h1 class="mb-4 text-3xl">Iniciar sesión</h1>
 
         <p
             v-if="status"
