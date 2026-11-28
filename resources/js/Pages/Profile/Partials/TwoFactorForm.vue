@@ -101,7 +101,7 @@ const danger = "nes-btn is-error inline-flex justify-center items-center"
                     <InputLabel for="code" value="Código" />
                     <TextInput
                         id="code"
-                        class="mt-1 block w-40 text-center text-xl tracking-[0.4em] font-mono"
+                        class="mt-1 block w-40 text-center text-3xl tracking-[0.4em] font-mono"
                         v-model="confirmation.code"
                         inputmode="numeric"
                         pattern="[0-9]*"

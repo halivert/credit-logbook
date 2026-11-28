@@ -129,7 +129,7 @@ function submit() {
 
                                 <div class="relative mt-1">
                                     <span
-                                        class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted"
+                                        class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted text-2xl"
                                         >$</span
                                     >
                                     <TextInput
@@ -137,7 +137,7 @@ function submit() {
                                         type="text"
                                         inputmode="decimal"
                                         min="0"
-                                        class="block w-full pl-7"
+                                        class="block w-full pl-8"
                                         v-model="form.limit"
                                         required
                                     />
@@ -165,11 +165,11 @@ function submit() {
                                         inputmode="decimal"
                                         min="0"
                                         max="200"
-                                        class="block w-full pr-7"
+                                        class="block w-full pr-8"
                                         v-model="form.interest_rate"
                                     />
                                     <span
-                                        class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-muted"
+                                        class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-muted text-2xl"
                                         >%</span
                                     >
                                 </div>

@@ -118,6 +118,8 @@
     .nes-input {
         width: 100%;
         margin: 0;
+        padding: 0.125rem 0.625rem;
+        @apply text-2xl;
         color: rgb(var(--ink));
         background-color: rgb(var(--surface));
     }
@@ -173,9 +175,9 @@
 
     /* Buttons keep NES.css colors in both schemes; these adapt them to the app */
     .nes-btn {
-        @apply text-2xl leading-none uppercase tracking-wider;
+        @apply text-lg leading-snug uppercase tracking-wider;
         margin: 4px;
-        padding: 8px 14px;
+        padding: 8px 12px;
     }
 
     .nes-btn:focus-visible {
@@ -226,7 +228,7 @@
 
     /* Two-option segmented control (radiogroup of buttons) */
     .px-segment {
-        @apply py-2 px-1 text-sm font-semibold;
+        @apply py-1 px-1 text-2xl;
         color: rgb(var(--muted));
     }
 

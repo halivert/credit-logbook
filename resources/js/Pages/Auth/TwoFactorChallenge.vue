@@ -72,7 +72,7 @@ function submit() {
                 <TextInput
                     id="code"
                     ref="codeInput"
-                    class="mt-1 block w-full text-center text-2xl tracking-[0.5em] font-mono"
+                    class="mt-1 block w-full text-center text-3xl tracking-[0.5em] font-mono"
                     v-model="form.code"
                     inputmode="numeric"
                     pattern="[0-9]*"

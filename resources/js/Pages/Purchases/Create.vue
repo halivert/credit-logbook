@@ -151,7 +151,7 @@ function submit() {
 
                                 <div class="relative mt-1">
                                     <span
-                                        class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted"
+                                        class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted text-2xl"
                                         >$</span
                                     >
                                     <TextInput
@@ -159,7 +159,7 @@ function submit() {
                                         type="text"
                                         inputmode="decimal"
                                         min="0.01"
-                                        class="block w-full pl-7"
+                                        class="block w-full pl-8"
                                         v-model="form.amount"
                                         required
                                     />
@@ -205,7 +205,7 @@ function submit() {
 
                                     <div class="relative mt-1">
                                         <span
-                                            class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted"
+                                            class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted text-2xl"
                                             >$</span
                                         >
                                         <TextInput
@@ -213,7 +213,7 @@ function submit() {
                                             type="text"
                                             inputmode="decimal"
                                             min="0.01"
-                                            class="block w-full pl-7"
+                                            class="block w-full pl-8"
                                             v-model="form.installment_amount"
                                             :placeholder="
                                                 suggestedInstallment?.toFixed(2)
@@ -248,7 +248,7 @@ function submit() {
 
                                 <div class="relative mt-1 w-1/2 pr-2">
                                     <span
-                                        class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted"
+                                        class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted text-2xl"
                                         >$</span
                                     >
                                     <TextInput
@@ -256,7 +256,7 @@ function submit() {
                                         type="text"
                                         inputmode="decimal"
                                         min="0"
-                                        class="block w-full pl-7"
+                                        class="block w-full pl-8"
                                         v-model="form.commission"
                                     />
                                 </div>

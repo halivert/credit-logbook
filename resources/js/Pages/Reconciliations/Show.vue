@@ -112,7 +112,7 @@ const secondary = "nes-btn inline-flex justify-center items-center"
                             <div class="mt-1 flex gap-3">
                                 <div class="relative flex-1">
                                     <span
-                                        class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted"
+                                        class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted text-2xl"
                                         >$</span
                                     >
                                     <TextInput
@@ -120,7 +120,7 @@ const secondary = "nes-btn inline-flex justify-center items-center"
                                         type="text"
                                         inputmode="decimal"
                                         min="0"
-                                        class="block w-full pl-7"
+                                        class="block w-full pl-8"
                                         v-model="form.to_avoid_interest"
                                         required
                                         :autofocus="!bankAmount"
