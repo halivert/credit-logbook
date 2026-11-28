@@ -27,7 +27,7 @@ const showingNavigationDropdown = ref(false)
                             <div class="shrink-0 flex items-center">
                                 <Link :href="route('credit-cards.index')">
                                     <ApplicationLogo
-                                        class="block h-9 w-auto fill-current text-ink"
+                                        class="block size-8 fill-current text-ink"
                                     />
                                 </Link>
                             </div>

@@ -14,7 +14,7 @@ defineProps<{
     <div
         class="min-h-screen flex flex-col items-center justify-center gap-8 px-4 py-12 bg-page text-center"
     >
-        <ApplicationLogo class="w-20 h-20 fill-current text-ink" />
+        <ApplicationLogo class="size-32 fill-current text-ink" />
 
         <h1 class="text-4xl sm:text-5xl">Bitácora de crédito</h1>
 
