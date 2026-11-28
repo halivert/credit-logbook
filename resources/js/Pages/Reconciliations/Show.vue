@@ -88,7 +88,7 @@ const secondary = "nes-btn inline-flex justify-center items-center"
         <div class="py-6 sm:py-12">
             <div class="max-w-lg mx-auto px-4 sm:px-6 space-y-6">
                 <section
-                    class="nes-container is-tight space-y-5"
+                    class="nes-container space-y-6"
                 >
                     <div>
                         <p class="text-base text-muted">
@@ -103,13 +103,13 @@ const secondary = "nes-btn inline-flex justify-center items-center"
                         </p>
                     </div>
 
-                    <form class="space-y-3" @submit.prevent="save">
+                    <form @submit.prevent="save">
                         <div>
                             <InputLabel
                                 for="to_avoid_interest"
                                 value="Tu estado de cuenta dice"
                             />
-                            <div class="mt-1 flex gap-3">
+                            <div class="mt-2 flex items-center gap-4">
                                 <div class="relative flex-1">
                                     <span
                                         class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted text-2xl"
@@ -126,12 +126,14 @@ const secondary = "nes-btn inline-flex justify-center items-center"
                                         :autofocus="!bankAmount"
                                     />
                                 </div>
-                                <PrimaryButton :disabled="form.processing"
+                                <PrimaryButton
+                                    class="!m-0 shrink-0"
+                                    :disabled="form.processing"
                                     >Comparar</PrimaryButton
                                 >
                             </div>
                             <p
-                                class="mt-1 text-base text-muted"
+                                class="mt-2 text-base text-muted"
                             >
                                 El "pago para no generar intereses" de ese
                                 corte.
@@ -216,13 +218,13 @@ const secondary = "nes-btn inline-flex justify-center items-center"
 
                 <section>
                     <h3
-                        class="mb-3 text-xl uppercase tracking-widest text-muted"
+                        class="mb-3 text-lg uppercase tracking-widest text-muted"
                     >
                         Movimientos del periodo
                     </h3>
                     <ul
                         v-if="lines.length"
-                        class="nes-container !py-0 !px-4 px-list"
+                        class="nes-container !py-0 !px-4 px-list text-lg"
                     >
                         <li
                             v-for="(line, index) in lines"
@@ -231,7 +233,7 @@ const secondary = "nes-btn inline-flex justify-center items-center"
                         >
                             <div class="min-w-0">
                                 <p class="truncate">{{ line.concept }}</p>
-                                <p class="text-lg text-muted">
+                                <p class="text-base text-muted">
                                     {{ toShortDate(line.date) }}
                                 </p>
                             </div>
@@ -256,12 +258,12 @@ const secondary = "nes-btn inline-flex justify-center items-center"
 
                 <section v-if="adjustments.length">
                     <h3
-                        class="mb-3 text-xl uppercase tracking-widest text-muted"
+                        class="mb-3 text-lg uppercase tracking-widest text-muted"
                     >
                         Ajustes
                     </h3>
                     <ul
-                        class="nes-container !py-0 !px-4 px-list"
+                        class="nes-container !py-0 !px-4 px-list text-lg"
                     >
                         <li
                             v-for="adjustment in adjustments"
@@ -270,7 +272,7 @@ const secondary = "nes-btn inline-flex justify-center items-center"
                         >
                             <div class="min-w-0">
                                 <p class="truncate">{{ adjustment.concept }}</p>
-                                <p class="text-lg text-muted">
+                                <p class="text-base text-muted">
                                     {{ toShortDate(adjustment.date) }}
                                 </p>
                             </div>
