@@ -16,10 +16,14 @@ const { toCurrency } = useFormat()
 
 
 const balance = props.creditCard.balance_used ?? 0
+const statement = props.creditCard.current_statement
+
+// What's usually paid: what's missing to avoid interest
+const toAvoidInterest = statement?.remaining ?? 0
 
 const form = useForm({
     date: today(),
-    amount: "",
+    amount: toAvoidInterest > 0 ? toAvoidInterest.toFixed(2) : "",
 })
 
 function submit() {
@@ -100,14 +104,25 @@ function submit() {
                             </div>
                         </div>
 
-                        <button
-                            v-if="balance > 0"
-                            type="button"
-                            class="text-sm text-indigo-600 dark:text-indigo-400 hover:underline"
-                            @click="form.amount = balance.toFixed(2)"
-                        >
-                            Pagar todo el saldo ({{ toCurrency(balance) }})
-                        </button>
+                        <div class="flex flex-col items-start gap-2 text-sm">
+                            <button
+                                v-if="toAvoidInterest > 0"
+                                type="button"
+                                class="text-indigo-600 dark:text-indigo-400 hover:underline"
+                                @click="form.amount = toAvoidInterest.toFixed(2)"
+                            >
+                                Para no generar intereses
+                                ({{ toCurrency(toAvoidInterest) }})
+                            </button>
+                            <button
+                                v-if="balance > 0"
+                                type="button"
+                                class="text-indigo-600 dark:text-indigo-400 hover:underline"
+                                @click="form.amount = balance.toFixed(2)"
+                            >
+                                Todo el saldo ({{ toCurrency(balance) }})
+                            </button>
+                        </div>
 
                         <PrimaryButton
                             type="submit"

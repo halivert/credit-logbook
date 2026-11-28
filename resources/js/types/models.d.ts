@@ -28,9 +28,24 @@ export type CreditCard = {
     /** Only on the pages that show it */
     balance_used?: number
     available_credit?: number
+    current_statement?: Statement
     deleted_at: DateString | null
     created_at: DateString
     updated_at: DateString
+}
+
+/** The statement of the latest closing, from the logbook */
+export type Statement = {
+    closing_date: string
+    due_date: string
+    next_closing_date: string
+    /** Pago para no generar intereses */
+    to_avoid_interest: number
+    paid_since_closing: number
+    remaining: number
+    /** Charged since the closing, for the next statement */
+    period_charges: number
+    is_overdue: boolean
 }
 
 export type Payment = {

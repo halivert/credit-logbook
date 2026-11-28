@@ -96,7 +96,10 @@ class CardLifecycleTest extends TestCase
             ->where('creditCard.next_closing_date', '2026-10-20')
             ->where('creditCard.next_due_date', '2026-11-09')
             ->where('installmentPurchases.0.billed_installments', 0)
-            ->where('installmentPurchases.0.installment_amount', 1000);
+            ->where('installmentPurchases.0.installment_amount', 1000)
+            // Nothing closed yet: nothing to pay, 500 - 200 this period
+            ->where('creditCard.current_statement.to_avoid_interest', 0)
+            ->where('creditCard.current_statement.period_charges', 300);
 
         // The closing bills the first installment, the balance doesn't move
         $this->on('2026-10-21');
@@ -104,17 +107,34 @@ class CardLifecycleTest extends TestCase
             ->where('creditCard.balance_used', 12300)
             ->where('creditCard.next_closing_date', '2026-11-20')
             ->where('installmentPurchases.0.billed_installments', 1)
-            ->where('installmentPurchases.0.remaining_amount', 11000);
+            ->where('installmentPurchases.0.remaining_amount', 11000)
+            // To avoid interest: 500 - 200 and the first installment
+            ->where('creditCard.current_statement.closing_date', '2026-10-20')
+            ->where('creditCard.current_statement.due_date', '2026-11-09')
+            ->where('creditCard.current_statement.to_avoid_interest', 1300)
+            ->where('creditCard.current_statement.remaining', 1300);
 
         // Paying what was billed: 500 - 200 + 1000
         $this->on('2026-11-05');
         $this->submit('credit-cards.payments.store', ['date' => '2026-11-05', 'amount' => '1300']);
         $this->cardPage()
             ->where('creditCard.balance_used', 11000)
-            ->where('creditCard.available_credit', 9000);
+            ->where('creditCard.available_credit', 9000)
+            ->where('creditCard.current_statement.remaining', 0)
+            ->where('creditCard.current_statement.is_overdue', false);
 
+        // The next closing only asks for the new installment
         $this->on('2026-11-21');
-        $this->cardPage()->where('installmentPurchases.0.billed_installments', 2);
+        $this->cardPage()
+            ->where('installmentPurchases.0.billed_installments', 2)
+            ->where('creditCard.current_statement.to_avoid_interest', 1000)
+            ->where('creditCard.current_statement.due_date', '2026-12-09');
+
+        // Not paid by the due date
+        $this->on('2026-12-10');
+        $this->cardPage()
+            ->where('creditCard.current_statement.remaining', 1000)
+            ->where('creditCard.current_statement.is_overdue', true);
 
         // After its twelfth closing the laptop is fully billed and leaves the
         // list, but it's still owed until it's paid
