@@ -30,4 +30,29 @@ class MoneyTest extends TestCase
     {
         $this->assertSame($cents, Money::toCents($amount));
     }
+
+    public static function cents(): array
+    {
+        return [
+            'zero' => [0],
+            'one cent' => [1],
+            'odd cents' => [33333],
+            'float trap' => [7],
+            'negative return' => [-30000],
+            'one cent back' => [-1],
+            'largest accepted' => [99999999999],
+        ];
+    }
+
+    #[Test]
+    #[DataProvider('cents')]
+    public function cents_round_trip_through_amounts(int $cents): void
+    {
+        $amount = Money::fromCents($cents);
+
+        // A float, so JSON and the frontend always get a number with cents
+        $this->assertIsFloat($amount);
+        $this->assertSame($cents, Money::toCents($amount));
+        $this->assertSame(number_format($cents / 100, 2, '.', ''), number_format($amount, 2, '.', ''));
+    }
 }
