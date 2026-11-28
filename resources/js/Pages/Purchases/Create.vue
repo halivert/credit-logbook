@@ -88,7 +88,7 @@ function submit() {
                             <p id="kind-title" class="title">Tipo</p>
 
                             <div
-                                class="flex flex-col sm:flex-row gap-x-8 gap-y-3"
+                                class="flex flex-col gap-3"
                             >
                                 <label
                                     v-for="kind in kinds"
