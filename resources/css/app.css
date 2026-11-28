@@ -64,7 +64,7 @@
     body {
         @apply bg-page text-ink font-sans;
         /* VT323 runs small; size it by x-height instead of bumping every size */
-        font-size-adjust: 0.55;
+        font-size-adjust: 0.60;
     }
 
     h1,
@@ -173,9 +173,9 @@
 
     /* Buttons keep NES.css colors in both schemes; these adapt them to the app */
     .nes-btn {
-        @apply text-lg leading-snug uppercase tracking-wider;
+        @apply text-2xl leading-none uppercase tracking-wider;
         margin: 4px;
-        padding: 8px 12px;
+        padding: 8px 14px;
     }
 
     .nes-btn:focus-visible {
