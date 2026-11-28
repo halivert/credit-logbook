@@ -4,6 +4,7 @@ namespace Tests\Feature\Purchases;
 
 use App\CreditCards\CreditCard;
 use App\Models\User;
+use App\Payments\Payment;
 use App\Purchases\Purchase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
@@ -158,5 +159,25 @@ class PurchaseTest extends TestCase
         $this->actingAs($intruder)->delete(route('purchases.destroy', $purchase))->assertNotFound();
 
         $this->assertModelExists($purchase);
+    }
+
+    #[Test]
+    public function a_purchase_with_payments_can_be_deleted_and_its_payments_are_kept(): void
+    {
+        $purchase = Purchase::factory()->for($this->creditCard)->create([
+            'amount' => 1200,
+            'installment_count' => 12,
+            'installment_amount' => 100,
+        ]);
+        $payment = Payment::factory()->for($this->creditCard)->create();
+        $payment->purchases()->attach($purchase, ['installment_number' => 3]);
+
+        $this->actingAs($this->creditCard->user)
+            ->delete(route('purchases.destroy', $purchase))
+            ->assertRedirect(route('credit-cards.show', $this->creditCard));
+
+        $this->assertModelMissing($purchase);
+        $this->assertModelExists($payment);
+        $this->assertCount(0, $payment->fresh()->purchases);
     }
 }

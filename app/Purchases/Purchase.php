@@ -87,6 +87,12 @@ class Purchase extends Model
     /**
      * Create a new factory instance for the model.
      */
+    protected static function booted(): void
+    {
+        // The money of its payments was still paid: keep them, unlinked.
+        static::deleting(fn (Purchase $purchase) => $purchase->payments()->detach());
+    }
+
     protected static function newFactory(): Factory
     {
         return PurchaseFactory::new();
