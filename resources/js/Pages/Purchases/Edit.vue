@@ -175,10 +175,10 @@ function submit() {
                                 </div>
                             </div>
 
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <InputLabel for="commission">
-                                        Comisión por apertura
+                            <div class="grid grid-cols-2 gap-x-4">
+                                <div class="grid grid-rows-subgrid row-span-3">
+                                    <InputLabel for="commission" class="self-end">
+                                        Comisión
                                         <span class="text-muted">(opcional)</span>
                                     </InputLabel>
 
@@ -202,8 +202,8 @@ function submit() {
                                     />
                                 </div>
 
-                                <div>
-                                    <InputLabel for="interest_rate">
+                                <div class="grid grid-rows-subgrid row-span-3">
+                                    <InputLabel for="interest_rate" class="self-end">
                                         Tasa anual
                                         <span class="text-muted">(opcional)</span>
                                     </InputLabel>

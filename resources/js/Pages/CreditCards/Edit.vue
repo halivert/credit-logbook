@@ -120,9 +120,10 @@ function submit() {
                             </p>
                         </div>
 
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
+                        <div class="grid grid-cols-2 gap-x-4">
+                            <div class="grid grid-rows-subgrid row-span-3">
                                 <InputLabel
+                                    class="self-end"
                                     for="limit"
                                     value="Límite de crédito"
                                 />
@@ -149,8 +150,8 @@ function submit() {
                                 />
                             </div>
 
-                            <div>
-                                <InputLabel for="interest_rate">
+                            <div class="grid grid-rows-subgrid row-span-3">
+                                <InputLabel for="interest_rate" class="self-end">
                                     Tasa anual
                                     <span
                                         class="font-normal text-muted"
