@@ -27,60 +27,75 @@ Route::get('/', function () {
     ]);
 });
 
+// URLs in Spanish (without accents, they break when copied); route names
+// stay in English like the rest of the code.
+Route::resourceVerbs([
+    'create' => 'crear',
+    'edit' => 'editar',
+]);
+
 Route::middleware('auth')->group(function () {
     /**
      * Profile
      */
-    Route::get('/profile', [ProfileController::class, 'edit'])
+    Route::get('/perfil', [ProfileController::class, 'edit'])
         ->name('profile.edit');
 
-    Route::patch('/profile', [ProfileController::class, 'update'])
+    Route::patch('/perfil', [ProfileController::class, 'update'])
         ->name('profile.update');
 
-    Route::delete('/profile', [ProfileController::class, 'destroy'])
+    Route::delete('/perfil', [ProfileController::class, 'destroy'])
         ->name('profile.destroy');
 
-    Route::get('/profile/security', [SecurityController::class, 'edit'])
+    Route::get('/perfil/seguridad', [SecurityController::class, 'edit'])
         ->middleware('password.confirm')
         ->name('profile.security');
 
     /**
      * Credit Cards
      */
-    Route::resource('credit-cards', CreditCardController::class)
-        ->parameters(['credit-cards' => 'creditCard']);
+    Route::resource('tarjetas', CreditCardController::class)
+        ->names('credit-cards')
+        ->parameters(['tarjetas' => 'creditCard']);
 
     /**
      * Purchases
      */
-    Route::resource('credit-cards.purchases', PurchaseController::class)
-        ->parameters([
-            'credit-cards' => 'creditCard'
-        ])->only(['create', 'store', 'edit', 'update', 'destroy'])
+    Route::resource('tarjetas.compras', PurchaseController::class)
+        ->only(['create', 'store', 'edit', 'update', 'destroy'])
+        ->parameters(['tarjetas' => 'creditCard', 'compras' => 'purchase'])
+        ->names([
+            'create' => 'credit-cards.purchases.create',
+            'store' => 'credit-cards.purchases.store',
+            'edit' => 'purchases.edit',
+            'update' => 'purchases.update',
+            'destroy' => 'purchases.destroy',
+        ])
         ->shallow();
 
     /**
      * Reconciling with the bank's statement
      */
-    Route::get('/credit-cards/{creditCard}/reconciliation', [ReconciliationController::class, 'show'])
+    Route::get('/tarjetas/{creditCard}/conciliacion', [ReconciliationController::class, 'show'])
         ->name('credit-cards.reconciliation.show');
 
-    Route::put('/credit-cards/{creditCard}/reconciliation', [ReconciliationController::class, 'update'])
+    Route::put('/tarjetas/{creditCard}/conciliacion', [ReconciliationController::class, 'update'])
         ->name('credit-cards.reconciliation.update');
 
-    Route::post('/credit-cards/{creditCard}/adjustments', [ReconciliationController::class, 'storeAdjustment'])
+    Route::post('/tarjetas/{creditCard}/ajustes', [ReconciliationController::class, 'storeAdjustment'])
         ->name('credit-cards.adjustments.store');
 
-    Route::delete('/adjustments/{adjustment}', [ReconciliationController::class, 'destroyAdjustment'])
+    Route::delete('/ajustes/{adjustment}', [ReconciliationController::class, 'destroyAdjustment'])
         ->name('adjustments.destroy');
 
     /**
      * Payments
      */
-    Route::resource('credit-cards.payments', PaymentController::class)
-        ->parameters([
-            'credit-cards' => 'creditCard'
-        ])->only(['create', 'store'])
-        ->shallow();
+    Route::resource('tarjetas.pagos', PaymentController::class)
+        ->only(['create', 'store'])
+        ->parameters(['tarjetas' => 'creditCard'])
+        ->names([
+            'create' => 'credit-cards.payments.create',
+            'store' => 'credit-cards.payments.store',
+        ]);
 });
-

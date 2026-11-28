@@ -164,4 +164,37 @@ return [
         'user_handle_secret' => env('PASSKEYS_USER_HANDLE_SECRET') ?: env('APP_KEY'),
     ],
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | Paths
+    |--------------------------------------------------------------------------
+    |
+    | The pages people see, in Spanish. The JSON endpoints (/user/..., and
+    | /passkeys/... which the passkeys client calls) keep Fortify's paths.
+    |
+    */
+
+    // Fortify reads them as fortify.paths.<route name>, so dotted names nest
+    'paths' => [
+        'login' => '/entrar',
+        'logout' => '/salir',
+        'register' => '/registro',
+        'password' => [
+            'request' => '/recuperar-contrasena',
+            'email' => '/recuperar-contrasena',
+            'reset' => '/nueva-contrasena/{token}',
+            'update' => '/nueva-contrasena',
+            'confirm' => '/confirmar-contrasena',
+        ],
+        'two-factor' => [
+            'login' => '/verificacion',
+        ],
+        'verification' => [
+            'notice' => '/verificar-correo',
+            'verify' => '/verificar-correo/{id}/{hash}',
+            'send' => '/verificar-correo/reenviar',
+        ],
+    ],
+
 ];
