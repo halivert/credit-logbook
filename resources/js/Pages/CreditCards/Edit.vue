@@ -134,9 +134,8 @@ function submit() {
                                     >
                                     <TextInput
                                         id="limit"
-                                        type="number"
+                                        type="text"
                                         inputmode="decimal"
-                                        step="0.01"
                                         min="0"
                                         class="block w-full pl-7"
                                         v-model="form.limit"
@@ -162,9 +161,8 @@ function submit() {
                                 <div class="relative mt-1">
                                     <TextInput
                                         id="interest_rate"
-                                        type="number"
+                                        type="text"
                                         inputmode="decimal"
-                                        step="0.01"
                                         min="0"
                                         max="200"
                                         class="block w-full pr-7"

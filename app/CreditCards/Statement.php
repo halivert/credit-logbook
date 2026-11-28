@@ -15,7 +15,7 @@ use Carbon\CarbonImmutable;
  * Amounts are in cents. Charges and payments are plain arrays so the math
  * doesn't depend on the database:
  * - charges: ['day' => CarbonImmutable, 'cents' => int, 'plan' => ?InstallmentPlan]
- *   (returns have negative cents)
+ *   (returns and adjustments in favor have negative cents)
  * - payments: ['day' => CarbonImmutable, 'cents' => int]
  */
 final readonly class Statement
@@ -24,6 +24,8 @@ final readonly class Statement
         public CarbonImmutable $closing,
         public CarbonImmutable $due,
         public CarbonImmutable $nextClosing,
+        /** What was owed at the closing, negative when in favor */
+        public int $closingBalanceCents,
         /** Pago para no generar intereses */
         public int $toAvoidInterestCents,
         public int $paidSinceClosingCents,
@@ -57,7 +59,8 @@ final readonly class Statement
             ->filter(fn (array $payment) => $payment['day']->lte($day))
             ->sum('cents');
 
-        $toAvoidInterest = max(0, $billedThrough($closing) - $paidThrough($closing));
+        $closingBalance = $billedThrough($closing) - $paidThrough($closing);
+        $toAvoidInterest = max(0, $closingBalance);
         $paidSinceClosing = $paidThrough($today) - $paidThrough($closing);
         $remaining = max(0, $toAvoidInterest - $paidSinceClosing);
 
@@ -65,6 +68,7 @@ final readonly class Statement
             closing: $closing,
             due: $due,
             nextClosing: $cycle->nextClosing($closing->addDay()),
+            closingBalanceCents: $closingBalance,
             toAvoidInterestCents: $toAvoidInterest,
             paidSinceClosingCents: $paidSinceClosing,
             remainingCents: $remaining,

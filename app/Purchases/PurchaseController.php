@@ -5,6 +5,7 @@ namespace App\Purchases;
 use App\CreditCards\CreditCard;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -18,10 +19,19 @@ class PurchaseController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(CreditCard $creditCard): Response
+    public function create(Request $request, CreditCard $creditCard): Response
     {
+        // Adding a purchase missing from a statement: back to reconciling,
+        // dated in the closed period
+        $reconciling = $request->query('from') === 'reconciliation';
+
         return Inertia::render('Purchases/Create', [
             'creditCard' => $creditCard,
+            'returnTo' => $reconciling ? 'reconciliation' : null,
+            'defaultKind' => $request->query('kind') === 'refund' ? 'refund' : null,
+            'defaultDate' => $reconciling
+                ? $creditCard->billingCycle()->lastClosing()->toDateString()
+                : null,
         ]);
     }
 
@@ -35,6 +45,10 @@ class PurchaseController extends Controller
         $attrs = $request->validated();
 
         $creditCard->purchases()->create($attrs);
+
+        if ($request->input('return_to') === 'reconciliation') {
+            return to_route('credit-cards.reconciliation.show', $creditCard);
+        }
 
         return to_route('credit-cards.show', $creditCard);
     }

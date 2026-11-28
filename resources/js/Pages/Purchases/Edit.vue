@@ -90,7 +90,8 @@ function submit() {
 
                             <TextInput
                                 id="amount"
-                                type="number"
+                                type="text"
+                                    inputmode="decimal"
                                 class="mt-1 block w-full"
                                 v-model="form.amount"
                                 required
@@ -135,10 +136,10 @@ function submit() {
 
                                 <TextInput
                                     id="installment_amount"
-                                    type="number"
+                                    type="text"
+                                    inputmode="decimal"
                                     min="0"
                                     :max="form.amount"
-                                    step="0.01"
                                     class="mt-1 block w-full"
                                     v-model="form.installment_amount"
                                     required
@@ -163,7 +164,8 @@ function submit() {
 
                                 <TextInput
                                     id="commission"
-                                    type="number"
+                                    type="text"
+                                    inputmode="decimal"
                                     min="1"
                                     class="mt-1 block w-full"
                                     v-model="form.commission"
@@ -183,7 +185,8 @@ function submit() {
 
                                 <TextInput
                                     id="interest_rate"
-                                    type="number"
+                                    type="text"
+                                    inputmode="decimal"
                                     min="0"
                                     class="mt-1 block w-full"
                                     v-model="form.interest_rate"
