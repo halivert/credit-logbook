@@ -2,6 +2,7 @@
 
 namespace App\Payments;
 
+use App\Support\Money;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
@@ -25,7 +26,7 @@ class UpdatePaymentRequest extends FormRequest
     {
         return [
             'date' => 'required|date_format:Y-m-d|before_or_equal:today',
-            'amount' => 'required|decimal:0,2|min:1',
+            'amount' => ['required', ...Money::rules()],
         ];
     }
 

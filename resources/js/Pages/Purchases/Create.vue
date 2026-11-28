@@ -186,6 +186,7 @@ function submit() {
                                         type="number"
                                         inputmode="numeric"
                                         min="1"
+                                        max="60"
                                         class="mt-1 block w-full"
                                         v-model="form.installment_count"
                                         required

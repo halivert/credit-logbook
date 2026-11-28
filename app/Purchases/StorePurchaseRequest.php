@@ -2,6 +2,7 @@
 
 namespace App\Purchases;
 
+use App\Support\Money;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Foundation\Http\FormRequest;
@@ -9,6 +10,9 @@ use Illuminate\Support\Facades\Gate;
 
 class StorePurchaseRequest extends FormRequest
 {
+    /** Banks in Mexico offer up to 48 months, some up to 60 */
+    public const MAX_INSTALLMENTS = 60;
+
     use HandlesAuthorization;
 
     /**
@@ -43,13 +47,14 @@ class StorePurchaseRequest extends FormRequest
             'concept' => 'required|string|max:255',
             'date' => 'required|date_format:Y-m-d|before_or_equal:today',
             'applied_on' => 'nullable|date_format:Y-m-d|after_or_equal:date|before_or_equal:today',
-            'amount' => 'required|decimal:0,2|min:1',
+            // Returns are positive here, they're stored as negative
+            'amount' => ['required', ...Money::rules()],
 
             // Empty means the even split, otherwise the bank's amount is kept
-            'installment_amount' => "$exclude|nullable|decimal:0,2|min:1|lte:amount",
-            'installment_count' => "$exclude|required|integer",
-            'commission' => "$exclude|decimal:0,2|nullable",
-            'interest_rate' => "$exclude|decimal:0,2|nullable",
+            'installment_amount' => [$exclude, 'nullable', ...Money::rules(), 'lte:amount'],
+            'installment_count' => [$exclude, 'required', 'integer', 'min:1', 'max:'.self::MAX_INSTALLMENTS],
+            'commission' => [$exclude, 'nullable', ...Money::rules('0')],
+            'interest_rate' => [$exclude, 'nullable', 'decimal:0,2', 'min:0', 'max:200'],
         ];
     }
 

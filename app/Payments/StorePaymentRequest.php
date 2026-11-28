@@ -2,6 +2,7 @@
 
 namespace App\Payments;
 
+use App\Support\Money;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StorePaymentRequest extends FormRequest
@@ -15,7 +16,7 @@ class StorePaymentRequest extends FormRequest
     {
         return [
             'date' => 'required|date_format:Y-m-d|before_or_equal:today',
-            'amount' => 'required|decimal:0,2|min:1',
+            'amount' => ['required', ...Money::rules()],
         ];
     }
 }
