@@ -54,6 +54,11 @@ trait HasInstallments
                 return (float) $this->amount;
             }
 
+            // Once every installment is billed, the whole purchase is
+            if ($this->billed_installments >= $this->installment_count) {
+                return (float) $this->amount;
+            }
+
             $billed = $this->billed_installments * $this->getRawOriginal('installment_amount');
 
             return round(min($billed, $this->amount), 2);
@@ -71,8 +76,9 @@ trait HasInstallments
     }
 
     /**
-     * The next installment to be billed: the last one is capped to what's
-     * left and the first one includes the commission.
+     * The next installment to be billed. The bank's amount is used as is,
+     * even when it doesn't divide the purchase evenly: the last installment
+     * takes whatever is left, and the first one includes the commission.
      */
     protected function installmentAmount(): Attribute
     {
@@ -81,7 +87,11 @@ trait HasInstallments
                 return null;
             }
 
-            $installmentAmount = min($this->remaining_amount, (float) $amount);
+            $isLast = $this->billed_installments === $this->installment_count - 1;
+
+            $installmentAmount = $isLast
+                ? $this->remaining_amount
+                : min($this->remaining_amount, (float) $amount);
 
             if ($this->billed_installments < 1) {
                 return round($installmentAmount + $this->commission, 2);

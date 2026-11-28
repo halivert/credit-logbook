@@ -219,4 +219,30 @@ class PurchaseTest extends TestCase
             ])
             ->assertSessionHasErrors(['applied_on']);
     }
+
+    #[Test]
+    public function the_installment_is_the_users_or_the_even_split_when_empty(): void
+    {
+        $store = fn (array $data) => $this->actingAs($this->creditCard->user)
+            ->post(route('credit-cards.purchases.store', $this->creditCard), [
+                'is_installment_purchase' => true,
+                'concept' => 'Laptop',
+                'date' => today()->toDateString(),
+                'amount' => '1000',
+                'installment_count' => 3,
+                ...$data,
+            ])
+            ->assertSessionHasNoErrors();
+
+        $store(['concept' => 'Vacía', 'installment_amount' => '']);
+        $store(['concept' => 'Del banco', 'installment_amount' => '333.33']);
+
+        $installment = fn (string $concept) => $this->creditCard->purchases()
+            ->where('concept', $concept)
+            ->sole()
+            ->getRawOriginal('installment_amount');
+
+        $this->assertEquals(333.34, $installment('Vacía'));
+        $this->assertEquals(333.33, $installment('Del banco'));
+    }
 }

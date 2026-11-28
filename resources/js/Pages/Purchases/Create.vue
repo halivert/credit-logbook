@@ -34,14 +34,18 @@ const form = useForm({
     commission: "",
 })
 
-/** What the bank usually charges: the amount split evenly, rounded up */
+/**
+ * What the bank usually charges: the amount split evenly, rounded up. The
+ * server uses the same split when the field is left empty.
+ */
 const suggestedInstallment = computed(() => {
     const amount = Number(form.amount)
     const count = Number(form.installment_count)
 
     if (!amount || !count) return null
 
-    return Math.ceil((amount / count) * 100) / 100
+    // Rounded to 6 decimals first so float noise doesn't add a cent
+    return Math.ceil(Number(((amount * 100) / count).toFixed(6))) / 100
 })
 
 function submit() {
@@ -49,8 +53,6 @@ function submit() {
         ...data,
         is_installment_purchase: kind === "installments",
         is_refund: kind === "refund",
-        installment_amount:
-            data.installment_amount || suggestedInstallment.value || "",
     })).post(route("credit-cards.purchases.store", props.creditCard))
 }
 </script>

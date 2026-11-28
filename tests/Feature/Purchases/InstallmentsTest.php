@@ -135,6 +135,46 @@ class InstallmentsTest extends TestCase
     }
 
     #[Test]
+    public function the_last_installment_takes_what_an_uneven_installment_leaves(): void
+    {
+        // The bank says 333.33 for 1000 in 3: the last one is 333.34
+        $purchase = $this->installmentPurchase('2026-09-15', [
+            'amount' => 1000,
+            'installment_count' => 3,
+            'installment_amount' => 333.33,
+        ]);
+
+        $this->at('2026-09-18 18:00');
+        $this->assertEqualsWithDelta(333.33, $purchase->installment_amount, 0.001);
+
+        $this->at('2026-10-27 18:00');
+        $this->assertSame(2, $purchase->billed_installments);
+        $this->assertEqualsWithDelta(333.34, $purchase->installment_amount, 0.001);
+
+        $this->at('2026-11-27 18:00');
+        $this->assertSame(0, $purchase->remaining_installments);
+        $this->assertEquals(0, $purchase->remaining_amount);
+    }
+
+    #[Test]
+    public function the_users_installment_is_used_even_if_it_is_not_the_exact_split(): void
+    {
+        $purchase = $this->installmentPurchase('2026-09-15', [
+            'amount' => 1000,
+            'installment_count' => 3,
+            'installment_amount' => 350,
+        ]);
+
+        $this->at('2026-09-18 18:00');
+        $this->assertEqualsWithDelta(350, $purchase->installment_amount, 0.001);
+
+        $this->at('2026-10-27 18:00');
+        $this->assertEqualsWithDelta(300, $purchase->remaining_amount, 0.001);
+        $this->assertEqualsWithDelta(300, $purchase->installment_amount, 0.001);
+    }
+
+
+    #[Test]
     public function single_payment_purchases_have_no_installments(): void
     {
         $purchase = Purchase::factory()->for($this->creditCard)->create(['amount' => 500])->fresh();

@@ -45,7 +45,8 @@ class StorePurchaseRequest extends FormRequest
             'applied_on' => 'nullable|date_format:Y-m-d|after_or_equal:date|before_or_equal:today',
             'amount' => 'required|decimal:0,2|min:1',
 
-            'installment_amount' => "$exclude|required|decimal:0,2|min:1|lte:amount",
+            // Empty means the even split, otherwise the bank's amount is kept
+            'installment_amount' => "$exclude|nullable|decimal:0,2|min:1|lte:amount",
             'installment_count' => "$exclude|required|integer",
             'commission' => "$exclude|decimal:0,2|nullable",
             'interest_rate' => "$exclude|decimal:0,2|nullable",
@@ -78,6 +79,22 @@ class StorePurchaseRequest extends FormRequest
             $validated['amount'] = -abs($validated['amount']);
         }
 
+        if ($validated['is_installment_purchase'] && blank($validated['installment_amount'] ?? null)) {
+            $validated['installment_amount'] = self::evenInstallment(
+                (float) $validated['amount'],
+                (int) $validated['installment_count'],
+            );
+        }
+
         return data_get($validated, $key, $default);
+    }
+
+    /**
+     * The amount split evenly, rounded up to the cent like banks do (the
+     * last installment absorbs the difference).
+     */
+    public static function evenInstallment(float $amount, int $count): float
+    {
+        return ceil(round($amount * 100 / $count, 6)) / 100;
     }
 }
