@@ -24,7 +24,7 @@ class UpdatePaymentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'datetime' => 'required|date|before_or_equal:now',
+            'date' => 'required|date_format:Y-m-d|before_or_equal:today',
             'amount' => 'required|decimal:0,2|min:1',
         ];
     }
@@ -32,7 +32,7 @@ class UpdatePaymentRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'datetime' => __('labels.datetime'),
+            'date' => __('labels.date'),
             'amount' => __('labels.amount'),
             'purchases' => __('labels.compras'),
             'installment_purchases' => __('labels.installment_purchases'),

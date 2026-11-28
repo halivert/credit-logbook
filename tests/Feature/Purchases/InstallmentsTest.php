@@ -33,7 +33,7 @@ class InstallmentsTest extends TestCase
     private function installmentPurchase(string $date, array $attributes = []): Purchase
     {
         return Purchase::factory()->for($this->creditCard)->create([
-            'datetime' => Carbon::parse($date, 'UTC'),
+            'date' => $date,
             'amount' => 1200,
             'installment_count' => 12,
             'installment_amount' => 100,
@@ -81,7 +81,7 @@ class InstallmentsTest extends TestCase
     public function the_posting_date_wins_over_the_purchase_date(): void
     {
         $purchase = $this->installmentPurchase('2026-10-19', [
-            'applied_at' => Carbon::parse('2026-10-21', 'UTC'),
+            'applied_on' => '2026-10-21',
         ]);
 
         $this->at('2026-11-27 18:00');
@@ -95,7 +95,7 @@ class InstallmentsTest extends TestCase
         $creditCard = CreditCard::factory()->create(['closing_date' => 30]);
 
         $purchase = Purchase::factory()->for($creditCard)->create([
-            'datetime' => Carbon::parse('2027-02-01', 'UTC'),
+            'date' => '2027-02-01',
             'amount' => 300,
             'installment_count' => 3,
             'installment_amount' => 100,

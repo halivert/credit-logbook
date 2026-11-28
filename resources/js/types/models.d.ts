@@ -37,7 +37,7 @@ export type Payment = {
     id: string
     credit_card_id: string
     /** "Y-m-d" */
-    datetime: string
+    date: string
     amount: Decimal
     created_at: DateString
     updated_at: DateString
@@ -47,7 +47,8 @@ export type Purchase = {
     id: string
     credit_card_id: string
     concept: string
-    datetime: DateString
+    /** "Y-m-d" */
+    date: string
     /** Negative for returns */
     amount: Decimal
     installment_count: number | null
@@ -55,7 +56,8 @@ export type Purchase = {
     installment_amount: Money | null
     commission: Decimal | null
     interest_rate: Decimal | null
-    applied_at: DateString
+    /** "Y-m-d", when the bank applied it if different from `date` */
+    applied_on: string | null
     created_at: DateString
     updated_at: DateString
     is_installment_purchase: boolean

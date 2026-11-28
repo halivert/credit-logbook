@@ -57,13 +57,14 @@ class CreditCardController extends Controller
     {
         $purchases = $creditCard->purchases()
             ->whereNull('installment_count')
-            ->orderBy('datetime', 'desc')
+            ->orderBy('date', 'desc')
+            ->orderBy('created_at', 'desc')
             ->simplePaginate(20);
 
         // Those with installments still to be billed
         $installmentPurchases = $creditCard->purchases()
             ->whereNotNull('installment_count')
-            ->orderBy('datetime', 'desc')
+            ->orderBy('date', 'desc')
             ->get()
             ->filter(fn ($purchase) => $purchase->remaining_installments > 0)
             ->values();

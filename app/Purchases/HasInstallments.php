@@ -92,14 +92,14 @@ trait HasInstallments
     }
 
     /**
-     * The calendar day the purchase counts from. Dates are stored as UTC
-     * calendar days (see resources/js/format.ts), the bank's posting date
-     * wins when it's known.
+     * The day the purchase counts from: the bank's posting date when it's
+     * known.
      */
     public function day(): CarbonImmutable
     {
-        $date = $this->getRawOriginal('applied_at') ?? $this->getRawOriginal('datetime');
-
-        return CarbonImmutable::parse($date, 'UTC')->startOfDay();
+        return CarbonImmutable::parse(
+            $this->getRawOriginal('applied_on') ?? $this->getRawOriginal('date'),
+            'UTC',
+        )->startOfDay();
     }
 }

@@ -51,7 +51,7 @@ const billedPercentage = computed(() =>
                 </div>
             </template>
             <p v-else class="text-sm text-gray-500 dark:text-gray-400">
-                {{ toDate(purchase.datetime) }}
+                {{ toDate(purchase.date) }}
                 <span v-if="purchase.is_refund"> · Devolución</span>
             </p>
         </div>

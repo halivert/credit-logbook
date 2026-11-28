@@ -7,7 +7,7 @@ import PrimaryButton from "@/Components/PrimaryButton.vue"
 import InputError from "@/Components/InputError.vue"
 import InputLabel from "@/Components/InputLabel.vue"
 import TextInput from "@/Components/TextInput.vue"
-import { useFormat } from "@/format"
+import { today, useFormat } from "@/format"
 
 const props = defineProps<{
     creditCard: CreditCard
@@ -23,17 +23,11 @@ const kinds: { value: Kind; label: string }[] = [
 
 const { toCurrency } = useFormat()
 
-const today = new Date()
-const datetime = [
-    today.getFullYear(),
-    String(today.getMonth() + 1).padStart(2, "0"),
-    String(today.getDate()).padStart(2, "0"),
-].join("-")
 
 const form = useForm({
     kind: "purchase" as Kind,
     concept: "",
-    datetime,
+    date: today(),
     amount: "",
     installment_count: "",
     installment_amount: "",
@@ -57,7 +51,6 @@ function submit() {
         is_refund: kind === "refund",
         installment_amount:
             data.installment_amount || suggestedInstallment.value || "",
-        datetime: new Date(data.datetime + "T00:00"),
     })).post(route("credit-cards.purchases.store", props.creditCard))
 }
 </script>
@@ -128,19 +121,19 @@ function submit() {
 
                         <div class="grid grid-cols-2 gap-4">
                             <div>
-                                <InputLabel for="datetime" value="Fecha" />
+                                <InputLabel for="date" value="Fecha" />
 
                                 <TextInput
-                                    id="datetime"
+                                    id="date"
                                     type="date"
                                     class="mt-1 block w-full"
-                                    v-model="form.datetime"
+                                    v-model="form.date"
                                     required
                                 />
 
                                 <InputError
                                     class="mt-2"
-                                    :message="form.errors.datetime"
+                                    :message="form.errors.date"
                                 />
                             </div>
 

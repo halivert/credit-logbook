@@ -169,7 +169,7 @@ class CreditCardTest extends TestCase
         $creditCard = CreditCard::factory()->create(['limit' => '10000']);
         Purchase::factory()->for($creditCard)->create(['amount' => 500]);
         $installments = Purchase::factory()->for($creditCard)->create([
-            'datetime' => now()->subMonths(2),
+            'date' => now()->subMonths(2)->toDateString(),
             'amount' => 1200,
             'installment_count' => 12,
             'installment_amount' => 100,

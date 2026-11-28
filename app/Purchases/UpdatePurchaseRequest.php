@@ -25,8 +25,8 @@ class UpdatePurchaseRequest extends FormRequest
     {
         $rules = [
             'concept' => 'required|string|max:255',
-            'datetime' => 'required|date|before_or_equal:now',
-            'applied_at' => 'date|nullable|before_or_equal:now',
+            'date' => 'required|date_format:Y-m-d|before_or_equal:today',
+            'applied_on' => 'nullable|date_format:Y-m-d|after_or_equal:date|before_or_equal:today',
             'amount' => 'required|decimal:0,2|min:1',
         ];
 
@@ -47,8 +47,8 @@ class UpdatePurchaseRequest extends FormRequest
     {
         return [
             'concept' => __('labels.concept'),
-            'datetime' => __('labels.datetime'),
-            'applied_at' => __('fecha de aplicación'),
+            'date' => __('labels.date'),
+            'applied_on' => __('labels.applied_on'),
             'amount' => __('labels.amount'),
             'installment_amount' => __('labels.installment_amount'),
             'installment_count' => __('labels.installment_count'),

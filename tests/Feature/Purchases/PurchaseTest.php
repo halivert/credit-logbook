@@ -31,7 +31,7 @@ class PurchaseTest extends TestCase
                 'is_installment_purchase' => false,
                 'is_refund' => false,
                 'concept' => 'Super',
-                'datetime' => today()->toDateString(),
+                'date' => today()->toDateString(),
                 'amount' => '1250.50',
                 // Installment fields are ignored for single payment purchases
                 'installment_count' => 12,
@@ -56,7 +56,7 @@ class PurchaseTest extends TestCase
             ->post(route('credit-cards.purchases.store', $this->creditCard), [
                 'is_installment_purchase' => true,
                 'concept' => 'Laptop',
-                'datetime' => today()->toDateString(),
+                'date' => today()->toDateString(),
                 'amount' => '12000',
                 'installment_count' => 12,
                 'installment_amount' => '1000',
@@ -78,12 +78,12 @@ class PurchaseTest extends TestCase
             ->post(route('credit-cards.purchases.store', $this->creditCard), [
                 'is_installment_purchase' => true,
                 'concept' => 'Laptop',
-                'datetime' => today()->addDays(2)->toDateString(),
+                'date' => today()->addDays(2)->toDateString(),
                 'amount' => '1000',
                 'installment_count' => 3,
                 'installment_amount' => '1001',
             ])
-            ->assertSessionHasErrors(['datetime', 'installment_amount']);
+            ->assertSessionHasErrors(['date', 'installment_amount']);
 
         $this->assertDatabaseCount(Purchase::class, 0);
     }
@@ -96,7 +96,7 @@ class PurchaseTest extends TestCase
                 'is_installment_purchase' => false,
                 'is_refund' => false,
                 'concept' => 'Super',
-                'datetime' => today()->toDateString(),
+                'date' => today()->toDateString(),
                 'amount' => '100',
             ])
             ->assertNotFound();
@@ -112,7 +112,7 @@ class PurchaseTest extends TestCase
         $this->actingAs($this->creditCard->user)
             ->put(route('purchases.update', $purchase), [
                 'concept' => 'Corregido',
-                'datetime' => today()->toDateString(),
+                'date' => today()->toDateString(),
                 'amount' => '99.99',
             ])
             ->assertSessionHasNoErrors()
@@ -151,7 +151,7 @@ class PurchaseTest extends TestCase
                 'is_installment_purchase' => true,
                 'installment_count' => 3,
                 'concept' => 'Devolución Amazon',
-                'datetime' => today()->toDateString(),
+                'date' => today()->toDateString(),
                 'amount' => '300',
             ])
             ->assertSessionHasNoErrors();
@@ -165,7 +165,7 @@ class PurchaseTest extends TestCase
         $this->actingAs($this->creditCard->user)
             ->put(route('purchases.update', $refund), [
                 'concept' => 'Devolución Amazon',
-                'datetime' => today()->toDateString(),
+                'date' => today()->toDateString(),
                 'amount' => '350',
             ])
             ->assertSessionHasNoErrors();
@@ -188,5 +188,35 @@ class PurchaseTest extends TestCase
             ->assertInertia(fn (Assert $page) => $page
                 ->where('baseInstallmentAmount', '100.00')
             );
+    }
+
+    #[Test]
+    public function dates_are_plain_calendar_days(): void
+    {
+        $purchase = Purchase::factory()->for($this->creditCard)->create([
+            'date' => '2026-11-20',
+            'applied_on' => '2026-11-21',
+        ]);
+
+        $this->actingAs($this->creditCard->user)
+            ->get(route('purchases.edit', $purchase))
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('purchase.date', '2026-11-20')
+                ->where('purchase.applied_on', '2026-11-21')
+            );
+    }
+
+    #[Test]
+    public function the_bank_cannot_apply_a_purchase_before_it_happened(): void
+    {
+        $this->actingAs($this->creditCard->user)
+            ->post(route('credit-cards.purchases.store', $this->creditCard), [
+                'is_installment_purchase' => false,
+                'concept' => 'Super',
+                'date' => today()->toDateString(),
+                'applied_on' => today()->subDay()->toDateString(),
+                'amount' => '100',
+            ])
+            ->assertSessionHasErrors(['applied_on']);
     }
 }

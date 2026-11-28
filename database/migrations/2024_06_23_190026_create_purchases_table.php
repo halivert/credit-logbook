@@ -15,7 +15,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignUuid('credit_card_id')->constrained()->cascadeOnDelete();
             $table->string('concept');
-            $table->timestamp('datetime', 3);
+            $table->date('date');
             // Negative for returns
             $table->decimal('amount', 19, 4);
 
@@ -24,11 +24,11 @@ return new class extends Migration
             $table->decimal('commission', 19, 4)->nullable();
             $table->decimal('interest_rate', 6, 2)->nullable();
             // When the bank applied it, if different from the purchase date
-            $table->timestamp('applied_at', 3)->nullable();
+            $table->date('applied_on')->nullable();
 
             $table->timestamps(3);
 
-            $table->index(['credit_card_id', 'datetime']);
+            $table->index(['credit_card_id', 'date']);
         });
     }
 

@@ -45,7 +45,7 @@ class PaymentTest extends TestCase
 
         $this->actingAs($this->creditCard->user)
             ->post(route('credit-cards.payments.store', $this->creditCard), [
-                'datetime' => today()->toDateString(),
+                'date' => today()->toDateString(),
                 'amount' => '500',
             ])
             ->assertSessionHasNoErrors()
@@ -62,10 +62,10 @@ class PaymentTest extends TestCase
     {
         $this->actingAs($this->creditCard->user)
             ->post(route('credit-cards.payments.store', $this->creditCard), [
-                'datetime' => today()->addDay()->toDateString(),
+                'date' => today()->addDay()->toDateString(),
                 'amount' => '0',
             ])
-            ->assertSessionHasErrors(['datetime', 'amount']);
+            ->assertSessionHasErrors(['date', 'amount']);
 
         $this->assertDatabaseCount(Payment::class, 0);
     }
@@ -75,7 +75,7 @@ class PaymentTest extends TestCase
     {
         $this->actingAs(User::factory()->create())
             ->post(route('credit-cards.payments.store', $this->creditCard), [
-                'datetime' => today()->toDateString(),
+                'date' => today()->toDateString(),
                 'amount' => '100',
             ])
             ->assertNotFound();

@@ -18,23 +18,23 @@ class Purchase extends Model
 
     protected $fillable = [
         'concept',
-        'datetime',
+        'date',
         'amount',
         'installment_count',
         'installment_amount',
         'commission',
         'interest_rate',
-        'applied_at',
+        'applied_on',
     ];
 
     protected $casts = [
-        'datetime' => 'datetime',
+        'date' => 'date:Y-m-d',
         'amount' => 'decimal:2',
         'installment_count' => 'integer',
         'installment_amount' => 'decimal:2',
         'commission' => 'decimal:2',
         'interest_rate' => 'decimal:2',
-        'applied_at' => 'datetime',
+        'applied_on' => 'date:Y-m-d',
     ];
 
     protected $appends = [
@@ -70,11 +70,6 @@ class Purchase extends Model
     protected function isRefund(): Attribute
     {
         return new Attribute(fn () => $this->amount < 0);
-    }
-
-    protected function appliedAt(): Attribute
-    {
-        return new Attribute(fn ($value) => $value ?? $this->datetime);
     }
 
     /**

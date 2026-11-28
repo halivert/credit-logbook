@@ -21,7 +21,7 @@ class PaymentFactory extends Factory
     {
         return [
             'credit_card_id' => CreditCard::factory(),
-            'datetime' => fake()->dateTimeBetween('-1 week'),
+            'date' => fake()->dateTimeBetween('-1 week')->format('Y-m-d'),
             'amount' => fake()->randomNumber(4),
         ];
     }

@@ -14,7 +14,7 @@ class Payment extends Model
     use HasFactory, HasUuids;
 
     protected $fillable = [
-        'datetime',
+        'date',
         'amount',
     ];
 
@@ -24,7 +24,7 @@ class Payment extends Model
     public function casts(): array
     {
         return [
-            'datetime' => 'date:Y-m-d',
+            'date' => 'date:Y-m-d',
             'amount' => 'decimal:2'
         ];
     }
